@@ -21,12 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package io;
+package de.targodan.usb.io;
 
 /**
  *
  * @author Luca Corbatto
  */
-public interface Marshaller {
-    IRCMessage marshall(Object o);
+public class Command {
+    public enum Type {
+        SOFT_ASSIGN, HARD_ASSIGN,
+        UNASSIGN,
+        TOGGLE_CODERED,
+        SET_SYSTEM,
+        TOGGLE_ACTIVE,
+        CLOSE,
+        SET_CMDR_NAME,
+        GRAB,
+        MARK_DELETION,
+        INJECT,
+        SET_IRCNICK,
+        SET_PLATFORM_PC, SET_PLATFORM_PS, SET_PLATFORM_XB,
+        SUBSTITUTE,
+    }
+    
+    protected final Type type;
+    protected final String[] parameters;
+
+    public Command(Type type, String[] parameters) {
+        this.type = type;
+        this.parameters = parameters;
+    }
+
+    public Type getType() {
+        return this.type;
+    }
+
+    public String getParameter(int i) {
+        return this.parameters[0];
+    }
+    
+    public int getParameterCount() {
+        return this.parameters.length;
+    }
 }

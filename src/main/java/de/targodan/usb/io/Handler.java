@@ -21,46 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package io;
+package de.targodan.usb.io;
+
+import de.targodan.usb.data.CaseManager;
+import de.targodan.usb.data.Rat;
+import de.targodan.usb.data.Report;
 
 /**
  *
  * @author Luca Corbatto
  */
-public class Command {
-    public enum Type {
-        SOFT_ASSIGN, HARD_ASSIGN,
-        UNASSIGN,
-        TOGGLE_CODERED,
-        SET_SYSTEM,
-        TOGGLE_ACTIVE,
-        CLOSE,
-        SET_CMDR_NAME,
-        GRAB,
-        MARK_DELETION,
-        INJECT,
-        SET_IRCNICK,
-        SET_PLATFORM_PC, SET_PLATFORM_PS, SET_PLATFORM_XB,
-        SUBSTITUTE,
-    }
+public interface Handler {
+    void registerCaseManager(CaseManager cm);
     
-    protected final Type type;
-    protected final String[] parameters;
-
-    public Command(Type type, String[] parameters) {
-        this.type = type;
-        this.parameters = parameters;
-    }
-
-    public Type getType() {
-        return this.type;
-    }
-
-    public String getParameter(int i) {
-        return this.parameters[0];
-    }
-    
-    public int getParameterCount() {
-        return this.parameters.length;
-    }
+    void handleCommand(Command cmd);
+    void handleCall(Rat rat, String caseIdentifier);
+    void handleReport(Report report);
 }

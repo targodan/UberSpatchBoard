@@ -21,20 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package io;
-
-import de.targodan.usb.data.CaseManager;
-import de.targodan.usb.data.Rat;
-import de.targodan.usb.data.Report;
+package de.targodan.usb.io;
 
 /**
  *
  * @author Luca Corbatto
  */
-public interface Handler {
-    void registerCaseManager(CaseManager cm);
-    
-    void handleCommand(Command cmd);
-    void handleCall(Rat rat, String caseIdentifier);
-    void handleReport(Report report);
+public interface Marshaller {
+    IRCMessage marshall(Object o);
 }
