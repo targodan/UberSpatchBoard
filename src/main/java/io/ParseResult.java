@@ -30,8 +30,8 @@ package io;
 public enum ParseResult {
     WAS_CALL,
     WAS_REPORT,
+    WAS_CALL_AND_REPORT,
     WAS_COMMAND,
     
     IGNORED,
-    ERROR,
 }

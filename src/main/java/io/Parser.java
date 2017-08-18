@@ -23,13 +23,11 @@
  */
 package io;
 
-import de.targodan.usb.data.CaseManager;
-
 /**
  *
  * @author corbatto
  */
 public interface Parser {
-    void RegisterCaseManager(CaseManager cm);
-    ParseResult Parse(IRCMessage message);
+    void registerHandler(Handler handler);
+    ParseResult parseAndHandle(IRCMessage message);
 }

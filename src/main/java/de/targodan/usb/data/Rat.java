@@ -38,6 +38,14 @@ public class Rat extends User {
     
     protected final Set<Report> reports;
     
+    public Rat(String ircName) {
+        this(ircName, null, null);
+    }
+    
+    public Rat(String ircName, String cmdrName) {
+        this(ircName, cmdrName, null);
+    }
+    
     public Rat(String ircName, String cmdrName, Platform platform) {
         super(ircName, cmdrName, platform);
         

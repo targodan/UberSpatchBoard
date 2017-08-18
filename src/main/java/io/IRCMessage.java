@@ -30,8 +30,32 @@ import java.time.LocalDateTime;
  * @author corbatto
  */
 public class IRCMessage {
-    protected LocalDateTime timestamp;
-    protected String fromUser;
-    protected String channel;
-    protected String message;
+    protected final LocalDateTime timestamp;
+    // FromUser will be "*" if it is an event, like "someone joined" or "someone quit".
+    protected final String sender;
+    protected final String channel;
+    protected final String content;
+
+    public IRCMessage(LocalDateTime timestamp, String fromUser, String channel, String message) {
+        this.timestamp = timestamp;
+        this.sender = fromUser;
+        this.channel = channel;
+        this.content = message;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public String getContent() {
+        return content;
+    }
 }

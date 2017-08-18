@@ -28,8 +28,9 @@ package io;
  * @author corbatto
  */
 public interface DataSource {
-    void RegisterParser(Parser parser);
+    void registerParser(Parser parser);
+    void registerMarshaller(Marshaller marshaller);
     
-    void Listen();
-    void Stop();
+    void listen();
+    void stop();
 }
