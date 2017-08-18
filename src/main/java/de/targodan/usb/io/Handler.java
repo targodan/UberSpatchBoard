@@ -23,6 +23,7 @@
  */
 package de.targodan.usb.io;
 
+import de.targodan.usb.data.Case;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
@@ -34,7 +35,8 @@ import de.targodan.usb.data.Report;
 public interface Handler {
     void registerCaseManager(CaseManager cm);
     
+    void handleNewCase(Case c);
     void handleCommand(Command cmd);
     void handleCall(Rat rat, String caseIdentifier);
-    void handleReport(Report report);
+    void handleReport(String ratIrcName, Report report, String caseIdentifier);
 }

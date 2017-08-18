@@ -78,4 +78,10 @@ public class CaseManager {
         // TODO: Check if < 0 is correct
         this.closedCases.removeIf(item -> item.getCloseTime().compareTo(closeTime) < 0);
     }
+    
+    public Case lookupCaseOfClient(String clientName) {
+        return this.cases.values().stream()
+                .filter(elem -> elem.getClient().getIrcName().equals(clientName) || elem.getClient().getCMDRName().equals(clientName))
+                .findFirst().orElse(null);
+    }
 }

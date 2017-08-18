@@ -23,7 +23,10 @@
  */
 package de.targodan.usb.io;
 
+import de.targodan.usb.data.Case;
+import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
+import de.targodan.usb.data.System;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
 import java.util.logging.Level;
@@ -38,6 +41,7 @@ import java.util.regex.Pattern;
 public class DefaultParser implements Parser {
     protected Handler handler;
     
+    protected Pattern ratsignalPattern;
     protected Pattern commandPattern;
     protected Pattern callPattern;
     protected Pattern reportPattern;
@@ -55,6 +59,7 @@ public class DefaultParser implements Parser {
     public DefaultParser() {
         this.handler = null;
         
+        this.ratsignalPattern = Pattern.compile("^RATSIGNAL - CMDR (?:<cmdr>.*?) - System: (?<system>.*?) \\(.*EDDB\\) - Platform: (?<platform>\\S+) - O2: (?<o2>(NOT )?OK) - Language: \\S+ \\((?<language>\\w\\w)-\\w\\w\\) - IRC Nickname: (?<ircnick>\\S+) \\(Case #(?<case>\\d+)\\)$");
         this.commandPattern = Pattern.compile("^(?<cmd>(?:!\\S+|go))\\s+(?<params>.*)$");
         this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\s|$).*(?<case>(?:#?\\d+|\\S+)?)");
         String reportRegex = "(^|.*(\\s|,))(?<type>(";
@@ -87,6 +92,11 @@ public class DefaultParser implements Parser {
             return ParseResult.WAS_COMMAND;
         }
         
+        boolean wasRatsignal = this.parseAndHandleRatsignal(message);
+        if(wasRatsignal) {
+            return ParseResult.WAS_RATSIGNAL;
+        }
+        
         boolean wasCall = this.parseAndHandleCall(message);
         boolean wasReport = this.parseAndHandleReport(message);
         if(wasCall && wasReport) {
@@ -100,6 +110,28 @@ public class DefaultParser implements Parser {
         }
         
         return ParseResult.IGNORED;
+    }
+    
+    protected boolean parseAndHandleRatsignal(IRCMessage message) {
+        Matcher m = this.ratsignalPattern.matcher(message.getContent());
+        if(!m.matches()) {
+            if(message.getContent().toLowerCase().contains("ratsignal")) {
+                Logger.getLogger(DefaultParser.class.getName()).log(Level.WARNING, "Possibly missed RATSIGNAL.", message);
+            }
+            return false;
+        }
+        
+        Case c = new Case(
+                Integer.valueOf(m.group("case")), 
+                new Client(m.group("ircnick"), m.group("cmdr"), this.parsePlatform(m.group("platform")), m.group("language").toLowerCase()),
+                new System(m.group("system")),
+                !m.group("o2").equals("OK"),
+                message.timestamp
+        );
+        
+        this.handler.handleNewCase(c);
+        
+        return true;
     }
     
     protected boolean parseAndHandleCommand(IRCMessage message) {
@@ -167,7 +199,7 @@ public class DefaultParser implements Parser {
             }
             
             Report report = new Report(this.parseReportType(repType), repState.equals("+"));
-            this.handler.handleReport(report);
+            this.handler.handleReport(message.getSender(), report, caseIdentifier);
             
             // Remove one char from front to find the other reports.
             text = text.substring(1);
@@ -318,5 +350,23 @@ public class DefaultParser implements Parser {
         }
         
         throw new IllegalArgumentException("Report \""+report+"\" unknown.");
+    }
+    
+    Platform parsePlatform(String platform) {
+        switch(platform) {
+            case "pc":
+                return Platform.PC;
+                
+            case "ps":
+            case "ps4":
+                return Platform.PS4;
+                
+            case "x":
+            case "xb":
+            case "xbox":
+                return Platform.XBOX;
+        }
+        
+        throw new IllegalArgumentException("Platform \""+platform+"\" is unknown.");
     }
 }

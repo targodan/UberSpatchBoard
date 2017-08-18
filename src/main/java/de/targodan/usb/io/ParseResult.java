@@ -28,6 +28,7 @@ package de.targodan.usb.io;
  * @author corbatto
  */
 public enum ParseResult {
+    WAS_RATSIGNAL,
     WAS_CALL,
     WAS_REPORT,
     WAS_CALL_AND_REPORT,

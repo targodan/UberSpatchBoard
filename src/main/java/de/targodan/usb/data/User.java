@@ -56,11 +56,11 @@ public class User {
         return ircName;
     }
 
-    public void setIrcName(String ircName) {
+    public void setIRCName(String ircName) {
         this.ircName = ircName;
     }
 
-    public String getCmdrName() {
+    public String getCMDRName() {
         return cmdrName;
     }
 

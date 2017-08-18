@@ -27,19 +27,23 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author corbatto
  */
 public class Rat extends User {
+    private static Pattern platformPattern;
+    
     protected int jumps;
     protected boolean assigned;
     
     protected final Set<Report> reports;
     
     public Rat(String ircName) {
-        this(ircName, null, null);
+        this(ircName, null, Rat.guessPlatform(ircName));
     }
     
     public Rat(String ircName, String cmdrName) {
@@ -52,6 +56,28 @@ public class Rat extends User {
         this.jumps = 0;
         this.reports = new HashSet<>();
         this.assigned = false;
+    }
+    
+    private static Platform guessPlatform(String ircName) {
+        if(Rat.platformPattern == null) {
+            Rat.platformPattern = Pattern.compile(".*\\[.*(?<platform>(pc|ps|xb))", Pattern.CASE_INSENSITIVE);
+        }
+        Matcher m = Rat.platformPattern.matcher(ircName);
+        if(!m.matches()) {
+            return null;
+        }
+        switch(m.group("platform").toLowerCase()) {
+            case "pc":
+                return Platform.PC;
+                
+            case "ps":
+                return Platform.PS4;
+                
+            case "xb":
+                return Platform.XBOX;
+        }
+        
+        return null;
     }
 
     public int getJumps() {
@@ -76,5 +102,5 @@ public class Rat extends User {
 
     public void setAssigned(boolean assigned) {
         this.assigned = assigned;
-    }    
+    }
 }

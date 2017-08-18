@@ -43,24 +43,28 @@ public class Case {
     private final Set<Rat> rats;
     private final List<String> notes;
     private Rat firstLimpet;
-    private boolean caseRed;
+    private boolean codeRed;
     private final LocalDateTime openTime;
     private LocalDateTime closeTime;
     
     private CaseManager attachedManager;
 
     public Case(int number, Client client, System system, boolean caseRed) {
+        this(number, client, system, caseRed, LocalDateTime.now());
+    }
+
+    public Case(int number, Client client, System system, boolean caseRed, LocalDateTime openTime) {
         this.number = number;
         this.client = client;
         this.system = system;
-        this.caseRed = caseRed;
+        this.codeRed = caseRed;
         
         this.active = true;
         this.calls = new ArrayList<>();
         this.rats = new HashSet<>();
         this.notes = new ArrayList<>();
         this.firstLimpet = null;
-        this.openTime = LocalDateTime.now();
+        this.openTime = openTime;
         this.closeTime = null;
         
         this.attachedManager = null;
@@ -109,8 +113,8 @@ public class Case {
         return this.firstLimpet;
     }
 
-    public boolean isCaseRed() {
-        return this.caseRed;
+    public boolean isCodeRed() {
+        return this.codeRed;
     }
 
     public LocalDateTime getOpenTime() {
@@ -134,7 +138,7 @@ public class Case {
     }
 
     public void setCaseRed(boolean caseRed) {
-        this.caseRed = caseRed;
+        this.codeRed = caseRed;
     }
 
     public LocalDateTime getCloseTime() {
@@ -152,9 +156,16 @@ public class Case {
         this.attachedManager = manager;
     }
     
-    public void addCall(Rat rat, int j) {
-        rat.setJumps(j);
+    public void addCall(Rat rat) {
         this.calls.add(rat);
+        
+        try {
+            // If that rat was already assigned update its jumps.
+            this.rats.stream()
+                    .filter(elem -> elem.equals(rat))
+                    .findFirst().get()
+                    .setJumps(rat.getJumps());
+        } catch(Exception ex) {}
     }
     
     public List<Rat> getCalls() {
