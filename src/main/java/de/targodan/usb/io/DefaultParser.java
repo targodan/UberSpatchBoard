@@ -49,6 +49,8 @@ public class DefaultParser implements Parser {
     protected Pattern twoArgumentsPattern;
     protected Pattern threeArgumentsPattern;
     
+    protected Pattern caseSanitizerPattern;
+    
     protected String[] supportedReports = {
         // IMPORTANT: If this needs to be changed look at the way parseAndHandleReport
         //            works and it will still then. Any postfix of any report must not be
@@ -59,9 +61,9 @@ public class DefaultParser implements Parser {
     public DefaultParser() {
         this.handler = null;
         
-        this.ratsignalPattern = Pattern.compile("^RATSIGNAL - CMDR (?:<cmdr>.*?) - System: (?<system>.*?) \\(.*EDDB\\) - Platform: (?<platform>\\S+) - O2: (?<o2>(NOT )?OK) - Language: \\S+ \\((?<language>\\w\\w)-\\w\\w\\) - IRC Nickname: (?<ircnick>\\S+) \\(Case #(?<case>\\d+)\\)$");
+        this.ratsignalPattern = Pattern.compile("^RATSIGNAL - CMDR (?<cmdr>.*?) - System: (?<system>.*?) \\(.*EDDB\\) - Platform: (?<platform>\\S+) - O2: (?<o2>(NOT )?OK) - Language: \\S+ \\((?<language>\\w\\w)(-\\w\\w)?\\)( - IRC Nickname: (?<ircnick>\\S+))? \\(Case #(?<case>\\d+)\\)$");
         this.commandPattern = Pattern.compile("^(?<cmd>(?:!\\S+|go))\\s+(?<params>.*)$");
-        this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\s|$).*(?<case>(?:#?\\d+|\\S+)?)");
+        this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\s|$).*?(?<case>(?:[cC#]?\\d+|\\S+)?)");
         String reportRegex = "(^|.*(\\s|,))(?<type>(";
         for(int i = 0; i < this.supportedReports.length; ++i) {
             reportRegex += this.supportedReports[i];
@@ -74,6 +76,8 @@ public class DefaultParser implements Parser {
         
         this.twoArgumentsPattern = Pattern.compile("^(\\S+)\\s+(.*)$");
         this.threeArgumentsPattern = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(.*)$");
+        
+        this.caseSanitizerPattern = Pattern.compile("^([cC#]?(?<caseNumber>\\d{1,3})|(?<clientName>\\S+))$");
     }
     
     @Override
@@ -121,9 +125,14 @@ public class DefaultParser implements Parser {
             return false;
         }
         
+        String ircNick = m.group("ircnick");
+        String cmdrName = m.group("cmdr");
+        if(ircNick == null || ircNick.length() == 0) {
+            ircNick = cmdrName;
+        }
         Case c = new Case(
                 Integer.valueOf(m.group("case")), 
-                new Client(m.group("ircnick"), m.group("cmdr"), this.parsePlatform(m.group("platform")), m.group("language").toLowerCase()),
+                new Client(ircNick, cmdrName, this.parsePlatform(m.group("platform")), m.group("language").toLowerCase()),
                 new System(m.group("system")),
                 !m.group("o2").equals("OK"),
                 message.timestamp
@@ -174,9 +183,25 @@ public class DefaultParser implements Parser {
         Rat call = new Rat(message.getSender());
         call.setJumps(Integer.valueOf(m.group("jumps")));
         
-        this.handler.handleCall(call, m.group("case"));
+        this.handler.handleCall(call, this.sanitizeCaseIdentifier(m.group("case")));
         
         return true;
+    }
+    
+    protected String sanitizeCaseIdentifier(String caseIdentifier) {
+        Matcher m = this.caseSanitizerPattern.matcher(caseIdentifier);
+        if(!m.matches()) {
+            throw new IllegalArgumentException("This should never happen.");
+        }
+        String caseNumber = m.group("caseNumber");
+        String clientName = m.group("clientName");
+        if(caseNumber != null && clientName == null) {
+            return caseNumber;
+        }
+        if(caseNumber == null && clientName != null) {
+            return clientName;
+        }
+        throw new IllegalArgumentException("This should never happen.");
     }
     
     protected boolean parseAndHandleReport(IRCMessage message) {
@@ -353,7 +378,7 @@ public class DefaultParser implements Parser {
     }
     
     Platform parsePlatform(String platform) {
-        switch(platform) {
+        switch(platform.toLowerCase()) {
             case "pc":
                 return Platform.PC;
                 

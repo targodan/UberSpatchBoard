@@ -23,6 +23,7 @@
  */
 package de.targodan.usb.data;
 
+import java.util.Objects;
 import java.util.Observable;
 
 /**
@@ -49,7 +50,38 @@ public class System extends Observable {
     public void setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.name);
+        hash = 29 * hash + (this.confirmed ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final System other = (System) obj;
+        if (this.confirmed != other.confirmed) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

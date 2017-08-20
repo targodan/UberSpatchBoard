@@ -39,8 +39,8 @@ import java.util.logging.Logger;
 public class SingleChannelFileDataSource implements DataSource {
     protected Parser parser;
     protected Marshaller marshaller;
-    protected AtomicBoolean run;
-    protected AtomicBoolean done;
+    protected final AtomicBoolean run;
+    protected final AtomicBoolean done;
     protected long readPause;
     protected String channelName;
     
@@ -121,6 +121,9 @@ public class SingleChannelFileDataSource implements DataSource {
             } catch(Exception ex) {
                 Logger.getLogger(SingleChannelFileDataSource.class.getName())
                         .log(Level.SEVERE, null, ex);
+                continue;
+            }
+            if(msg == null) {
                 continue;
             }
             // Fix channel name if necessary

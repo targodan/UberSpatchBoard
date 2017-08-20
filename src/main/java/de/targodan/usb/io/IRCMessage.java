@@ -24,6 +24,7 @@
 package de.targodan.usb.io;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  *
@@ -57,5 +58,42 @@ public class IRCMessage {
 
     public String getContent() {
         return content;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.timestamp);
+        hash = 89 * hash + Objects.hashCode(this.sender);
+        hash = 89 * hash + Objects.hashCode(this.channel);
+        hash = 89 * hash + Objects.hashCode(this.content);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final IRCMessage other = (IRCMessage) obj;
+        if (!Objects.equals(this.sender, other.sender)) {
+            return false;
+        }
+        if (!Objects.equals(this.channel, other.channel)) {
+            return false;
+        }
+        if (!Objects.equals(this.content, other.content)) {
+            return false;
+        }
+        if (!Objects.equals(this.timestamp, other.timestamp)) {
+            return false;
+        }
+        return true;
     }
 }

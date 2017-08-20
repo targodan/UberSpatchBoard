@@ -60,7 +60,7 @@ public class User extends Observable {
     public void setIRCName(String ircName) {
         this.ircName = ircName;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
@@ -71,7 +71,7 @@ public class User extends Observable {
     public void setCMDRName(String cmdrName) {
         this.cmdrName = cmdrName;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
@@ -82,7 +82,7 @@ public class User extends Observable {
     public void setPlatform(Platform platform) {
         this.platform = platform;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 

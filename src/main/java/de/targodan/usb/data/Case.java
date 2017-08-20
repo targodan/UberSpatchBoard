@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Set;
 
@@ -77,14 +78,14 @@ public class Case extends Observable {
         }
         this.rats.add(rat);
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
     
     public void unassignRat(Rat rat) {
         this.rats.remove(rat);
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
@@ -115,7 +116,7 @@ public class Case extends Observable {
     public void addNote(String note) {
         this.notes.add(note);
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
@@ -134,21 +135,21 @@ public class Case extends Observable {
     public void setActive(boolean active) {
         this.active = active;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
     public void setClient(Client client) {
         this.client = client;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
     public void setSystem(System system) {
         this.system = system;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
@@ -161,7 +162,7 @@ public class Case extends Observable {
     public void setCaseRed(boolean caseRed) {
         this.codeRed = caseRed;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
@@ -175,7 +176,7 @@ public class Case extends Observable {
             this.attachedManager.notifyCaseClosed(this);
         }
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
     
@@ -194,7 +195,7 @@ public class Case extends Observable {
                     .setJumps(rat.getJumps());
         } catch(Exception ex) {}
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
     
@@ -213,4 +214,75 @@ public class Case extends Observable {
                         .findFirst().orElse(null)
                 );
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 43 * hash + (this.active ? 1 : 0);
+        hash = 43 * hash + this.number;
+        hash = 43 * hash + Objects.hashCode(this.client);
+        hash = 43 * hash + Objects.hashCode(this.system);
+        hash = 43 * hash + Objects.hashCode(this.calls);
+        hash = 43 * hash + Objects.hashCode(this.rats);
+        hash = 43 * hash + Objects.hashCode(this.notes);
+        hash = 43 * hash + Objects.hashCode(this.firstLimpet);
+        hash = 43 * hash + (this.codeRed ? 1 : 0);
+        hash = 43 * hash + Objects.hashCode(this.openTime);
+        hash = 43 * hash + Objects.hashCode(this.closeTime);
+        hash = 43 * hash + Objects.hashCode(this.attachedManager);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Case other = (Case) obj;
+        if (this.active != other.active) {
+            return false;
+        }
+        if (this.number != other.number) {
+            return false;
+        }
+        if (this.codeRed != other.codeRed) {
+            return false;
+        }
+        if (!Objects.equals(this.client, other.client)) {
+            return false;
+        }
+        if (!Objects.equals(this.system, other.system)) {
+            return false;
+        }
+        if (!Objects.equals(this.calls, other.calls)) {
+            return false;
+        }
+        if (!Objects.equals(this.rats, other.rats)) {
+            return false;
+        }
+        if (!Objects.equals(this.notes, other.notes)) {
+            return false;
+        }
+        if (!Objects.equals(this.firstLimpet, other.firstLimpet)) {
+            return false;
+        }
+        if (!Objects.equals(this.openTime, other.openTime)) {
+            return false;
+        }
+        if (!Objects.equals(this.closeTime, other.closeTime)) {
+            return false;
+        }
+        if (!Objects.equals(this.attachedManager, other.attachedManager)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

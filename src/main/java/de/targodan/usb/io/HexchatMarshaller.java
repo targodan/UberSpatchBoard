@@ -43,28 +43,30 @@ public class HexchatMarshaller implements Marshaller {
     }
     
     protected Month parseMonth(String month) {
-        switch(month) {
-            case "Jan":
+        switch(month.toLowerCase()) {
+            case "jan":
                 return Month.JANUARY;
-            case "Feb":
+            case "feb":
                 return Month.FEBRUARY;
-            case "Mar":
+            case "mar":
                 return Month.MARCH;
-            case "Apr":
+            case "apr":
                 return Month.APRIL;
-            case "May":
+            case "may":
                 return Month.MAY;
-            case "Jun":
+            case "jun":
                 return Month.JUNE;
-            case "Jul":
+            case "jul":
                 return Month.JULY;
-            case "Aug":
+            case "aug":
                 return Month.AUGUST;
-            case "Sep":
+            case "sep":
                 return Month.SEPTEMBER;
-            case "Oct":
+            case "oct":
                 return Month.OCTOBER;
-            case "Dec":
+            case "nov":
+                return Month.NOVEMBER;
+            case "dec":
                 return Month.DECEMBER;
             default:
                 throw new IllegalArgumentException("\""+month+"\" is not a valid month.");
@@ -118,6 +120,10 @@ public class HexchatMarshaller implements Marshaller {
             throw new IllegalArgumentException("Parameter for HexchatMarshaller needs to be a String.");
         }
         String line = (String)o;
+        
+        if(line.length() < 17) {
+            return null;
+        }
         
         String dateTime = line.substring(0, 15);
         LocalDateTime timestamp = this.parseDateTime(dateTime);

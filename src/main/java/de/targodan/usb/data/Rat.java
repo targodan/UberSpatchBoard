@@ -87,7 +87,7 @@ public class Rat extends User {
     public void setJumps(int jumps) {
         this.jumps = jumps;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
     
@@ -98,7 +98,7 @@ public class Rat extends User {
     public void insertReport(Report report) {
         this.reports.add(report);
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 
@@ -109,7 +109,7 @@ public class Rat extends User {
     public void setAssigned(boolean assigned) {
         this.assigned = assigned;
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
 }

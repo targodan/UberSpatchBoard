@@ -67,7 +67,7 @@ public class CaseManager extends Observable {
         }
         this.cases.put(c.getNumber(), c);
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
     
@@ -77,7 +77,7 @@ public class CaseManager extends Observable {
             this.closedCases.add(closedCase);
         }
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
     
@@ -85,7 +85,7 @@ public class CaseManager extends Observable {
         // TODO: Check if < 0 is correct
         this.closedCases.removeIf(item -> item.getCloseTime().compareTo(closeTime) < 0);
         
-        this.hasChanged();
+        this.setChanged();
         this.notifyObservers();
     }
     

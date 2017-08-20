@@ -24,12 +24,71 @@
 package de.targodan.usb;
 
 import de.targodan.usb.data.CaseManager;
+import de.targodan.usb.io.DataSource;
+import de.targodan.usb.io.DefaultHandler;
+import de.targodan.usb.io.DefaultParser;
+import de.targodan.usb.io.Handler;
+import de.targodan.usb.io.HexchatMarshaller;
+import de.targodan.usb.io.Parser;
+import de.targodan.usb.io.SingleChannelFileDataSource;
+import de.targodan.usb.ui.MainWindow;
+import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 public class Program {
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        de.targodan.usb.ui.MainWindow.main(args);
+        try {
+            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        
+        CaseManager cm = new CaseManager();
+        String appdata = System.getenv("APPDATA");
+        String logfile = appdata+"\\HexChat\\logs\\FuelRats\\#fuelrats.log";
+        
+        DataSource ds;
+        try {
+            ds = new SingleChannelFileDataSource("#fuelrats", logfile);
+        } catch(Exception ex) {
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
+            return;
+        }
+        
+        Handler handler = new DefaultHandler();
+        handler.registerCaseManager(cm);
+        Parser parser = new DefaultParser();
+        parser.registerHandler(handler);
+        ds.registerParser(parser);
+        ds.registerMarshaller(new HexchatMarshaller());
+        
+        new Thread(() -> {
+            ds.listen();
+        }).start();
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            MainWindow window = new MainWindow(cm);
+            window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            window.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    ds.stop();
+                }
+            });
+            window.setVisible(true);
+        });
     }
 }

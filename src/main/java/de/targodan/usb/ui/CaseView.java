@@ -47,7 +47,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
         
         this.setLayout(new HorizontalLayout());
         
-        this.initialSize = this.getHeight();
+        this.initialSize = this.getPreferredSize().height;
     }
     
     public CaseView(Case c) {
