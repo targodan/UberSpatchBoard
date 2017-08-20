@@ -232,7 +232,7 @@ public class DefaultHandler implements Handler {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
         }
-        c.getClient().setCmdrName(cmd.getParameter(1));
+        c.getClient().setCMDRName(cmd.getParameter(1));
     }
     
     void handleCommandIRCNick(Command cmd) {

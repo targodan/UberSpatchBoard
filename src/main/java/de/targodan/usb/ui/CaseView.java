@@ -25,8 +25,11 @@ package de.targodan.usb.ui;
 
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.Platform;
-import de.targodan.usb.data.Rat;
-import javax.swing.border.LineBorder;
+import java.awt.Dimension;
+import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.stream.Stream;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -34,7 +37,7 @@ import org.jdesktop.swingx.VerticalLayout;
  *
  * @author Luca Corbatto
  */
-public class CaseView extends javax.swing.JPanel {
+public class CaseView extends javax.swing.JPanel implements Observer {
 
     /**
      * Creates new form CaseView
@@ -43,6 +46,8 @@ public class CaseView extends javax.swing.JPanel {
         initComponents();
         
         this.setLayout(new HorizontalLayout());
+        
+        this.initialSize = this.getHeight();
     }
     
     public CaseView(Case c) {
@@ -51,6 +56,7 @@ public class CaseView extends javax.swing.JPanel {
         this.viewCase = c;
         
         this.updateCaseView();
+        this.viewCase.addObserver(this);
     }
     
     protected void updateCaseView() {
@@ -63,8 +69,21 @@ public class CaseView extends javax.swing.JPanel {
         this.ratsPanel.removeAll();
         this.ratsPanel.setLayout(new VerticalLayout());
         this.viewCase.getRats().forEach((rat) -> {
-            this.ratsPanel.add(new RatView(rat));
+            RatView rv = new RatView(rat);
+            this.ratsPanel.add(rv);
         });
+        int height = Stream.of(this.ratsPanel.getComponents())
+                .mapToInt(c -> c.getHeight())
+                .sum();
+        if(height < this.initialSize) {
+            height = this.initialSize;
+        }
+        this.setPreferredSize(new Dimension(this.getWidth(), height));
+    }
+    
+    @Override
+    public void update(Observable o, Object arg) {
+        this.updateCaseView();
     }
     
     protected String platformToString(Platform platform) {
@@ -284,6 +303,7 @@ public class CaseView extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private Case viewCase;
+    private int initialSize;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel caseNumber;

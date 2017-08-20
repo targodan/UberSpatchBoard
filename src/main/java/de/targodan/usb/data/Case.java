@@ -28,13 +28,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Observable;
 import java.util.Set;
 
 /**
  *
  * @author corbatto
  */
-public class Case {
+public class Case extends Observable {
     private boolean active;
     private final int number;
     private Client client;
@@ -75,10 +76,16 @@ public class Case {
             throw new IllegalStateException("There have already been 3 rats assigned to this case. Unassign first!");
         }
         this.rats.add(rat);
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
     
     public void unassignRat(Rat rat) {
         this.rats.remove(rat);
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public boolean isActive() {
@@ -107,6 +114,9 @@ public class Case {
     
     public void addNote(String note) {
         this.notes.add(note);
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public Rat getFirstLimpet() {
@@ -123,22 +133,36 @@ public class Case {
 
     public void setActive(boolean active) {
         this.active = active;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public void setClient(Client client) {
         this.client = client;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public void setSystem(System system) {
         this.system = system;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public void setFirstLimpet(Rat firstLimpet) {
         this.firstLimpet = firstLimpet;
+        
+        this.notifyObservers();
     }
 
     public void setCaseRed(boolean caseRed) {
         this.codeRed = caseRed;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public LocalDateTime getCloseTime() {
@@ -150,6 +174,9 @@ public class Case {
         if(this.attachedManager != null) {
             this.attachedManager.notifyCaseClosed(this);
         }
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
     
     public void attachManager(CaseManager manager) {
@@ -166,6 +193,9 @@ public class Case {
                     .findFirst().get()
                     .setJumps(rat.getJumps());
         } catch(Exception ex) {}
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
     
     public List<Rat> getCalls() {
@@ -175,11 +205,11 @@ public class Case {
     public Rat lookupAssociatedRat(String ircName) {
                 // Try and find rat among assigned rats.
         return this.rats.stream()
-                .filter(rat -> rat.getIrcName().equals(ircName))
+                .filter(rat -> rat.getIRCName().equals(ircName))
                 .findFirst().orElse(
                     // No assigned rat found => search in calls.
                     this.calls.stream()
-                        .filter(rat -> rat.getIrcName().equals(ircName))
+                        .filter(rat -> rat.getIRCName().equals(ircName))
                         .findFirst().orElse(null)
                 );
     }

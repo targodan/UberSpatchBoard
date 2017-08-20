@@ -23,11 +23,13 @@
  */
 package de.targodan.usb.data;
 
+import java.util.Observable;
+
 /**
  *
  * @author corbatto
  */
-public class System {
+public class System extends Observable {
     protected final String name;
     protected boolean confirmed;
 
@@ -46,5 +48,8 @@ public class System {
 
     public void setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 }

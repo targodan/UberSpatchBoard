@@ -47,7 +47,7 @@ public class Rat extends User {
     }
     
     public Rat(String ircName, String cmdrName) {
-        this(ircName, cmdrName, null);
+        this(ircName, cmdrName, Rat.guessPlatform(ircName));
     }
     
     public Rat(String ircName, String cmdrName, Platform platform) {
@@ -86,6 +86,9 @@ public class Rat extends User {
 
     public void setJumps(int jumps) {
         this.jumps = jumps;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
     
     public Collection<Report> getReports() {
@@ -94,6 +97,9 @@ public class Rat extends User {
     
     public void insertReport(Report report) {
         this.reports.add(report);
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public boolean isAssigned() {
@@ -102,5 +108,8 @@ public class Rat extends User {
 
     public void setAssigned(boolean assigned) {
         this.assigned = assigned;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 }

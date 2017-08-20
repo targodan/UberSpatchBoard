@@ -24,13 +24,20 @@
 package de.targodan.usb.ui;
 
 import de.targodan.usb.data.Rat;
+import de.targodan.usb.data.Report;
+import java.awt.Color;
+import java.awt.Font;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.JLabel;
 import org.jdesktop.swingx.HorizontalLayout;
+import org.jdesktop.swingx.VerticalLayout;
 
 /**
  *
  * @author Luca Corbatto
  */
-public class RatView extends javax.swing.JPanel {
+public class RatView extends javax.swing.JPanel implements Observer {
 
     /**
      * Creates new form RatView
@@ -39,14 +46,113 @@ public class RatView extends javax.swing.JPanel {
         initComponents();
         
         this.setLayout(new HorizontalLayout());
+        this.reportsPanel.setLayout(new VerticalLayout());
     }
     
     public RatView(Rat rat) {
         this();
         
         this.rat = rat;
+        this.updateRatView();
+        this.rat.addObserver(this);
     }
 
+    private String getRatName() {
+        String name = this.rat.getCMDRName();
+        if(name.length() == 0) {
+            name = this.rat.getIRCName();
+        }
+        return name;
+    }
+    
+    private void updateRatView() {
+        if(this.rat == null) {
+            throw new IllegalStateException("Can't updateRatView without a rat.");
+        }
+        
+        this.ratName.setText(this.getRatName());
+        this.jumps.setText(Integer.toString(this.rat.getJumps())+"j");
+        this.updateReports();
+    }
+    
+    private void updateReports() {
+        this.reportsPanel.removeAll();
+        
+        this.rat.getReports().stream()
+                .sorted((r1, r2) -> this.reportOrder(r1.getType()) - this.reportOrder(r2.getType()))
+                .forEach(report -> {
+                    JLabel label = new JLabel();
+
+                    String text = this.reportTypeToString(report.getType());
+                    if(report.isPlus()) {
+                        text += "+";
+                        label.setBackground(RatView.PLUS_BACKGROUND_COLOR);
+                        label.setForeground(RatView.PLUS_FOREGROUND_COLOR);
+                    } else {
+                        text += "-";
+                        label.setBackground(RatView.MINUS_BACKGROUND_COLOR);
+                        label.setForeground(RatView.MINUS_FOREGROUND_COLOR);
+                        label.setFont(new Font(label.getFont().getFamily(), Font.BOLD, label.getFont().getSize()));
+                    }
+                    label.setText(text);
+
+                    this.reportsPanel.add(label);
+                });
+    }
+    
+    private String reportTypeToString(Report.Type type) {
+        switch(type) {
+            case BC:
+                return "bc";
+                
+            case COMMS:
+                return "comms";
+                
+            case FR:
+                return "fr";
+                
+            case INST:
+                return "inst";
+                
+            case PARTY:
+                return "party";
+                
+            case WR:
+                return "wr";
+        }
+        
+        throw new IllegalArgumentException("Unknown report type \""+type.toString()+"\".");
+    }
+    
+    private int reportOrder(Report.Type type) {
+        switch(type) {
+            case BC:
+                return 4;
+                
+            case COMMS:
+                return 2;
+                
+            case FR:
+                return 0;
+                
+            case INST:
+                return 5;
+                
+            case PARTY:
+                return 1;
+                
+            case WR:
+                return 3;
+        }
+        
+        throw new IllegalArgumentException("Unknown report type \""+type.toString()+"\".");
+    }
+    
+    @Override
+    public void update(Observable o, Object arg) {
+        this.updateRatView();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -135,7 +241,12 @@ public class RatView extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private Rat rat;
-
+    
+    private static final Color MINUS_BACKGROUND_COLOR = Color.RED;
+    private static final Color MINUS_FOREGROUND_COLOR = Color.WHITE;
+    private static final Color PLUS_BACKGROUND_COLOR = Color.GREEN;
+    private static final Color PLUS_FOREGROUND_COLOR = Color.BLACK;
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jumps;
     private javax.swing.JPanel jumpsPanel;

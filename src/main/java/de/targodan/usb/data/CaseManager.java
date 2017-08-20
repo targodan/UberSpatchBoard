@@ -29,13 +29,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
 
 /**
  *
  * @author corbatto
  */
-public class CaseManager {
+public class CaseManager extends Observable {
     protected final Set<Case> closedCases;
     protected final Map<Integer, Case> cases;
 
@@ -65,6 +66,9 @@ public class CaseManager {
             throw new IllegalStateException("A case with the number " + Integer.toString(c.getNumber()) + " already exists!");
         }
         this.cases.put(c.getNumber(), c);
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
     
     public void notifyCaseClosed(Case c) {
@@ -72,16 +76,22 @@ public class CaseManager {
         if(closedCase != null) {
             this.closedCases.add(closedCase);
         }
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
     
     public void removeClosedCasesOlderThan(LocalDateTime closeTime) {
         // TODO: Check if < 0 is correct
         this.closedCases.removeIf(item -> item.getCloseTime().compareTo(closeTime) < 0);
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
     
     public Case lookupCaseOfClient(String clientName) {
         return this.cases.values().stream()
-                .filter(elem -> elem.getClient().getIrcName().equals(clientName) || elem.getClient().getCMDRName().equals(clientName))
+                .filter(elem -> elem.getClient().getIRCName().equals(clientName) || elem.getClient().getCMDRName().equals(clientName))
                 .findFirst().orElse(null);
     }
 }

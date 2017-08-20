@@ -42,5 +42,8 @@ public class Client extends User {
 
     public void setLanguage(String language) {
         this.language = language;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 }

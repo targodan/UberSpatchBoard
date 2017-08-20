@@ -24,12 +24,13 @@
 package de.targodan.usb.data;
 
 import java.util.Objects;
+import java.util.Observable;
 
 /**
  *
  * @author corbatto
  */
-public class User {
+public class User extends Observable {
     protected String ircName;
     protected String cmdrName;
     protected Platform platform;
@@ -52,20 +53,26 @@ public class User {
         this.platform = platform;
     }
 
-    public String getIrcName() {
+    public String getIRCName() {
         return ircName;
     }
 
     public void setIRCName(String ircName) {
         this.ircName = ircName;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public String getCMDRName() {
         return cmdrName;
     }
 
-    public void setCmdrName(String cmdrName) {
+    public void setCMDRName(String cmdrName) {
         this.cmdrName = cmdrName;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     public Platform getPlatform() {
@@ -74,6 +81,9 @@ public class User {
 
     public void setPlatform(Platform platform) {
         this.platform = platform;
+        
+        this.hasChanged();
+        this.notifyObservers();
     }
 
     @Override

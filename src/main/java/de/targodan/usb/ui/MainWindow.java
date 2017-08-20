@@ -23,14 +23,16 @@
  */
 package de.targodan.usb.ui;
 
-import java.awt.Component;
+import de.targodan.usb.data.CaseManager;
+import java.util.Observable;
+import java.util.Observer;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
  *
  * @author Luca Corbatto
  */
-public class MainWindow extends javax.swing.JFrame {
+public class MainWindow extends javax.swing.JFrame implements Observer {
 
     /**
      * Creates new form MainWindow
@@ -39,10 +41,30 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         
         this.casePanel.setLayout(new VerticalLayout());
-        this.casePanel.add(new CaseView());
-        this.casePanel.add(new CaseView());
-        this.casePanel.add(new CaseView());
-        this.casePanel.add(new CaseView());
+    }
+    
+    public MainWindow(CaseManager cm) {
+        this();
+        
+        this.cm = cm;
+        this.updateCases();
+        this.cm.addObserver(this);
+    }
+    
+    private void updateCases() {
+        if(this.cm == null) {
+            throw new IllegalStateException("Can't updateCases without a CaseManager.");
+        }
+        
+        this.casePanel.removeAll();
+        this.cm.getCases().forEach(c -> {
+            this.casePanel.add(new CaseView(c));
+        });
+    }
+    
+    @Override
+    public void update(Observable o, Object arg) {
+        this.updateCases();
     }
 
     /**
@@ -60,6 +82,7 @@ public class MainWindow extends javax.swing.JFrame {
         caseWrapperPanel = new javax.swing.JPanel();
         caseScrollPane = new javax.swing.JScrollPane();
         casePanel = new javax.swing.JPanel();
+        caseView1 = new de.targodan.usb.ui.CaseView();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -99,15 +122,19 @@ public class MainWindow extends javax.swing.JFrame {
         caseWrapperPanel.setLayout(caseWrapperPanelLayout);
         caseWrapperPanelLayout.setHorizontalGroup(
             caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1049, Short.MAX_VALUE)
+            .addComponent(caseView1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1134, Short.MAX_VALUE)
             .addGroup(caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(caseScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1134, Short.MAX_VALUE))
         );
         caseWrapperPanelLayout.setVerticalGroup(
             caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 473, Short.MAX_VALUE)
+            .addGroup(caseWrapperPanelLayout.createSequentialGroup()
+                .addComponent(caseView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 436, Short.MAX_VALUE))
             .addGroup(caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(caseScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE))
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, caseWrapperPanelLayout.createSequentialGroup()
+                    .addGap(0, 38, Short.MAX_VALUE)
+                    .addComponent(caseScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout caseBoxLayout = new javax.swing.GroupLayout(caseBox);
@@ -185,10 +212,13 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
     
+    private CaseManager cm;
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
     private javax.swing.JPanel casePanel;
     private javax.swing.JScrollPane caseScrollPane;
+    private de.targodan.usb.ui.CaseView caseView1;
     private javax.swing.JPanel caseWrapperPanel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
