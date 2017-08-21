@@ -73,6 +73,9 @@ public class RatView extends javax.swing.JPanel implements Observer {
         this.ratName.setText(this.getRatName());
         this.jumps.setText(Integer.toString(this.rat.getJumps())+"j");
         this.updateReports();
+        
+        this.revalidate();
+        this.repaint();
     }
     
     private void updateReports() {
@@ -150,7 +153,9 @@ public class RatView extends javax.swing.JPanel implements Observer {
     
     @Override
     public void update(Observable o, Object arg) {
-        this.updateRatView();
+        java.awt.EventQueue.invokeLater(() -> {
+            this.updateRatView();
+        });
     }
     
     /**

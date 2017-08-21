@@ -64,9 +64,25 @@ public class Program {
         } catch(Exception ex) {
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
+            
+            Program.runWithoutDataSource(cm);
+            
             return;
         }
         
+        Program.runWithDataSource(cm, ds);
+    }
+
+    private static void runWithoutDataSource(CaseManager cm) {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            MainWindow window = new MainWindow(cm);
+            window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            window.setVisible(true);
+        });
+    }
+    
+    private static void runWithDataSource(CaseManager cm, DataSource ds) {
         Handler handler = new DefaultHandler();
         handler.registerCaseManager(cm);
         Parser parser = new DefaultParser();

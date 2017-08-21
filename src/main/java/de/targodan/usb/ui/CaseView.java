@@ -26,7 +26,6 @@ package de.targodan.usb.ui;
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.Platform;
 import java.awt.Dimension;
-import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.stream.Stream;
@@ -79,11 +78,16 @@ public class CaseView extends javax.swing.JPanel implements Observer {
             height = this.initialSize;
         }
         this.setPreferredSize(new Dimension(this.getWidth(), height));
+        
+        this.revalidate();
+        this.repaint();
     }
     
     @Override
     public void update(Observable o, Object arg) {
-        this.updateCaseView();
+        java.awt.EventQueue.invokeLater(() -> {
+            this.updateCaseView();
+        });
     }
     
     protected String platformToString(Platform platform) {

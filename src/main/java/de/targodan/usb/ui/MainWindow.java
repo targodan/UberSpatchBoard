@@ -23,7 +23,11 @@
  */
 package de.targodan.usb.ui;
 
+import de.targodan.usb.data.Case;
 import de.targodan.usb.data.CaseManager;
+import de.targodan.usb.data.Client;
+import de.targodan.usb.data.Platform;
+import java.time.LocalDateTime;
 import java.util.Observable;
 import java.util.Observer;
 import org.jdesktop.swingx.VerticalLayout;
@@ -60,8 +64,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.cm.getCases().forEach(c -> {
             this.casePanel.add(new CaseView(c));
         });
+        this.revalidate();
         this.repaint();
-        this.caseScrollPane.repaint();
     }
     
     @Override
@@ -90,6 +94,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         jToolBar1.setRollover(true);
 
@@ -126,7 +132,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         caseWrapperPanel.setLayout(caseWrapperPanelLayout);
         caseWrapperPanelLayout.setHorizontalGroup(
             caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseView1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1134, Short.MAX_VALUE)
+            .addComponent(caseView1, javax.swing.GroupLayout.DEFAULT_SIZE, 1134, Short.MAX_VALUE)
             .addGroup(caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(caseScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1134, Short.MAX_VALUE))
         );
@@ -134,11 +140,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(caseWrapperPanelLayout.createSequentialGroup()
                 .addComponent(caseView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 436, Short.MAX_VALUE))
+                .addGap(0, 535, Short.MAX_VALUE))
             .addGroup(caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, caseWrapperPanelLayout.createSequentialGroup()
                     .addGap(0, 37, Short.MAX_VALUE)
-                    .addComponent(caseScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)))
+                    .addComponent(caseScrollPane)))
         );
 
         javax.swing.GroupLayout caseBoxLayout = new javax.swing.GroupLayout(caseBox);
@@ -164,6 +170,19 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setText("Test");
+        jMenu2.setToolTipText("");
+
+        jMenuItem2.setText("Add test case");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onAddTestCaseClicked(evt);
+            }
+        });
+        jMenu2.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu2);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -187,6 +206,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void onCloseMenuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCloseMenuClicked
         this.dispose();
     }//GEN-LAST:event_onCloseMenuClicked
+
+    private void onAddTestCaseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onAddTestCaseClicked
+        Case testCase = new Case(this.cm.getCases().size()+1, new Client("Kies", "Kies", Platform.PC, "de"), new de.targodan.usb.data.System("Cubeo"), false, LocalDateTime.now());
+        this.cm.addCase(testCase);
+    }//GEN-LAST:event_onAddTestCaseClicked
 
     /**
      * @param args the command line arguments
@@ -225,8 +249,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private de.targodan.usb.ui.CaseView caseView1;
     private javax.swing.JPanel caseWrapperPanel;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
     // End of variables declaration//GEN-END:variables
