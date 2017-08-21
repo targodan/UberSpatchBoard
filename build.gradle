@@ -39,3 +39,7 @@ compileTestJava {
     options.warnings = true
     options.deprecation = true
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0.2'
+}
