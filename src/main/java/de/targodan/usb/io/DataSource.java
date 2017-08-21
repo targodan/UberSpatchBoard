@@ -23,14 +23,13 @@
  */
 package de.targodan.usb.io;
 
+import java.util.concurrent.BlockingQueue;
+
 /**
  *
  * @author corbatto
  */
 public interface DataSource {
-    void registerParser(Parser parser);
-    void registerMarshaller(Marshaller marshaller);
-    
-    void listen();
+    void listen(BlockingQueue<IRCMessage> output);
     void stop();
 }

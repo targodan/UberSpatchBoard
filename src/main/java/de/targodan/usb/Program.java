@@ -24,6 +24,7 @@
 package de.targodan.usb;
 
 import de.targodan.usb.data.CaseManager;
+import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.io.DataSource;
 import de.targodan.usb.io.DefaultHandler;
 import de.targodan.usb.io.DefaultParser;
@@ -44,56 +45,33 @@ public class Program {
     public static void main(String[] args) {
         try {
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         CaseManager cm = new CaseManager();
         String appdata = System.getenv("APPDATA");
         String logfile = appdata+"\\HexChat\\logs\\FuelRats\\#fuelrats.log";
         
-        DataSource ds;
-        try {
-            ds = new SingleChannelFileDataSource("#fuelrats", logfile);
-        } catch(Exception ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
-            
-            Program.runWithoutDataSource(cm);
-            
-            return;
-        }
-        
-        Program.runWithDataSource(cm, ds);
-    }
-
-    private static void runWithoutDataSource(CaseManager cm) {
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            MainWindow window = new MainWindow(cm);
-            window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            window.setVisible(true);
-        });
-    }
-    
-    private static void runWithDataSource(CaseManager cm, DataSource ds) {
         Handler handler = new DefaultHandler();
         handler.registerCaseManager(cm);
         Parser parser = new DefaultParser();
         parser.registerHandler(handler);
-        ds.registerParser(parser);
-        ds.registerMarshaller(new HexchatMarshaller());
+        
+        DataConsumer dc = new DataConsumer(parser);
         
         new Thread(() -> {
-            ds.listen();
+            dc.start();
         }).start();
-
+        
+        try {
+            DataSource ds = new SingleChannelFileDataSource("#fuelrats", logfile, new HexchatMarshaller());
+            dc.addDataSource(ds);
+        } catch(Exception ex) {
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
+        }
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             MainWindow window = new MainWindow(cm);
@@ -101,7 +79,7 @@ public class Program {
             window.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    ds.stop();
+                    dc.stop();
                 }
             });
             window.setVisible(true);
