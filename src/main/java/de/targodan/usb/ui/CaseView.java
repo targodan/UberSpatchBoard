@@ -44,8 +44,6 @@ public class CaseView extends javax.swing.JPanel implements Observer {
     public CaseView() {
         initComponents();
         
-        this.setLayout(new HorizontalLayout());
-        
         this.initialSize = this.getPreferredSize().height;
     }
     
@@ -112,6 +110,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         caseNumberPanel = new javax.swing.JPanel();
         caseNumber = new javax.swing.JLabel();
@@ -129,8 +128,10 @@ public class CaseView extends javax.swing.JPanel implements Observer {
         notes = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
 
         caseNumberPanel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 1, new java.awt.Color(0, 0, 0)));
+        caseNumberPanel.setPreferredSize(new java.awt.Dimension(40, 39));
 
         caseNumber.setText("Case");
 
@@ -151,7 +152,10 @@ public class CaseView extends javax.swing.JPanel implements Observer {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        add(caseNumberPanel);
+
         cmdrNamePanel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 1, new java.awt.Color(0, 0, 0)));
+        cmdrNamePanel.setPreferredSize(new java.awt.Dimension(170, 39));
 
         cmdrName.setText("CMDR Name");
 
@@ -162,7 +166,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
             .addGroup(cmdrNamePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(cmdrName)
-                .addContainerGap(78, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         cmdrNamePanelLayout.setVerticalGroup(
             cmdrNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,7 +176,10 @@ public class CaseView extends javax.swing.JPanel implements Observer {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        add(cmdrNamePanel);
+
         languagePanel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 1, new java.awt.Color(0, 0, 0)));
+        languagePanel.setPreferredSize(new java.awt.Dimension(40, 39));
 
         language.setText("Lang");
 
@@ -183,7 +190,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
             .addGroup(languagePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(language)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         languagePanelLayout.setVerticalGroup(
             languagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,7 +200,10 @@ public class CaseView extends javax.swing.JPanel implements Observer {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        add(languagePanel);
+
         platformPanel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 1, new java.awt.Color(0, 0, 0)));
+        platformPanel.setPreferredSize(new java.awt.Dimension(40, 39));
 
         platform.setText("Plat");
 
@@ -214,7 +224,10 @@ public class CaseView extends javax.swing.JPanel implements Observer {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        add(platformPanel);
+
         systemPanel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 1, new java.awt.Color(0, 0, 0)));
+        systemPanel.setPreferredSize(new java.awt.Dimension(200, 39));
 
         system.setText("System");
 
@@ -225,7 +238,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
             .addGroup(systemPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(system)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(157, Short.MAX_VALUE))
         );
         systemPanelLayout.setVerticalGroup(
             systemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -235,7 +248,10 @@ public class CaseView extends javax.swing.JPanel implements Observer {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        add(systemPanel);
+
         ratsPanel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 1, new java.awt.Color(0, 0, 0)));
+        ratsPanel.setPreferredSize(new java.awt.Dimension(250, 39));
 
         rats.setText("Rats");
 
@@ -246,7 +262,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
             .addGroup(ratsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(rats)
-                .addContainerGap(296, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ratsPanelLayout.setVerticalGroup(
             ratsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -255,6 +271,10 @@ public class CaseView extends javax.swing.JPanel implements Observer {
                 .addComponent(rats)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        add(ratsPanel);
+
+        notesPanel.setPreferredSize(new java.awt.Dimension(175, 39));
 
         notes.setText("Notes");
 
@@ -265,7 +285,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
             .addGroup(notesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(notes)
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         notesPanelLayout.setVerticalGroup(
             notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,35 +295,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(caseNumberPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmdrNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(languagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(platformPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(systemPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ratsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(notesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseNumberPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(cmdrNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(languagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(platformPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(systemPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ratsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(notesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        add(notesPanel);
     }// </editor-fold>//GEN-END:initComponents
 
     private Case viewCase;
