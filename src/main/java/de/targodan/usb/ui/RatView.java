@@ -105,6 +105,9 @@ public class RatView extends javax.swing.JPanel implements Observer {
     
     private String reportTypeToString(Report.Type type) {
         switch(type) {
+            case SYS:
+                return "sys";
+                
             case BC:
                 return "bc";
                 
@@ -129,23 +132,26 @@ public class RatView extends javax.swing.JPanel implements Observer {
     
     private int reportOrder(Report.Type type) {
         switch(type) {
-            case BC:
-                return 4;
-                
-            case COMMS:
-                return 2;
-                
-            case FR:
+            case SYS:
                 return 0;
-                
-            case INST:
-                return 5;
-                
-            case PARTY:
+  
+            case FR:
                 return 1;
                 
-            case WR:
+            case PARTY:
+                return 2;
+            
+            case COMMS:
                 return 3;
+                
+            case WR:
+                return 4;
+                
+            case BC:
+                return 5;
+                
+            case INST:
+                return 6;
         }
         
         throw new IllegalArgumentException("Unknown report type \""+type.toString()+"\".");

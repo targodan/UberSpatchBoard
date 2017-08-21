@@ -27,6 +27,7 @@ import de.targodan.usb.data.Case;
 import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
+import de.targodan.usb.data.Report;
 import java.time.LocalDateTime;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,6 +41,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.*;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -166,12 +168,92 @@ public class DefaultParserTest {
     @Test
     public void testParseAndHandleReport() {
         System.out.println("parseAndHandleReport");
-        IRCMessage message = null;
-        DefaultParser instance = new DefaultParser();
-        boolean expResult = false;
-        boolean result = instance.parseAndHandleReport(message);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "fr+ #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            Report report = new Report(Report.Type.FR, true);
+            verify(mockHandler).handleReport("Kies", report, "2");
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "fr- client");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            Report report = new Report(Report.Type.FR, false);
+            verify(mockHandler).handleReport("Kies", report, "client");
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "bc+ #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            Report report = new Report(Report.Type.BC, true);
+            verify(mockHandler).handleReport("Kies", report, "2");
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "wb- #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            Report report = new Report(Report.Type.BC, false);
+            verify(mockHandler).handleReport("Kies", report, "2");
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "sys+ #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            Report report = new Report(Report.Type.SYS, true);
+            verify(mockHandler).handleReport("Kies", report, "2");
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "sys+ fr- wr+ #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            InOrder order = inOrder(mockHandler, mockHandler, mockHandler);
+            Report report = new Report(Report.Type.SYS, true);
+            order.verify(mockHandler).handleReport("Kies", report, "2");
+            report = new Report(Report.Type.FR, false);
+            order.verify(mockHandler).handleReport("Kies", report, "2");
+            report = new Report(Report.Type.WR, true);
+            order.verify(mockHandler).handleReport("Kies", report, "2");
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "just some text #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = false;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+        }
+        reset(mockHandler);
     }
 }

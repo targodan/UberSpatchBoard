@@ -55,15 +55,17 @@ public class DefaultParser implements Parser {
         // IMPORTANT: If this needs to be changed look at the way parseAndHandleReport
         //            works and it will still then. Any postfix of any report must not be
         //            a valid report on its own.
-        "fr", "wr", "wb", "bc", "comm", "comms", "inst", "party",
+        "sys", "fr", "wr", "wb", "bc", "comm", "comms", "inst", "party",
     };
     
     public DefaultParser() {
         this.handler = null;
         
+        String caseIdentifierPattern = "(?<case>(?:[cC#]?\\d+|\\S+)?)";
+        
         this.ratsignalPattern = Pattern.compile("^RATSIGNAL - CMDR (?<cmdr>.*?) - System: (?<system>.*?) \\(.*EDDB\\) - Platform: (?<platform>\\S+) - O2: (?<o2>(NOT )?OK) - Language: \\S+ \\((?<language>\\w\\w)(-\\w\\w)?\\)( - IRC Nickname: (?<ircnick>\\S+))? \\(Case #(?<case>\\d+)\\)$");
         this.commandPattern = Pattern.compile("^(?<cmd>(?:!\\S+|go))\\s+(?<params>.*)$");
-        this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\s|$).*?(?<case>(?:[cC#]?\\d+|\\S+)?)");
+        this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\s|$).*?"+caseIdentifierPattern);
         String reportRegex = "(^|.*(\\s|,))(?<type>(";
         for(int i = 0; i < this.supportedReports.length; ++i) {
             reportRegex += this.supportedReports[i];
@@ -71,7 +73,7 @@ public class DefaultParser implements Parser {
                 reportRegex += "|";
             }
         }
-        reportRegex += "))(?<state>\\+|-)(\\s|$).*(?<case>(?:#?\\d+|\\S+)?)";
+        reportRegex += "))(?<state>\\+|-)(\\s|$).*?"+caseIdentifierPattern;
         this.reportPattern = Pattern.compile(reportRegex, Pattern.CASE_INSENSITIVE);
         
         this.twoArgumentsPattern = Pattern.compile("^(\\S+)\\s+(.*)$");
@@ -220,14 +222,18 @@ public class DefaultParser implements Parser {
             String repState = m.group("state");
             if(caseIdentifier == null) {
                 // First match is probably the best match
-                caseIdentifier = m.group("case");
+                caseIdentifier = this.sanitizeCaseIdentifier(m.group("case"));
             }
             
             Report report = new Report(this.parseReportType(repType), repState.equals("+"));
             this.handler.handleReport(message.getSender(), report, caseIdentifier);
             
             // Remove one char from front to find the other reports.
-            text = text.substring(1);
+            int nextStart = text.indexOf(repType)+repType.length()+1;
+            if(text.length() <= nextStart) {
+                break;
+            }
+            text = text.substring(nextStart).trim();
         }
         
         return matchedAtLeastOnce;
@@ -353,6 +359,9 @@ public class DefaultParser implements Parser {
     protected Report.Type parseReportType(String report) {
         report = report.toLowerCase();
         switch(report) {
+            case "sys":
+                return Report.Type.SYS;
+                
             case "fr":
                 return Report.Type.FR;
                 

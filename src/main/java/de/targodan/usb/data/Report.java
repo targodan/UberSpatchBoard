@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public class Report {
     public enum Type {
-        FR, WR, BC, COMMS, INST, PARTY
+        SYS, FR, WR, BC, COMMS, INST, PARTY
     }
     
     protected final Type type;
