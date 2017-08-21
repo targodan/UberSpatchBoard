@@ -23,6 +23,9 @@
  */
 package de.targodan.usb.io;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  *
  * @author Luca Corbatto
@@ -66,4 +69,35 @@ public class Command {
     public int getParameterCount() {
         return this.parameters.length;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + Objects.hashCode(this.type);
+        hash = 53 * hash + Arrays.deepHashCode(this.parameters);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Command other = (Command) obj;
+        if (this.type != other.type) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.parameters, other.parameters)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

@@ -245,11 +245,11 @@ public class DefaultParser implements Parser {
             return Command.Type.SOFT_ASSIGN;
         }
         
-        if(cmd.charAt(0) != '!') {
+        if(cmd.length() < 2 || cmd.charAt(0) != '!') {
             throw new IllegalArgumentException("Commands must start with '!' or be \"go\", got \""+cmd+"\"!");
         }
         
-        switch(cmd) {
+        switch(cmd.substring(1).toLowerCase()) {
             case "active":
             case "inactive":
             case "deactivate":

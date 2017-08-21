@@ -80,21 +80,6 @@ public class DefaultParserTest {
     }
 
     /**
-     * Test of parseAndHandle method, of class DefaultParser.
-     */
-    @Test
-    public void testParseAndHandle() {
-        System.out.println("parseAndHandle");
-        IRCMessage message = null;
-        DefaultParser instance = new DefaultParser();
-        ParseResult expResult = null;
-        ParseResult result = instance.parseAndHandle(message);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of parseAndHandleRatsignal method, of class DefaultParser.
      */
     @Test
@@ -130,13 +115,83 @@ public class DefaultParserTest {
     @Test
     public void testParseAndHandleCommand() {
         System.out.println("parseAndHandleCommand");
-        IRCMessage message = null;
-        DefaultParser instance = new DefaultParser();
-        boolean expResult = false;
-        boolean result = instance.parseAndHandleCommand(message);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        
+//            Command cmd = new Command(Command.Type.SOFT_ASSIGN, new String[] {});
+//            verify(mockHandler).handleCommand(cmd);
+        
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "go 2 Kies");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCommand(message);
+            assertThat(result, equalTo(expResult));
+            
+            Command cmd = new Command(Command.Type.SOFT_ASSIGN, new String[] {"2", "Kies"});
+            verify(mockHandler).handleCommand(cmd);
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "go 2 Tom Kies");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCommand(message);
+            assertThat(result, equalTo(expResult));
+            
+            Command cmd = new Command(Command.Type.SOFT_ASSIGN, new String[] {"2", "Tom", "Kies"});
+            verify(mockHandler).handleCommand(cmd);
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "!go 2 Kies");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCommand(message);
+            assertThat(result, equalTo(expResult));
+            
+            Command cmd = new Command(Command.Type.HARD_ASSIGN, new String[] {"2", "Kies"});
+            verify(mockHandler).handleCommand(cmd);
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "!go 2 Tom Kies");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCommand(message);
+            assertThat(result, equalTo(expResult));
+            
+            Command cmd = new Command(Command.Type.HARD_ASSIGN, new String[] {"2", "Tom", "Kies"});
+            verify(mockHandler).handleCommand(cmd);
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "!inject 2 this is some text");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCommand(message);
+            assertThat(result, equalTo(expResult));
+            
+            Command cmd = new Command(Command.Type.INJECT, new String[] {"2", "this is some text"});
+            verify(mockHandler).handleCommand(cmd);
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "!cmdr 2 Cpt. Obvious");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCommand(message);
+            assertThat(result, equalTo(expResult));
+            
+            Command cmd = new Command(Command.Type.SET_CMDR_NAME, new String[] {"2", "Cpt. Obvious"});
+            verify(mockHandler).handleCommand(cmd);
+        }
+        reset(mockHandler);
     }
 
     /**
