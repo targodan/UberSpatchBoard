@@ -23,6 +23,7 @@
  */
 package de.targodan.usb.ui;
 
+import de.targodan.usb.Program;
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.data.Client;
@@ -30,6 +31,7 @@ import de.targodan.usb.data.Platform;
 import java.time.LocalDateTime;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JFrame;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -97,6 +99,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         jToolBar1.setRollover(true);
 
@@ -194,6 +197,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         jMenu2.add(jMenuItem2);
 
+        jMenuItem3.setText("Open injection window");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onOpenInjectionWindowClicked(evt);
+            }
+        });
+        jMenu2.add(jMenuItem3);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -224,6 +235,13 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         Case testCase = new Case(this.cm.getCases().size()+1, new Client("Kies", "Kies", Platform.PC, "de"), new de.targodan.usb.data.System("Cubeo"), false, LocalDateTime.now());
         this.cm.addCase(testCase);
     }//GEN-LAST:event_onAddTestCaseClicked
+
+    private void onOpenInjectionWindowClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onOpenInjectionWindowClicked
+        MessageInjectionWindow window = new MessageInjectionWindow();
+        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.setVisible(true);
+        Program.dataConsumer.addDataSource(window);
+    }//GEN-LAST:event_onOpenInjectionWindowClicked
 
     /**
      * @param args the command line arguments
@@ -267,6 +285,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
     // End of variables declaration//GEN-END:variables

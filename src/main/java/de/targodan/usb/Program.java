@@ -39,6 +39,8 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 public class Program {
+    public static DataConsumer dataConsumer;
+    
     /**
      * @param args the command line arguments
      */
@@ -58,15 +60,15 @@ public class Program {
         Parser parser = new DefaultParser();
         parser.registerHandler(handler);
         
-        DataConsumer dc = new DataConsumer(parser);
+        Program.dataConsumer = new DataConsumer(parser);
         
         new Thread(() -> {
-            dc.start();
+            Program.dataConsumer.start();
         }).start();
         
         try {
             DataSource ds = new SingleChannelFileDataSource("#fuelrats", logfile, new HexchatMarshaller());
-            dc.addDataSource(ds);
+            Program.dataConsumer.addDataSource(ds);
         } catch(Exception ex) {
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
@@ -79,7 +81,7 @@ public class Program {
             window.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    dc.stop();
+                    Program.dataConsumer.stop();
                 }
             });
             window.setVisible(true);

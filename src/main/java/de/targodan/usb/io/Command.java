@@ -63,7 +63,7 @@ public class Command {
         if(i >= this.parameters.length) {
             throw new IllegalArgumentException("Requested parameter "+Integer.toString(i)+" but only "+Integer.toString(this.parameters.length)+" parameters available for command type "+this.type.toString()+".");
         }
-        return this.parameters[0];
+        return this.parameters[i];
     }
     
     public int getParameterCount() {
