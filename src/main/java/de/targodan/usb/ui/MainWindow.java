@@ -88,7 +88,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         statusBar = new javax.swing.JPanel();
         caseBox = new javax.swing.JPanel();
         caseWrapperPanel = new javax.swing.JPanel();
-        caseView1 = new de.targodan.usb.ui.CaseView();
+        caseViewHeader = new de.targodan.usb.ui.CaseView();
+        caseScrollPaneWrapper = new javax.swing.JPanel();
         caseScrollPane = new javax.swing.JScrollPane();
         casePanel = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -119,32 +120,44 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         casePanel.setLayout(casePanelLayout);
         casePanelLayout.setHorizontalGroup(
             casePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1701, Short.MAX_VALUE)
+            .addGap(0, 1725, Short.MAX_VALUE)
         );
         casePanelLayout.setVerticalGroup(
             casePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 535, Short.MAX_VALUE)
+            .addGap(0, 777, Short.MAX_VALUE)
         );
 
         caseScrollPane.setViewportView(casePanel);
+
+        javax.swing.GroupLayout caseScrollPaneWrapperLayout = new javax.swing.GroupLayout(caseScrollPaneWrapper);
+        caseScrollPaneWrapper.setLayout(caseScrollPaneWrapperLayout);
+        caseScrollPaneWrapperLayout.setHorizontalGroup(
+            caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(caseScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1728, Short.MAX_VALUE))
+        );
+        caseScrollPaneWrapperLayout.setVerticalGroup(
+            caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 780, Short.MAX_VALUE)
+            .addGroup(caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(caseScrollPane))
+        );
 
         javax.swing.GroupLayout caseWrapperPanelLayout = new javax.swing.GroupLayout(caseWrapperPanel);
         caseWrapperPanel.setLayout(caseWrapperPanelLayout);
         caseWrapperPanelLayout.setHorizontalGroup(
             caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseView1, javax.swing.GroupLayout.DEFAULT_SIZE, 1134, Short.MAX_VALUE)
-            .addGroup(caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(caseScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1134, Short.MAX_VALUE))
+            .addComponent(caseViewHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 1106, Short.MAX_VALUE)
+            .addComponent(caseScrollPaneWrapper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         caseWrapperPanelLayout.setVerticalGroup(
             caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(caseWrapperPanelLayout.createSequentialGroup()
-                .addComponent(caseView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 535, Short.MAX_VALUE))
-            .addGroup(caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, caseWrapperPanelLayout.createSequentialGroup()
-                    .addGap(0, 37, Short.MAX_VALUE)
-                    .addComponent(caseScrollPane)))
+                .addComponent(caseViewHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(caseScrollPaneWrapper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout caseBoxLayout = new javax.swing.GroupLayout(caseBox);
@@ -246,7 +259,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel caseBox;
     private javax.swing.JPanel casePanel;
     private javax.swing.JScrollPane caseScrollPane;
-    private de.targodan.usb.ui.CaseView caseView1;
+    private javax.swing.JPanel caseScrollPaneWrapper;
+    private de.targodan.usb.ui.CaseView caseViewHeader;
     private javax.swing.JPanel caseWrapperPanel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
