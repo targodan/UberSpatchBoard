@@ -65,7 +65,7 @@ public class DefaultParser implements Parser {
         
         this.ratsignalPattern = Pattern.compile("^RATSIGNAL - CMDR (?<cmdr>.*?) - System: (?<system>.*?) \\(.*EDDB\\) - Platform: (?<platform>\\S+) - O2: (?<o2>(NOT )?OK) - Language: \\S+ \\((?<language>\\w\\w)(-\\w\\w)?\\)( - IRC Nickname: (?<ircnick>\\S+))? \\(Case #(?<case>\\d+)\\)$");
         this.commandPattern = Pattern.compile("^(?<cmd>(?:!\\S+|go))\\s+(?<params>.*)$");
-        this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\s|$).*?"+caseIdentifierPattern);
+        this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\W|$).*?"+caseIdentifierPattern);
         String reportRegex = "(^|.*(\\s|,))(?<type>(";
         for(int i = 0; i < this.supportedReports.length; ++i) {
             reportRegex += this.supportedReports[i];
@@ -79,7 +79,7 @@ public class DefaultParser implements Parser {
         this.twoArgumentsPattern = Pattern.compile("^(\\S+)\\s+(.*)$");
         this.threeArgumentsPattern = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(.*)$");
         
-        this.caseSanitizerPattern = Pattern.compile("^([cC#]?(?<caseNumber>\\d{1,3})|(?<clientName>\\S+))$");
+        this.caseSanitizerPattern = Pattern.compile("^([cC#]?(?<caseNumber>\\d{1,3})|(?<clientName>.+))$");
     }
     
     @Override
@@ -191,6 +191,9 @@ public class DefaultParser implements Parser {
     }
     
     protected String sanitizeCaseIdentifier(String caseIdentifier) {
+        if(caseIdentifier == null || caseIdentifier.length() == 0) {
+            return "";
+        }
         Matcher m = this.caseSanitizerPattern.matcher(caseIdentifier);
         if(!m.matches()) {
             throw new IllegalArgumentException("This should never happen.");

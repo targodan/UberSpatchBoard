@@ -215,6 +215,82 @@ public class DefaultParserTest {
             assertThat(ratCaptor.getValue(), equalTo(rat));
             assertThat(ratCaptor.getValue().getJumps(), equalTo(rat.getJumps()));
         }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "5j c2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCall(message);
+            assertThat(result, equalTo(expResult));
+            
+            Rat rat = new Rat("Kies");
+            rat.setJumps(5);
+            verify(mockHandler).handleCall(ratCaptor.capture(), Mockito.eq("2"));
+            assertThat(ratCaptor.getValue(), equalTo(rat));
+            assertThat(ratCaptor.getValue().getJumps(), equalTo(rat.getJumps()));
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "5j clientName");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCall(message);
+            assertThat(result, equalTo(expResult));
+            
+            Rat rat = new Rat("Kies");
+            rat.setJumps(5);
+            verify(mockHandler).handleCall(ratCaptor.capture(), Mockito.eq("clientName"));
+            assertThat(ratCaptor.getValue(), equalTo(rat));
+            assertThat(ratCaptor.getValue().getJumps(), equalTo(rat.getJumps()));
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "5j");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCall(message);
+            assertThat(result, equalTo(expResult));
+            
+            Rat rat = new Rat("Kies");
+            rat.setJumps(5);
+            verify(mockHandler).handleCall(ratCaptor.capture(), Mockito.eq(""));
+            assertThat(ratCaptor.getValue(), equalTo(rat));
+            assertThat(ratCaptor.getValue().getJumps(), equalTo(rat.getJumps()));
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "5j +scooping #3");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCall(message);
+            assertThat(result, equalTo(expResult));
+            
+            Rat rat = new Rat("Kies");
+            rat.setJumps(5);
+            verify(mockHandler).handleCall(ratCaptor.capture(), Mockito.eq("3"));
+            assertThat(ratCaptor.getValue(), equalTo(rat));
+            assertThat(ratCaptor.getValue().getJumps(), equalTo(rat.getJumps()));
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "5j+scooping #3");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleCall(message);
+            assertThat(result, equalTo(expResult));
+            
+            Rat rat = new Rat("Kies");
+            rat.setJumps(5);
+            verify(mockHandler).handleCall(ratCaptor.capture(), Mockito.eq("3"));
+            assertThat(ratCaptor.getValue(), equalTo(rat));
+            assertThat(ratCaptor.getValue().getJumps(), equalTo(rat.getJumps()));
+        }
+        reset(mockHandler);
     }
 
     /**
