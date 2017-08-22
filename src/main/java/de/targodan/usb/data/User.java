@@ -65,7 +65,7 @@ public class User extends Observable {
     }
 
     public String getCMDRName() {
-        return cmdrName;
+        return cmdrName != null ? cmdrName : ircName;
     }
 
     public void setCMDRName(String cmdrName) {

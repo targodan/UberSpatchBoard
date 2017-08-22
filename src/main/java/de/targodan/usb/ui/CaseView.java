@@ -70,7 +70,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
             this.ratsPanel.add(rv);
         });
         int height = Stream.of(this.ratsPanel.getComponents())
-                .mapToInt(c -> c.getHeight())
+                .mapToInt(c -> c.getPreferredSize().height)
                 .sum();
         if(height < this.initialSize) {
             height = this.initialSize;

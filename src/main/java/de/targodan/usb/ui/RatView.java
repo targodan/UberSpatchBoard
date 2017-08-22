@@ -26,10 +26,12 @@ package de.targodan.usb.ui;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -44,9 +46,6 @@ public class RatView extends javax.swing.JPanel implements Observer {
      */
     public RatView() {
         initComponents();
-        
-        this.setLayout(new HorizontalLayout());
-        this.reportsPanel.setLayout(new VerticalLayout());
     }
     
     public RatView(Rat rat) {
@@ -85,21 +84,24 @@ public class RatView extends javax.swing.JPanel implements Observer {
                 .sorted((r1, r2) -> this.reportOrder(r1.getType()) - this.reportOrder(r2.getType()))
                 .forEach(report -> {
                     JLabel label = new JLabel();
+                    JPanel panel = new JPanel();
 
                     String text = this.reportTypeToString(report.getType());
                     if(report.isPlus()) {
                         text += "+";
-                        label.setBackground(RatView.PLUS_BACKGROUND_COLOR);
+                        panel.setBackground(RatView.PLUS_BACKGROUND_COLOR);
                         label.setForeground(RatView.PLUS_FOREGROUND_COLOR);
                     } else {
                         text += "-";
-                        label.setBackground(RatView.MINUS_BACKGROUND_COLOR);
+                        panel.setBackground(RatView.MINUS_BACKGROUND_COLOR);
                         label.setForeground(RatView.MINUS_FOREGROUND_COLOR);
                         label.setFont(new Font(label.getFont().getFamily(), Font.BOLD, label.getFont().getSize()));
                     }
                     label.setText(text);
+                    panel.add(label);
+                    panel.setPreferredSize(new Dimension(panel.getPreferredSize().width, 25));
 
-                    this.reportsPanel.add(label);
+                    this.reportsPanel.add(panel);
                 });
     }
     
@@ -219,17 +221,6 @@ public class RatView extends javax.swing.JPanel implements Observer {
                 .addContainerGap()
                 .addComponent(jumps)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout reportsPanelLayout = new javax.swing.GroupLayout(reportsPanel);
-        reportsPanel.setLayout(reportsPanelLayout);
-        reportsPanelLayout.setHorizontalGroup(
-            reportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 204, Short.MAX_VALUE)
-        );
-        reportsPanelLayout.setVerticalGroup(
-            reportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

@@ -28,6 +28,8 @@ import de.targodan.usb.data.Case;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
+import de.targodan.usb.data.Rat;
+import de.targodan.usb.data.Report;
 import java.time.LocalDateTime;
 import java.util.Observable;
 import java.util.Observer;
@@ -233,6 +235,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private void onAddTestCaseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onAddTestCaseClicked
         Case testCase = new Case(this.cm.getCases().size()+1, new Client("Kies", "Kies", Platform.PC, "de"), new de.targodan.usb.data.System("Cubeo"), false, LocalDateTime.now());
+        Rat rat = new Rat("testRat");
+        rat.setJumps(5);
+        rat.setAssigned(true);
+        rat.insertReport(new Report(Report.Type.SYS, true));
+        testCase.assignRat(rat);
         this.cm.addCase(testCase);
     }//GEN-LAST:event_onAddTestCaseClicked
 

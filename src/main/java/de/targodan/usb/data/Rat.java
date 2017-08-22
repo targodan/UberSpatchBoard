@@ -96,6 +96,9 @@ public class Rat extends User {
     }
     
     public void insertReport(Report report) {
+        if(this.reports.contains(report)) {
+            this.reports.remove(report);
+        }
         this.reports.add(report);
         
         this.setChanged();
