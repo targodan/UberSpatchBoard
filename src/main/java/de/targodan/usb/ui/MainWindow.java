@@ -48,6 +48,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     public MainWindow() {
         initComponents();
         
+        this.console = new ConsoleWindow();
+        
         this.casePanel.setLayout(new VerticalLayout());
     }
     
@@ -100,6 +102,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
 
@@ -191,6 +194,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jMenu2.setText("Test");
         jMenu2.setToolTipText("");
 
+        jMenuItem4.setText("Show Console");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onShowConsoleClicked(evt);
+            }
+        });
+        jMenu2.add(jMenuItem4);
+
         jMenuItem2.setText("Add test case");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -250,6 +261,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         Program.dataConsumer.addDataSource(window);
     }//GEN-LAST:event_onOpenInjectionWindowClicked
 
+    private void onShowConsoleClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onShowConsoleClicked
+        this.console.setVisible(true);
+    }//GEN-LAST:event_onShowConsoleClicked
+
     /**
      * @param args the command line arguments
      */
@@ -279,6 +294,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }
     
     private CaseManager cm;
+    private ConsoleWindow console;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
@@ -293,6 +309,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
     // End of variables declaration//GEN-END:variables
