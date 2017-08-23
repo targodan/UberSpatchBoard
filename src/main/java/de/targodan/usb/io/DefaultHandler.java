@@ -73,51 +73,67 @@ public class DefaultHandler implements Handler {
         switch(cmd.type) {
             case CLOSE:
                 this.handleCommandClose(cmd);
+                break;
                 
             case HARD_ASSIGN:
                 this.handleCommandHardAssign(cmd);
+                break;
                 
             case GRAB:
                 this.handleCommandGrab(cmd);
+                break;
                 
             case INJECT:
                 this.handleCommandInject(cmd);
+                break;
                 
             case MARK_DELETION:
                 this.handleCommandMarkDeletion(cmd);
+                break;
                 
             case SET_CMDR_NAME:
                 this.handleCommandSetCMDRName(cmd);
+                break;
                 
             case SET_IRCNICK:
                 this.handleCommandIRCNick(cmd);
+                break;
                 
             case SET_PLATFORM_PC:
                 this.handleCommandSetPlatformPC(cmd);
+                break;
                 
             case SET_PLATFORM_PS:
                 this.handleCommandSetPlatformPS4(cmd);
+                break;
                 
             case SET_PLATFORM_XB:
                 this.handleCommandSetPlatformXBox(cmd);
+                break;
                 
             case SET_SYSTEM:
                 this.handleCommandSetSystem(cmd);
+                break;
                 
             case SOFT_ASSIGN:
                 this.handleCommandSoftAssign(cmd);
+                break;
                 
             case SUBSTITUTE:
                 this.handleCommandSubstitute(cmd);
+                break;
                 
             case TOGGLE_ACTIVE:
                 this.handleCommandToggleActive(cmd);
+                break;
                 
             case TOGGLE_CODERED:
                 this.handleCommandToggleCodered(cmd);
+                break;
                 
             case UNASSIGN:
                 this.handleCommandUnassign(cmd);
+                break;
         }
     }
 
