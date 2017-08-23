@@ -25,11 +25,12 @@ package de.targodan.usb.ui;
 
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.Platform;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.stream.Stream;
-import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -58,6 +59,15 @@ public class CaseView extends javax.swing.JPanel implements Observer {
     
     protected void updateCaseView() {
         this.caseNumber.setText("#"+Integer.toString(this.viewCase.getNumber()));
+        if(this.viewCase.isClosed()) {
+            this.caseNumberPanel.setBackground(CaseView.CLOSED_BACKGROUND_COLOR);
+            this.caseNumber.setForeground(CaseView.CLOSED_FOREGROUND_COLOR);
+        } else if(this.viewCase.isCodeRed()) {
+            this.caseNumberPanel.setBackground(CaseView.CR_BACKGROUND_COLOR);
+            this.caseNumber.setForeground(CaseView.CR_FOREGROUND_COLOR);
+            this.caseNumber.setFont(new Font(this.caseNumber.getFont().getFamily(), Font.BOLD, this.caseNumber.getFont().getSize()));
+        }
+        
         this.cmdrName.setText(this.viewCase.getClient().getCMDRName());
         this.language.setText(this.viewCase.getClient().getLanguage().toUpperCase());
         this.platform.setText(this.platformToString(this.viewCase.getClient().getPlatform()));
@@ -300,6 +310,11 @@ public class CaseView extends javax.swing.JPanel implements Observer {
 
     private Case viewCase;
     private int initialSize;
+    
+    private static final Color CR_BACKGROUND_COLOR = Color.RED;
+    private static final Color CR_FOREGROUND_COLOR = Color.WHITE;
+    private static final Color CLOSED_BACKGROUND_COLOR = Color.GREEN;
+    private static final Color CLOSED_FOREGROUND_COLOR = Color.BLACK;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel caseNumber;

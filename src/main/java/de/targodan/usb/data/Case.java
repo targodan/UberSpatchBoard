@@ -180,6 +180,10 @@ public class Case extends Observable {
         this.notifyObservers();
     }
     
+    public boolean isClosed() {
+        return this.closeTime != null;
+    }
+    
     public void attachManager(CaseManager manager) {
         this.attachedManager = manager;
     }
