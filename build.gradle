@@ -9,7 +9,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-version = '0.1'
+version = '1.0-alpha'
 
 if (!hasProperty('mainClass')) {
     ext.mainClass = 'de.targodan.usb.Program'
