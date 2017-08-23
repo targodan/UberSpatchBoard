@@ -15,11 +15,12 @@ notifications:
 
 before_deploy:
     - "./gradlew fatJar javadoc"
+    - "mv build/libs/*-all-*.jar build/libs/UberSpatchBoard.jar"
 
 deploy:
     - provider: releases
       skip_cleanup: true
-      file: build/libs/*-all-*.jar
+      file: build/libs/UberSpatchBoard.jar
       on:
           repo: targodan/UberSpatchBoard
           tags: true
