@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +43,7 @@ public class DataConsumer {
     private final AtomicBoolean run;
     private final AtomicBoolean done;
     private final List<DataSource> dataSources;
+    private final List<Thread> threads;
     
     public DataConsumer(Parser parser) {
         this.queue = new ArrayBlockingQueue<>(8);
@@ -49,14 +51,22 @@ public class DataConsumer {
         this.run = new AtomicBoolean(false);
         this.done = new AtomicBoolean(false);
         this.dataSources = new CopyOnWriteArrayList<>();
+        this.threads = new ArrayList<>();
+    }
+    
+    private void createAndStartThread(DataSource ds) {
+        Thread t = new Thread(() -> {
+            ds.listen(this.queue);
+        });
+        t.setName("DataSourceThread_"+ds.getClass().getName());
+        this.threads.add(t);
+        t.start();
     }
     
     public void addDataSource(DataSource ds) {
         this.dataSources.add(ds);
         if(this.run.get() && !this.done.get()) {
-            new Thread(() -> {
-                ds.listen(this.queue);
-            }).start();
+            this.createAndStartThread(ds);
         }
     }
     
@@ -65,29 +75,26 @@ public class DataConsumer {
         this.run.set(true);
         
         this.dataSources.forEach(ds -> {
-            new Thread(() -> {
-                ds.listen(this.queue);
-            }).start();
+            this.createAndStartThread(ds);
         });
         
+        IRCMessage msg;
         while(this.run.get()) {
-            IRCMessage msg;
             try {
-                msg = this.queue.take();
+                msg = this.queue.poll(100, TimeUnit.MILLISECONDS);
+                if(msg == null) {
+                    continue;
+                }
+                
+                ParseResult result = this.parser.parseAndHandle(msg);
+                Logger.getLogger(SingleChannelFileDataSource.class.getName())
+                        .log(Level.INFO, "Parsed message.", result);
+                Logger.getLogger(SingleChannelFileDataSource.class.getName())
+                        .log(Level.FINE, "Parsed message.", msg);
             } catch(Exception ex) {
                 Logger.getLogger(SingleChannelFileDataSource.class.getName())
                         .log(Level.SEVERE, null, ex);
-                continue;
             }
-            if(msg == null) {
-                continue;
-            }
-            
-            ParseResult result = this.parser.parseAndHandle(msg);
-            Logger.getLogger(SingleChannelFileDataSource.class.getName())
-                    .log(Level.INFO, "Parsed message.", result);
-            Logger.getLogger(SingleChannelFileDataSource.class.getName())
-                    .log(Level.FINE, "Parsed message.", msg);
         }
         this.done.set(true);
     }
@@ -97,8 +104,15 @@ public class DataConsumer {
             ds.stop();
         });
         
+        this.threads.forEach(thread -> {
+            try {
+                thread.join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DataConsumer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
         this.run.set(false);
-        this.queue.add(null);
         
         while(!this.done.get()) {
             try {

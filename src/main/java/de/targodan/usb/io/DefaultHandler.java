@@ -147,6 +147,10 @@ public class DefaultHandler implements Handler {
             return;
         }
         Rat rat = c.lookupAssociatedRat(ratIrcName);
+        if(rat == null) {
+            Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Recieved report but couldn't find associated rat.");
+            return;
+        }
         rat.insertReport(report);
     }
     

@@ -33,6 +33,7 @@ import de.targodan.usb.io.HexchatMarshaller;
 import de.targodan.usb.io.Parser;
 import de.targodan.usb.io.SingleChannelFileDataSource;
 import de.targodan.usb.ui.MainWindow;
+import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,9 +63,11 @@ public class Program {
         
         Program.dataConsumer = new DataConsumer(parser);
         
-        new Thread(() -> {
+        Thread dataConsumerThread = new Thread(() -> {
             Program.dataConsumer.start();
-        }).start();
+        });
+        dataConsumerThread.setName("DataConsumerThread");
+        dataConsumerThread.start();
         
         try {
             DataSource ds = new SingleChannelFileDataSource("#fuelrats", logfile, new HexchatMarshaller());
@@ -77,11 +80,15 @@ public class Program {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             MainWindow window = new MainWindow(cm);
-            window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             window.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     Program.dataConsumer.stop();
+                    try {
+                        dataConsumerThread.join();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             });
             window.setVisible(true);

@@ -24,11 +24,7 @@
 package de.targodan.usb.io;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -128,7 +124,15 @@ public class ReaderDataSource implements DataSource {
                 msg = new IRCMessage(msg.getTimestamp(), msg.getSender(), this.overrideChannelName, msg.getContent());
             }
             
-            output.add(msg);
+            while(!output.offer(msg)) {
+                while(output.remainingCapacity() == 0) {
+                    try {
+                        Thread.currentThread().wait(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ReaderDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
         }
         this.done.set(true);
     }

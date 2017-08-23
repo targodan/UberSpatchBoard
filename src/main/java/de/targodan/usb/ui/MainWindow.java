@@ -108,8 +108,13 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         jToolBar1.setRollover(true);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("USB - UberSpatchBoard");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                onWindowClosed(evt);
+            }
+        });
 
         javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
         statusBar.setLayout(statusBarLayout);
@@ -264,6 +269,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void onShowConsoleClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onShowConsoleClicked
         this.console.setVisible(true);
     }//GEN-LAST:event_onShowConsoleClicked
+
+    private void onWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onWindowClosed
+        this.console.dispose();
+    }//GEN-LAST:event_onWindowClosed
 
     /**
      * @param args the command line arguments

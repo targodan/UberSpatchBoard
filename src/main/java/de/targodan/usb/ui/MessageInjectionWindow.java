@@ -27,6 +27,8 @@ import de.targodan.usb.io.DataSource;
 import de.targodan.usb.io.IRCMessage;
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -127,13 +129,30 @@ public class MessageInjectionWindow extends javax.swing.JFrame implements DataSo
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void sendComplete() {
+        java.awt.EventQueue.invokeLater(() -> {
+            this.message.setText("");
+        });
+    }
+    
     private void onSendButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSendButtonClicked
         if(this.output == null) {
             return;
         }
         IRCMessage msg = new IRCMessage(LocalDateTime.now(), this.ircNickname.getText(), this.channel.getText(), this.message.getText());
-        output.add(msg);
-        this.message.setText("");
+        
+        new Thread(() -> {
+            while(!this.output.offer(msg)) {
+                while(this.output.remainingCapacity() == 0) {
+                    try {
+                        Thread.currentThread().wait(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MessageInjectionWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            this.sendComplete();
+        }).start();
     }//GEN-LAST:event_onSendButtonClicked
 
     @Override
