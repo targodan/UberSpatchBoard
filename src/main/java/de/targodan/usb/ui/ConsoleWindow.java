@@ -23,7 +23,12 @@
  */
 package de.targodan.usb.ui;
 
+import de.targodan.usb.TeeOutputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,15 +36,51 @@ import java.io.PrintStream;
  */
 public class ConsoleWindow extends javax.swing.JFrame {
 
+    private PrintStream originalOut;
+    private PrintStream originalErr;
+    
     /**
      * Creates new form ConsoleWindow
      */
     public ConsoleWindow() {
         initComponents();
         
-        PrintStream stream = new PrintStream(new TextAreaOutputStream(this.jTextArea1));
-        System.setOut(stream);
-        System.setErr(stream);
+        OutputStream textAreaOutputStream = new TextAreaOutputStream(this.jTextArea1);
+        
+        this.originalOut = System.out;
+        this.originalErr = System.err;
+        
+        PrintStream out;
+        PrintStream err;
+        try {
+            out = new PrintStream(new TeeOutputStream(textAreaOutputStream, System.out), true, "UTF-8");
+            err = new PrintStream(new TeeOutputStream(textAreaOutputStream, System.err), true, "UTF-8");
+            
+            System.setOut(out);
+            System.setErr(err);
+            
+            this.originalOut.flush();
+            this.originalErr.flush();
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(ConsoleWindow.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalStateException("This should never happen.");
+        }
+    }
+    
+    @Override
+    public void dispose() {
+        PrintStream out = System.out;
+        PrintStream err = System.err;
+        
+        System.setOut(this.originalOut);
+        System.setErr(this.originalErr);
+        
+        out.flush();
+        out.close();
+        err.flush();
+        err.close();
+        
+        super.dispose();
     }
 
     /**
@@ -77,41 +118,6 @@ public class ConsoleWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ConsoleWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ConsoleWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ConsoleWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ConsoleWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ConsoleWindow().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;

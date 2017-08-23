@@ -32,6 +32,7 @@ import de.targodan.usb.io.Handler;
 import de.targodan.usb.io.HexchatMarshaller;
 import de.targodan.usb.io.Parser;
 import de.targodan.usb.io.SingleChannelFileDataSource;
+import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.Frame;
 import java.awt.event.WindowEvent;
@@ -49,8 +50,10 @@ public class Program {
         try {
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
+        
+        ConsoleWindow consoleWindow = new ConsoleWindow();
         
         CaseManager cm = new CaseManager();
         String appdata = System.getenv("APPDATA");
@@ -79,10 +82,12 @@ public class Program {
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            MainWindow window = new MainWindow(cm);
+            MainWindow window = new MainWindow(consoleWindow, cm);
             window.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
+                    consoleWindow.dispose();
+                    
                     Program.dataConsumer.stop();
                     try {
                         dataConsumerThread.join();

@@ -45,16 +45,16 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     /**
      * Creates new form MainWindow
      */
-    public MainWindow() {
+    public MainWindow(ConsoleWindow consoleWindow) {
         initComponents();
         
-        this.console = new ConsoleWindow();
+        this.consoleWindow = consoleWindow;
         
         this.casePanel.setLayout(new VerticalLayout());
     }
     
-    public MainWindow(CaseManager cm) {
-        this();
+    public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
+        this(consoleWindow);
         
         this.cm = cm;
         this.updateCases();
@@ -110,11 +110,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("USB - UberSpatchBoard");
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                onWindowClosed(evt);
-            }
-        });
 
         javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
         statusBar.setLayout(statusBarLayout);
@@ -261,49 +256,16 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private void onOpenInjectionWindowClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onOpenInjectionWindowClicked
         MessageInjectionWindow window = new MessageInjectionWindow();
-        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setVisible(true);
         Program.dataConsumer.addDataSource(window);
     }//GEN-LAST:event_onOpenInjectionWindowClicked
 
     private void onShowConsoleClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onShowConsoleClicked
-        this.console.setVisible(true);
+        this.consoleWindow.setVisible(true);
     }//GEN-LAST:event_onShowConsoleClicked
 
-    private void onWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onWindowClosed
-        this.console.dispose();
-    }//GEN-LAST:event_onWindowClosed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new MainWindow().setVisible(true);
-        });
-    }
-    
     private CaseManager cm;
-    private ConsoleWindow console;
+    private ConsoleWindow consoleWindow;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
