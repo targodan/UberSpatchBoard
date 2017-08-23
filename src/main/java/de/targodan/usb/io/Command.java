@@ -61,7 +61,7 @@ public class Command {
 
     public String getParameter(int i) {
         if(i >= this.parameters.length) {
-            throw new IllegalArgumentException("Requested parameter "+Integer.toString(i)+" but only "+Integer.toString(this.parameters.length)+" parameters available for command type "+this.type.toString()+".");
+            throw new IllegalArgumentException("Requested parameter with index "+Integer.toString(i)+" but only "+Integer.toString(this.parameters.length)+" parameters available for command type "+this.type.toString()+".");
         }
         return this.parameters[i];
     }

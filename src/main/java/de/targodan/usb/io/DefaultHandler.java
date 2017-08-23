@@ -188,6 +188,14 @@ public class DefaultHandler implements Handler {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
         }
+        if(cmd.getParameterCount() >= 2) {
+            String ratName = cmd.getParameter(1);
+            Rat rat = c.lookupAssociatedRat(ratName);
+            if(rat == null) {
+                rat = new Rat(ratName);
+            }
+            c.setFirstLimpet(rat);
+        }
         c.close();
     }
     

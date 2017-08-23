@@ -335,7 +335,7 @@ public class DefaultParser implements Parser {
             case HARD_ASSIGN:
             case CLOSE:
             case UNASSIGN:
-                return params.split("\\s+");
+                return params.split("\\s");
                 
             case SET_CMDR_NAME:
             case INJECT:
