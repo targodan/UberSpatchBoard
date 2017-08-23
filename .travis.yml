@@ -1,0 +1,35 @@
+language: java
+jdk:
+    - oraclejdk8
+install:
+    - "./gradlew assemble"
+script:
+    - "./gradlew check"
+after_success:
+    - "./gradlew test jacocoTestReport coveralls"
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
+before_deploy:
+    - "./gradlew fatJar javadoc"
+
+deploy:
+    - provider: releases
+      skip_cleanup: true
+      file: build/libs/*-all-*.jar
+      on:
+          repo: targodan/UberSpatchBoard
+          tags: true
+      api_key:
+          secure: h7OIAlgZhOUTFX8IDaUj33lhbtNQTG/45MWz+q9asGdJaqELnvST+8MmmTfdbbH9KJbsNuDBcgJU7SxD15thsB3PhFih/VD9sN1XJ1Vm+H/vkRIO/hOb/rUkSl/u4Pi16cyyXCsdJciUEt1+v7fiZGo+RBY2Q5yyF8dtPzLJhXGDqBFTUUMBzYHpUYqQKZIHOm6JeQM/LjJaNs1btKK35sABoPKlvw9K4rJDIt5m+jL3O55+a29b+FO9Bdb4sg0APdKQoMGgHUsujQMh0J4c+LeCqkHW+UIFlJWSO4dZHmVTJBkCIPNqqnFEdrAtmc0DRSSPIa88flQ8Ne7NCh5UlnjGpwXPDdSDkZEVWjR3lNkEY+UwREt5zYuEX+STQxfT1jFR/qbOuyA4eEYPhlG2LR4R+wGQMENUutbupzaWVmBoD6mgslFoGsEYqaJHBdLfB4BWnNkyoy7gVL7bwiRKUCO/8bN6hzN6RaYkPX2ZEXEI2VsHPQsQY113oYMCwjcBLbYUKEdo1jXBaIYjDwQf6LsYGg0E1Q2KiWP4aCmg0Ki94ZpP4CX8BCYufPCpgZsEJ/JbvUpYz7WPTZ4nEV2XBdiLdLKGJ0XKqDf8nU1c9dPxE9GATOvvyJVVBBbIchTOikbWKyfi8dx9bQzZhzs6J7WTjYrGM+2Xj63RXXqGaF0=
+    - provider: pages
+      skip_cleanup: true
+      local_dir: build/docs/javadoc
+      github_token: $GITHUB_ACCESS_TOKEN
+      on:
+          branch:
+              - master
+              - travis
