@@ -63,7 +63,7 @@ public class DefaultParser implements Parser {
         
         String caseIdentifierPattern = "(?<case>(?:[cC#]?\\d+|\\S+)?)";
         
-        this.ratsignalPattern = Pattern.compile("^RATSIGNAL - CMDR (?<cmdr>.*?) - System: (?<system>.*?) \\(.*EDDB\\) - Platform: (?<platform>\\S+) - O2: (?<o2>(NOT )?OK) - Language: \\S+ \\((?<language>\\w\\w)(-\\w\\w)?\\)( - IRC Nickname: (?<ircnick>\\S+))? \\(Case #(?<case>\\d+)\\)$");
+        this.ratsignalPattern = Pattern.compile("^RATSIGNAL - CMDR (?<cmdr>.*?) - System: (?<system>.*?) \\(.*?\\) - Platform: (?<platform>\\S+) - O2: (?<o2>(NOT )?OK) - Language: .+? \\((?<language>\\w\\w)(-\\w\\w)?\\)( - IRC Nickname: (?<ircnick>\\S+))? \\(Case #(?<case>\\d+)\\)$");
         this.commandPattern = Pattern.compile("^(?<cmd>(?:!\\S+|go))\\s+(?<params>.*)$");
         this.callPattern = Pattern.compile("(^|.*(\\s|,))(?<jumps>\\d+)(j|J)(\\W|$).*?"+caseIdentifierPattern);
         String reportRegex = "(^|.*(\\s|,))(?<type>(";

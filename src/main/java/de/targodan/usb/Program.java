@@ -34,11 +34,10 @@ import de.targodan.usb.io.Parser;
 import de.targodan.usb.io.SingleChannelFileDataSource;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
-import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 
 public class Program {
     public static DataConsumer dataConsumer;
@@ -54,6 +53,12 @@ public class Program {
         }
         
         ConsoleWindow consoleWindow = new ConsoleWindow();
+        
+        Logger rootLogger = LogManager.getLogManager().getLogger("");
+        rootLogger.setLevel(Level.INFO);
+        for(java.util.logging.Handler h : rootLogger.getHandlers()) {
+            h.setLevel(Level.INFO);
+        }
         
         CaseManager cm = new CaseManager();
         String appdata = System.getenv("APPDATA");
