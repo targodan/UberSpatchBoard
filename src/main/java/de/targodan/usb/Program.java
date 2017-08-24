@@ -41,6 +41,10 @@ import java.util.logging.Logger;
 
 public class Program {
     public static DataConsumer dataConsumer;
+    public static final Version VERSION = Version.parse("v1.0-alpha1");
+    public static final String[] CONTRIBUTORS = new String[] {
+        "Your name could be here",
+    };
     
     /**
      * @param args the command line arguments

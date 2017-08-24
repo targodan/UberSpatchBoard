@@ -63,6 +63,7 @@ public class MessageInjectionWindow extends javax.swing.JFrame implements DataSo
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("USB - Inject IRC Messages");
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWidths = new int[] {0, 5, 0};
         layout.rowHeights = new int[] {0, 5, 0, 5, 0, 5, 0};

@@ -30,9 +30,14 @@ import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
+import java.awt.Dimension;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -105,6 +110,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem7 = new javax.swing.JMenuItem();
 
         jToolBar1.setRollover(true);
 
@@ -181,7 +191,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         jMenu1.setText("File");
 
-        jMenuItem1.setLabel("Close");
+        jMenuItem1.setText("Close");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onCloseMenuClicked(evt);
@@ -202,7 +212,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         jMenu2.add(jMenuItem4);
 
-        jMenuItem2.setText("Add test case");
+        jMenuItem2.setText("Add test Case");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onAddTestCaseClicked(evt);
@@ -210,7 +220,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         jMenu2.add(jMenuItem2);
 
-        jMenuItem3.setText("Open injection window");
+        jMenuItem3.setText("Open injection Window");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onOpenInjectionWindowClicked(evt);
@@ -219,6 +229,35 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jMenu2.add(jMenuItem3);
 
         jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Help");
+
+        jMenuItem5.setText("Report a Bug");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onReportABugClicked(evt);
+            }
+        });
+        jMenu3.add(jMenuItem5);
+
+        jMenuItem6.setText("Contribute");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onContributeClicked(evt);
+            }
+        });
+        jMenu3.add(jMenuItem6);
+        jMenu3.add(jSeparator1);
+
+        jMenuItem7.setText("About");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onAboutClicked(evt);
+            }
+        });
+        jMenu3.add(jMenuItem7);
+
+        jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
 
@@ -264,6 +303,26 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.consoleWindow.setVisible(true);
     }//GEN-LAST:event_onShowConsoleClicked
 
+    private void onReportABugClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onReportABugClicked
+        try {
+            java.awt.Desktop.getDesktop().browse(new URI("https://github.com/targodan/UberSpatchBoard#Report-a-Bug"));
+        } catch (Exception ex) { /* Seriously Java, bugger off with your checked exceptions! */ }
+    }//GEN-LAST:event_onReportABugClicked
+
+    private void onContributeClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onContributeClicked
+        try {
+            java.awt.Desktop.getDesktop().browse(new URI("https://github.com/targodan/UberSpatchBoard#Contribute"));
+        } catch (Exception ex) { /* Seriously Java, bugger off with your checked exceptions! */ }
+    }//GEN-LAST:event_onContributeClicked
+
+    private void onAboutClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onAboutClicked
+        java.awt.EventQueue.invokeLater(() -> {
+            AboutWindow w = new AboutWindow();
+            w.setSize(new Dimension(400, 300));
+            w.setVisible(true);
+        });
+    }//GEN-LAST:event_onAboutClicked
+
     private CaseManager cm;
     private ConsoleWindow consoleWindow;
     
@@ -276,11 +335,16 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel caseWrapperPanel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
     // End of variables declaration//GEN-END:variables
