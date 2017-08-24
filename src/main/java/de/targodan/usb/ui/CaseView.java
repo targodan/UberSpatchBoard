@@ -62,6 +62,7 @@ public class CaseView extends javax.swing.JPanel implements Observer {
         if(this.viewCase.isClosed()) {
             this.caseNumberPanel.setBackground(CaseView.CLOSED_BACKGROUND_COLOR);
             this.caseNumber.setForeground(CaseView.CLOSED_FOREGROUND_COLOR);
+            this.caseNumber.setFont(new Font(this.caseNumber.getFont().getFamily(), Font.PLAIN, this.caseNumber.getFont().getSize()));
         } else if(this.viewCase.isCodeRed()) {
             this.caseNumberPanel.setBackground(CaseView.CR_BACKGROUND_COLOR);
             this.caseNumber.setForeground(CaseView.CR_FOREGROUND_COLOR);
