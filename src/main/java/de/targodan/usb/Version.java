@@ -126,6 +126,32 @@ public class Version {
         
         return sb.toString();
     }
+    
+    public int compareTo(Version other) {
+        return Version.compare(this, other);
+    }
+    
+    public static int compare(Version v1, Version v2) {
+        if(v1.major != v2.major) {
+            return v1.major - v2.major;
+        }
+        if(v1.minor != v2.minor) {
+            return v1.minor - v2.minor;
+        }
+        if(v1.bugfix != v2.bugfix) {
+            return v1.bugfix - v2.bugfix;
+        }
+        if(v1.addition == null && v2.addition != null) {
+            return 1;
+        }
+        if(v1.addition != null && v2.addition == null) {
+            return -1;
+        }
+        if(v1.addition == null && v2.addition == null) {
+            return 0;
+        }
+        return v1.addition.compareTo(v2.addition);
+    }
 
     @Override
     public int hashCode() {
