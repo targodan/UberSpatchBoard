@@ -73,7 +73,7 @@ public class DefaultParser implements Parser {
                 reportRegex += "|";
             }
         }
-        reportRegex += "))(?<state>\\+|-)(\\s|$).*?"+caseIdentifierPattern;
+        reportRegex += "))(?<state>\\+|-)\\s*(.*?|$)"+caseIdentifierPattern;
         this.reportPattern = Pattern.compile(reportRegex, Pattern.CASE_INSENSITIVE);
         
         this.twoArgumentsPattern = Pattern.compile("^(\\S+)\\s+(.*)$");

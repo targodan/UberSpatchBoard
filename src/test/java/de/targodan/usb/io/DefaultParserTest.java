@@ -378,6 +378,36 @@ public class DefaultParserTest {
         }
         reset(mockHandler);
         {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "fr+ wr- #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            InOrder order = inOrder(mockHandler, mockHandler, mockHandler);
+            Report report = new Report(Report.Type.FR, true);
+            order.verify(mockHandler).handleReport("Kies", report, "2");
+            report = new Report(Report.Type.WR, false);
+            order.verify(mockHandler).handleReport("Kies", report, "2");
+        }
+        reset(mockHandler);
+        {
+            IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "fr+, wr- #2");
+            DefaultParser instance = new DefaultParser();
+            instance.registerHandler(mockHandler);
+            boolean expResult = true;
+            boolean result = instance.parseAndHandleReport(message);
+            assertThat(result, equalTo(expResult));
+            
+            InOrder order = inOrder(mockHandler, mockHandler, mockHandler);
+            Report report = new Report(Report.Type.FR, true);
+            order.verify(mockHandler).handleReport("Kies", report, "2");
+            report = new Report(Report.Type.WR, false);
+            order.verify(mockHandler).handleReport("Kies", report, "2");
+        }
+        reset(mockHandler);
+        {
             IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "just some text #2");
             DefaultParser instance = new DefaultParser();
             instance.registerHandler(mockHandler);
