@@ -7,7 +7,7 @@ The ultimate spatch board for dispatching fuel rats cases.
 
 Just download the latest ".jar"-file from [releases](releases) put it wherever you want and double click to start it. Done.
 
-**NOTE:** So far only HexChat is supported and only with the default logging settings. Only the following logfile will be read: `%appdata%\hexchat\logs\fuelrats\#fuelrats.log`
+**NOTE:** So far only HexChat is supported and only with the default logging settings. Only the following logfile will be read: `%appdata%\hexchat\logs\fuelrats\#fuelrats.log` or on linux `~/.config/hexchat/fuelrats/fuelrats.log` 
 
 # Features
 
