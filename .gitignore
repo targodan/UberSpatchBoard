@@ -43,3 +43,7 @@ gradle-app.setting
 
 # ====== NETBEANS ======
 .nb-gradle/
+
+
+# ====== USB =======
+usb.yml

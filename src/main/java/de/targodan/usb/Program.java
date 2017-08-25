@@ -23,6 +23,8 @@
  */
 package de.targodan.usb;
 
+import de.targodan.usb.config.CaseManagerFactory;
+import de.targodan.usb.config.Config;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.io.DataSource;
@@ -35,6 +37,7 @@ import de.targodan.usb.io.SingleChannelFileDataSource;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -42,9 +45,11 @@ import java.util.logging.Logger;
 public class Program {
     public static DataConsumer dataConsumer;
     public static final Version VERSION = Version.parse("v1.0-alpha1");
+    public static final String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
+    public static Config CONFIG;
     
     /**
      * @param args the command line arguments
@@ -64,30 +69,18 @@ public class Program {
             h.setLevel(Level.INFO);
         }
         
-        CaseManager cm = new CaseManager();
-        String appdata = System.getenv("APPDATA");
-        String logfile = appdata+"\\HexChat\\logs\\FuelRats\\#fuelrats.log";
+        CONFIG = Config.readConfig(Program.CONFIG_FILE);
         
-        Handler handler = new DefaultHandler();
-        handler.registerCaseManager(cm);
-        Parser parser = new DefaultParser();
-        parser.registerHandler(handler);
+        CaseManagerFactory factory = CaseManagerFactory.getDefaultFactory(CONFIG);
         
-        Program.dataConsumer = new DataConsumer(parser);
+        CaseManager cm = factory.createCaseManager();
+        Program.dataConsumer = factory.createDataConsumer();
         
         Thread dataConsumerThread = new Thread(() -> {
             Program.dataConsumer.start();
         });
         dataConsumerThread.setName("DataConsumerThread");
         dataConsumerThread.start();
-        
-        try {
-            DataSource ds = new SingleChannelFileDataSource("#fuelrats", logfile, new HexchatMarshaller());
-            Program.dataConsumer.addDataSource(ds);
-        } catch(Exception ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
-        }
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
