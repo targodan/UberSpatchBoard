@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 .
+ * Copyright 2017 Luca Corbatto.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -105,6 +105,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         casePanel = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem8 = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
@@ -190,6 +192,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         );
 
         jMenu1.setText("File");
+
+        jMenuItem8.setText("Settings");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onSettingsClicked(evt);
+            }
+        });
+        jMenu1.add(jMenuItem8);
+        jMenu1.add(jSeparator2);
 
         jMenuItem1.setText("Close");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -323,6 +334,12 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
     }//GEN-LAST:event_onAboutClicked
 
+    private void onSettingsClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSettingsClicked
+        java.awt.EventQueue.invokeLater(() -> {
+            new SettingsWindow().setVisible(true);
+        });
+    }//GEN-LAST:event_onSettingsClicked
+
     private CaseManager cm;
     private ConsoleWindow consoleWindow;
     
@@ -344,7 +361,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
     // End of variables declaration//GEN-END:variables

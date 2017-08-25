@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 .
+ * Copyright 2017 Luca Corbatto.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,7 +116,10 @@ public class DataConsumer {
         
         while(!this.done.get()) {
             try {
-                this.done.wait();
+                Thread t = Thread.currentThread();
+                synchronized(t) {
+                    t.wait(50);
+                }
             } catch (InterruptedException ex) {
                 Logger.getLogger(SingleChannelFileDataSource.class.getName()).log(Level.SEVERE, null, ex);
                 break;

@@ -21,14 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.data;
+package de.targodan.usb.config;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
  * @author corbatto
  */
-public enum Platform {
-    PC,
-    PS4,
-    XBOX,
+public class IRCClientRegistry {
+    private static final List<IRCClient> supportedClients = new ArrayList<>();
+    private static boolean isInitialized = false;
+    
+    private static void init() {
+        if(IRCClientRegistry.isInitialized) {
+            return;
+        }
+        IRCClientRegistry.registerClient(new Hexchat());
+        IRCClientRegistry.isInitialized = true;
+    }
+    
+    public static void registerClient(IRCClient client) {
+        IRCClientRegistry.supportedClients.add(client);
+    }
+    
+    public static List<IRCClient> getSupportedClients() {
+        IRCClientRegistry.init();
+        return Collections.unmodifiableList(IRCClientRegistry.supportedClients);
+    }
+    
+    public static IRCClient getIRCClientByName(String name) {
+        IRCClientRegistry.init();
+        return IRCClientRegistry.supportedClients.stream()
+                .filter(client -> client.getName().equals(name))
+                .findFirst().orElse(null);
+    }
 }

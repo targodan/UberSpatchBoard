@@ -21,14 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.data;
+package de.targodan.usb.config;
+
+import de.targodan.usb.io.Marshaller;
 
 /**
  *
  * @author corbatto
  */
-public enum Platform {
-    PC,
-    PS4,
-    XBOX,
+public interface IRCClient {
+    boolean isInstalled();
+    String getFuelratsLogfilePath();
+    Marshaller getMarshaller();
+    String getName();
 }

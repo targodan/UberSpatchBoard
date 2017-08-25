@@ -21,14 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.data;
+package de.targodan.usb.config;
 
 /**
  *
  * @author corbatto
  */
-public enum Platform {
-    PC,
-    PS4,
-    XBOX,
+public enum OperatingSystem {
+    WINDOWS, MAC, UNIX, SOLARIS;
+    
+    public static OperatingSystem getCurrent() {
+        String osId = System.getProperty("os.name").toLowerCase();
+        if(osId.contains("win")) {
+            return WINDOWS;
+        } else if(osId.contains("mac")) {
+            return MAC;
+        } else if(osId.contains("nix") || osId.contains("nux") || osId.contains("aix")) {
+            return UNIX;
+        } else if(osId.contains("sunos")) {
+            return SOLARIS;
+        } else {
+            // Wat?
+            throw new IllegalStateException("OS not supported.");
+        }
+    }
 }

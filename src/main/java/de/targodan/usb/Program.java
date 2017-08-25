@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 .
+ * Copyright 2017 Luca Corbatto.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,8 @@
  */
 package de.targodan.usb;
 
+import de.targodan.usb.config.CaseManagerFactory;
+import de.targodan.usb.config.Config;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.io.DataSource;
@@ -35,17 +37,20 @@ import de.targodan.usb.io.SingleChannelFileDataSource;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Program {
     public static DataConsumer dataConsumer;
-    public static final Version VERSION = Version.parse("v1.0-alpha1");
+    public static final Version VERSION = Version.parse("v1.0-alpha2");
+    public static final String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
-    
+    public static Config CONFIG;
+
     /**
      * @param args the command line arguments
      */
@@ -55,40 +60,28 @@ public class Program {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
         ConsoleWindow consoleWindow = new ConsoleWindow();
-        
+
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         rootLogger.setLevel(Level.INFO);
         for(java.util.logging.Handler h : rootLogger.getHandlers()) {
             h.setLevel(Level.INFO);
         }
-        
-        CaseManager cm = new CaseManager();
-        String appdata = System.getenv("APPDATA");
-        String logfile = appdata+"\\HexChat\\logs\\FuelRats\\#fuelrats.log";
-        
-        Handler handler = new DefaultHandler();
-        handler.registerCaseManager(cm);
-        Parser parser = new DefaultParser();
-        parser.registerHandler(handler);
-        
-        Program.dataConsumer = new DataConsumer(parser);
-        
+
+        CONFIG = Config.readConfig(Program.CONFIG_FILE);
+
+        CaseManagerFactory factory = CaseManagerFactory.getDefaultFactory(CONFIG);
+
+        CaseManager cm = factory.createCaseManager();
+        Program.dataConsumer = factory.createDataConsumer();
+
         Thread dataConsumerThread = new Thread(() -> {
             Program.dataConsumer.start();
         });
         dataConsumerThread.setName("DataConsumerThread");
         dataConsumerThread.start();
-        
-        try {
-            DataSource ds = new SingleChannelFileDataSource("#fuelrats", logfile, new HexchatMarshaller());
-            Program.dataConsumer.addDataSource(ds);
-        } catch(Exception ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
-        }
-        
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             MainWindow window = new MainWindow(consoleWindow, cm);
@@ -96,13 +89,22 @@ public class Program {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     consoleWindow.dispose();
-                    
-                    Program.dataConsumer.stop();
-                    try {
-                        dataConsumerThread.join();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+
+                    /*
+                    Open a new Thread because you can't wait in the EventQueue Thread.
+                    The application will stay open as long as there are extra Threads open,
+                    so this should work as intended.
+                    */
+                    Thread cleanUpThread = new Thread(() -> {
+                        Program.dataConsumer.stop();
+                        try {
+                            dataConsumerThread.join();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                    cleanUpThread.setName("cleanUpThread");
+                    cleanUpThread.start();
                 }
             });
             window.setVisible(true);
