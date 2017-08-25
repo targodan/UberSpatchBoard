@@ -51,10 +51,15 @@ public class PathSanitizer {
         return path;
     }
     
+    protected static String sanitizeReplaceString(String text) {
+        return text.replace("\\", "\\\\")
+                .replace("$", "\\$");
+    }
+    
     protected static String sanitizeWindows(String path) {
         Matcher m = Pattern.compile("%(?<var>[a-zA-Z0-9_]+)%").matcher(path);
         while(m.find()) {
-            path = m.replaceFirst(environment.get(m.group("var")));
+            path = m.replaceFirst(sanitizeReplaceString(environment.get(m.group("var"))));
         }
         return path;
     }
@@ -63,11 +68,11 @@ public class PathSanitizer {
         path = path.replaceFirst("^~", System.getProperty("user.home"));
         Matcher m = Pattern.compile("\\$(?<var>[a-zA-Z0-9_]+)").matcher(path);
         while(m.find()) {
-            path = m.replaceFirst(environment.get(m.group("var")));
+            path = m.replaceFirst(sanitizeReplaceString(environment.get(m.group("var"))));
         }
         m = Pattern.compile("\\$\\{(?<var>[a-zA-Z0-9_]+)\\}").matcher(path);
         while(m.find()) {
-            path = m.replaceFirst(environment.get(m.group("var")));
+            path = m.replaceFirst(sanitizeReplaceString(environment.get(m.group("var"))));
         }
         return path;
     }
