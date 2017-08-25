@@ -44,13 +44,13 @@ import java.util.logging.Logger;
 
 public class Program {
     public static DataConsumer dataConsumer;
-    public static final Version VERSION = Version.parse("v1.0-alpha1");
+    public static final Version VERSION = Version.parse("v1.0-alpha2");
     public static final String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
     public static Config CONFIG;
-    
+
     /**
      * @param args the command line arguments
      */
@@ -60,28 +60,28 @@ public class Program {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
         ConsoleWindow consoleWindow = new ConsoleWindow();
-        
+
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         rootLogger.setLevel(Level.INFO);
         for(java.util.logging.Handler h : rootLogger.getHandlers()) {
             h.setLevel(Level.INFO);
         }
-        
+
         CONFIG = Config.readConfig(Program.CONFIG_FILE);
-        
+
         CaseManagerFactory factory = CaseManagerFactory.getDefaultFactory(CONFIG);
-        
+
         CaseManager cm = factory.createCaseManager();
         Program.dataConsumer = factory.createDataConsumer();
-        
+
         Thread dataConsumerThread = new Thread(() -> {
             Program.dataConsumer.start();
         });
         dataConsumerThread.setName("DataConsumerThread");
         dataConsumerThread.start();
-        
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             MainWindow window = new MainWindow(consoleWindow, cm);
@@ -89,7 +89,7 @@ public class Program {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     consoleWindow.dispose();
-                    
+
                     /*
                     Open a new Thread because you can't wait in the EventQueue Thread.
                     The application will stay open as long as there are extra Threads open,
