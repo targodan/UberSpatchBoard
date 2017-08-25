@@ -33,7 +33,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-version = '1.0-alpha1'
+version = '1.0-alpha2'
 
 if (!hasProperty('mainClass')) {
     ext.mainClass = 'de.targodan.usb.Program'
@@ -66,7 +66,7 @@ task wrapper(type: Wrapper) {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'UberSpatchBoard',  
+        attributes 'Implementation-Title': 'UberSpatchBoard',
         	'Implementation-Version': version,
         	'Main-Class': 'de.targodan.usb.Program'
     }
@@ -74,7 +74,7 @@ jar {
 
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'UberSpatchBoard',  
+        attributes 'Implementation-Title': 'UberSpatchBoard',
         	'Implementation-Version': version,
         	'Main-Class': 'de.targodan.usb.Program'
     }

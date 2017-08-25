@@ -5,7 +5,7 @@ The ultimate spatch board for dispatching fuel rats cases.
 
 # How to Install
 
-Just download the latest ".jar"-file from [releases](releases) put it wherever you want and double click to start it. Done.
+Just download the latest ".jar"-file from [releases](https://github.com/targodan/UberSpatchBoard/releases) put it wherever you want and double click to start it. Done.
 
 **NOTE:** So far only HexChat is supported. The default place where it is looking for the logfile is `%appdata%\hexchat\logs\fuelrats\#fuelrats.log` or on linux `~/.config/hexchat/fuelrats/fuelrats.log`.
 If your HexChat logs to some other location go to `File` -> `Settings` and change the location.
@@ -28,12 +28,12 @@ There *will* be things that this tool won't detect and there may be things that 
 - Support of other IRC clients
 - Prepared answers and questions for sending to the client like `Hello CLIENT, do you see a blue O2 timer at the top right of your screen?`
 
-Any feature you'd like to see missing? Go to [issues](issues) and either open up a new issue or give a :+1: on an existing issue that you really want to see implemented.
+Any feature you'd like to see missing? Go to [issues](https://github.com/targodan/UberSpatchBoard/issues) and either open up a new issue or give a :+1: on an existing issue that you really want to see implemented.
 
 # Contribute
 
 You know your way around Java and want to help out? Great! :smiley:
-Just make a fork and open a pull request on the `development` branch (not the master branch).
+Just make a fork and open a pull request on the `develop` branch (not the master branch).
 
 Please take a look at the existing code though and adopt that code style.
 I'm sorry but that style is not debatable and pull requests not written in that style will not be accepted.
