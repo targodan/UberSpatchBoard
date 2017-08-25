@@ -25,6 +25,7 @@
 plugins {
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'edu.sc.seis.launch4j' version '2.4.1'
 }
 
 apply plugin: 'java'
@@ -98,4 +99,8 @@ jacocoTestReport {
             )
         })
     }
+}
+
+launch4j {
+    mainClassName = 'de.targodan.usb.Program'
 }
