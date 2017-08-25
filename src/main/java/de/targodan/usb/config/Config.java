@@ -50,7 +50,7 @@ public class Config {
         public String path;
     }
     
-    List<DataSource> dataSources;
+    public List<DataSource> dataSources;
     
     public Config() {
         this.dataSources = new ArrayList<>();

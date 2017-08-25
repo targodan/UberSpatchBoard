@@ -49,6 +49,7 @@ public class Program {
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
+    public static Config CONFIG;
     
     /**
      * @param args the command line arguments
@@ -68,9 +69,9 @@ public class Program {
             h.setLevel(Level.INFO);
         }
         
-        Config config = Config.readConfig(Program.CONFIG_FILE);
+        CONFIG = Config.readConfig(Program.CONFIG_FILE);
         
-        CaseManagerFactory factory = CaseManagerFactory.getDefaultFactory(config);
+        CaseManagerFactory factory = CaseManagerFactory.getDefaultFactory(CONFIG);
         
         CaseManager cm = factory.createCaseManager();
         Program.dataConsumer = factory.createDataConsumer();
