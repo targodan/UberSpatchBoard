@@ -116,7 +116,10 @@ public class DataConsumer {
         
         while(!this.done.get()) {
             try {
-                this.done.wait();
+                Thread t = Thread.currentThread();
+                synchronized(t) {
+                    t.wait(50);
+                }
             } catch (InterruptedException ex) {
                 Logger.getLogger(SingleChannelFileDataSource.class.getName()).log(Level.SEVERE, null, ex);
                 break;

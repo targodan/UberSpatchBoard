@@ -97,12 +97,21 @@ public class Program {
                 public void windowClosed(WindowEvent e) {
                     consoleWindow.dispose();
                     
-                    Program.dataConsumer.stop();
-                    try {
-                        dataConsumerThread.join();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    /*
+                    Open a new Thread because you can't wait in the EventQueue Thread.
+                    The application will stay open as long as there are extra Threads open,
+                    so this should work as intended.
+                    */
+                    Thread cleanUpThread = new Thread(() -> {
+                        Program.dataConsumer.stop();
+                        try {
+                            dataConsumerThread.join();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                    cleanUpThread.setName("cleanUpThread");
+                    cleanUpThread.start();
                 }
             });
             window.setVisible(true);
