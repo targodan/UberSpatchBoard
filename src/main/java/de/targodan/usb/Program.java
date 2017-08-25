@@ -67,7 +67,7 @@ public class Program {
         } catch (IOException ex) {
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Config config;
+        Config config = null;
         if(configFileExistedAlready) {
             YamlReader reader = new YamlReader(file);
             try {
@@ -75,6 +75,9 @@ public class Program {
             } catch (YamlException ex) {
                 Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+        if(config == null) {
+            config = Config.getDefaultConfig();
         }
         return null;
     }
