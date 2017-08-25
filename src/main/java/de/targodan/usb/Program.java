@@ -23,7 +23,8 @@
  */
 package de.targodan.usb;
 
-import com.esotericsoftware.yamlbeans.YamlException;
+import de.targodan.usb.config.CaseManagerFactory;
+import de.targodan.usb.config.Config;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.io.DataSource;
@@ -37,50 +38,17 @@ import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import com.esotericsoftware.yamlbeans.YamlReader;
 
 public class Program {
     public static DataConsumer dataConsumer;
     public static final Version VERSION = Version.parse("v1.0-alpha1");
+    public static final String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
-    
-    private static Config readConfig() {
-        Path path = Paths.get("usb.yml");
-        boolean configFileExistedAlready = false;
-        FileReader file = null;
-        try {
-            File f = path.toFile();
-            configFileExistedAlready = !f.createNewFile();
-            file = new FileReader(f);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Config config = null;
-        if(configFileExistedAlready) {
-            YamlReader reader = new YamlReader(file);
-            try {
-                config = reader.read(Config.class);
-            } catch (YamlException ex) {
-                Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        if(config == null) {
-            config = Config.getDefaultConfig();
-        }
-        return null;
-    }
     
     /**
      * @param args the command line arguments
@@ -100,30 +68,18 @@ public class Program {
             h.setLevel(Level.INFO);
         }
         
-        CaseManager cm = new CaseManager();
-        String appdata = System.getenv("APPDATA");
-        String logfile = appdata+"\\HexChat\\logs\\FuelRats\\#fuelrats.log";
+        Config config = Config.readConfig(Program.CONFIG_FILE);
         
-        Handler handler = new DefaultHandler();
-        handler.registerCaseManager(cm);
-        Parser parser = new DefaultParser();
-        parser.registerHandler(handler);
+        CaseManagerFactory factory = CaseManagerFactory.getDefaultFactory(config);
         
-        Program.dataConsumer = new DataConsumer(parser);
+        CaseManager cm = factory.createCaseManager();
+        Program.dataConsumer = factory.createDataConsumer();
         
         Thread dataConsumerThread = new Thread(() -> {
             Program.dataConsumer.start();
         });
         dataConsumerThread.setName("DataConsumerThread");
         dataConsumerThread.start();
-        
-        try {
-            DataSource ds = new SingleChannelFileDataSource("#fuelrats", logfile, new HexchatMarshaller());
-            Program.dataConsumer.addDataSource(ds);
-        } catch(Exception ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Can't open logfile.", logfile);
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, "Exception opening logfile.", ex);
-        }
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
