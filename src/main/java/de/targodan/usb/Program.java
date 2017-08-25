@@ -23,6 +23,7 @@
  */
 package de.targodan.usb;
 
+import com.esotericsoftware.yamlbeans.YamlException;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.io.DataSource;
@@ -35,9 +36,16 @@ import de.targodan.usb.io.SingleChannelFileDataSource;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import com.esotericsoftware.yamlbeans.YamlReader;
 
 public class Program {
     public static DataConsumer dataConsumer;
@@ -45,6 +53,31 @@ public class Program {
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
+    
+    private static Config readConfig() {
+        Path path = Paths.get("usb.yml");
+        boolean configFileExistedAlready = false;
+        FileReader file = null;
+        try {
+            File f = path.toFile();
+            configFileExistedAlready = !f.createNewFile();
+            file = new FileReader(f);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Config config;
+        if(configFileExistedAlready) {
+            YamlReader reader = new YamlReader(file);
+            try {
+                config = reader.read(Config.class);
+            } catch (YamlException ex) {
+                Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
     
     /**
      * @param args the command line arguments
