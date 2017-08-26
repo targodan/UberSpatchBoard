@@ -52,8 +52,11 @@ public class Config {
     
     public List<DataSource> dataSources;
     
+    public float secondsUntilClearedCasesAreRemoved;
+    
     public Config() {
         this.dataSources = new ArrayList<>();
+        this.secondsUntilClearedCasesAreRemoved = 60;
     }
     
     public static Config getDefaultConfig() {

@@ -26,6 +26,7 @@ package de.targodan.usb.ui;
 import de.targodan.usb.Program;
 import de.targodan.usb.config.Config;
 import de.targodan.usb.config.IRCClientRegistry;
+import java.awt.Window;
 import java.io.File;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
@@ -36,12 +37,13 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author corbatto
  */
-public class SettingsWindow extends javax.swing.JFrame {
+public class SettingsWindow extends javax.swing.JDialog {
 
     /**
      * Creates new form SettingsWindow
      */
-    public SettingsWindow() {
+    public SettingsWindow(Window owner) {
+        super(owner);
         initComponents();
         
         this.fileChooser = new JFileChooser();
@@ -62,9 +64,12 @@ public class SettingsWindow extends javax.swing.JFrame {
                 .map(client -> client.getName())
                 .toArray(String[]::new)
         ));
-        if(Program.CONFIG != null && Program.CONFIG.dataSources.size() > 0) {
-            this.logfile.setText(Program.CONFIG.dataSources.get(0).path);
-            this.ircClient.setSelectedItem(Program.CONFIG.dataSources.get(0).type);
+        if(Program.CONFIG != null) {
+            this.cleardCaseRemovalSeconds.setText(Float.toString(Program.CONFIG.secondsUntilClearedCasesAreRemoved));
+            if(Program.CONFIG.dataSources.size() > 0) {
+                this.logfile.setText(Program.CONFIG.dataSources.get(0).path);
+                this.ircClient.setSelectedItem(Program.CONFIG.dataSources.get(0).type);
+            }
         }
     }
 
@@ -85,13 +90,17 @@ public class SettingsWindow extends javax.swing.JFrame {
         logfile = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel3 = new javax.swing.JLabel();
+        cleardCaseRemovalSeconds = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("USB - Settings");
 
         java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
         jPanel1Layout.columnWidths = new int[] {0, 5, 0, 5, 0};
-        jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0};
+        jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel1Layout.columnWeights = new double[] {0.0, 0.0, 1.0, 0.0, 0.0};
         jPanel1.setLayout(jPanel1Layout);
 
@@ -147,8 +156,35 @@ public class SettingsWindow extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 8;
         jPanel1.add(jButton2, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel1.add(jSeparator1, gridBagConstraints);
+
+        jLabel3.setText("Cleared Case Removal");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanel1.add(jLabel3, gridBagConstraints);
+
+        cleardCaseRemovalSeconds.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE;
+        jPanel1.add(cleardCaseRemovalSeconds, gridBagConstraints);
+
+        jLabel4.setText("Seconds");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 6;
+        jPanel1.add(jLabel4, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -156,14 +192,14 @@ public class SettingsWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -184,29 +220,44 @@ public class SettingsWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_onIRCClientChange
 
     private void onSaveClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSaveClicked
-        this.updateConfig();
-        Config.writeConfig(Program.CONFIG, Program.CONFIG_FILE);
-        JOptionPane.showMessageDialog(this, "You need to restart the UberSpatchBoard for the changes to take effect.", "Sorry", JOptionPane.INFORMATION_MESSAGE);
-        this.dispose();
+        if(this.updateConfig()) {
+            Config.writeConfig(Program.CONFIG, Program.CONFIG_FILE);
+            JOptionPane.showMessageDialog(this, "You need to restart the UberSpatchBoard for the changes to take effect.", "Sorry", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+        }
     }//GEN-LAST:event_onSaveClicked
 
-    private void updateConfig() {
+    private boolean updateConfig() {
         Program.CONFIG.dataSources.clear();
         Config.DataSource ds = new Config.DataSource();
         ds.path = this.logfile.getText();
         ds.type = (String)this.ircClient.getSelectedItem();
         Program.CONFIG.dataSources.add(ds);
+        try {
+            String secondsTxt = this.cleardCaseRemovalSeconds.getText().trim();
+            if(secondsTxt.length() > 0) {
+                Program.CONFIG.secondsUntilClearedCasesAreRemoved = Float.parseFloat(secondsTxt);
+            }
+        } catch(NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Cleared case removal time needs to be a number.", "Sorry", JOptionPane.INFORMATION_MESSAGE);
+            return false;
+        }
+        return true;
     }
     
     private JFileChooser fileChooser;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField cleardCaseRemovalSeconds;
     private javax.swing.JComboBox<String> ircClient;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField logfile;
     // End of variables declaration//GEN-END:variables
 }

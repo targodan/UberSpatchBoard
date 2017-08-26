@@ -32,13 +32,13 @@ import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
 import java.awt.Dimension;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -46,7 +46,7 @@ import org.jdesktop.swingx.VerticalLayout;
  * @author Luca Corbatto
  */
 public class MainWindow extends javax.swing.JFrame implements Observer {
-
+    
     /**
      * Creates new form MainWindow
      */
@@ -56,6 +56,24 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.consoleWindow = consoleWindow;
         
         this.casePanel.setLayout(new VerticalLayout());
+        
+        this.runRemoveClearedCasesThread = new AtomicBoolean(true);
+        this.removeClearedCasesThread = new Thread(() -> {
+            while(this.runRemoveClearedCasesThread.get()) {
+                try {
+                    Thread t = Thread.currentThread();
+                    synchronized(t) {
+                        t.wait(200);
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if(Program.CONFIG.secondsUntilClearedCasesAreRemoved > 0) {
+                    this.cm.removeClosedCasesOlderThan(LocalDateTime.now().minus((int)(Program.CONFIG.secondsUntilClearedCasesAreRemoved * 1000), ChronoUnit.MILLIS));
+                }
+            }
+        });
+        this.removeClearedCasesThread.setName("RemoveClearedCasesThread");
     }
     
     public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
@@ -72,6 +90,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         }
         
         this.casePanel.removeAll();
+        this.cm.getClosedCases().forEach(c -> {
+            this.casePanel.add(new CaseView(c));
+        });
         this.cm.getCases().forEach(c -> {
             this.casePanel.add(new CaseView(c));
         });
@@ -122,6 +143,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("USB - UberSpatchBoard");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
         statusBar.setLayout(statusBarLayout);
@@ -305,7 +334,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_onAddTestCaseClicked
 
     private void onOpenInjectionWindowClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onOpenInjectionWindowClicked
-        MessageInjectionWindow window = new MessageInjectionWindow();
+        MessageInjectionWindow window = new MessageInjectionWindow(this);
         window.setVisible(true);
         Program.dataConsumer.addDataSource(window);
     }//GEN-LAST:event_onOpenInjectionWindowClicked
@@ -336,12 +365,27 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private void onSettingsClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSettingsClicked
         java.awt.EventQueue.invokeLater(() -> {
-            new SettingsWindow().setVisible(true);
+            new SettingsWindow(this).setVisible(true);
         });
     }//GEN-LAST:event_onSettingsClicked
 
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        this.removeClearedCasesThread.start();
+    }//GEN-LAST:event_formWindowOpened
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        this.runRemoveClearedCasesThread.set(false);
+        try {
+            this.removeClearedCasesThread.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosing
+
     private CaseManager cm;
     private ConsoleWindow consoleWindow;
+    private final Thread removeClearedCasesThread;
+    private AtomicBoolean runRemoveClearedCasesThread;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
