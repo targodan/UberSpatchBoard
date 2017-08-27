@@ -47,6 +47,8 @@ public class Program {
     public static Config CONFIG;
 
     /**
+     * The main function will start up the UberSpatchBoard.
+     * 
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -55,7 +57,7 @@ public class Program {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
+        
         ConsoleWindow consoleWindow = new ConsoleWindow();
 
         Logger rootLogger = LogManager.getLogManager().getLogger("");

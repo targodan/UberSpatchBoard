@@ -30,17 +30,31 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
- * @author corbatto
+ * TeeOutputStream is an OutputStream which redirects everything it receives to
+ * all OutputStreams given to it during construction.
+ * 
+ * @author Luca Corbatto
  */
 public class TeeOutputStream extends OutputStream {
     
     private final List<OutputStream> outputs;
     
+    /**
+     * Constructs a TeeOutputStream that will redirect any data to the given
+     * OutputStreams.
+     * 
+     * @param outputs The target OutputStreams.
+     */
     public TeeOutputStream(List<OutputStream> outputs) {
         this.outputs = new ArrayList<>(outputs);
     }
     
+    /**
+     * Constructs a TeeOutputStream that will redirect any data to the given
+     * OutputStreams.
+     * 
+     * @param outputs The target OutputStreams.
+     */
     public TeeOutputStream(OutputStream... outputs) {
         this.outputs = new ArrayList<>(Arrays.asList(outputs));
     }

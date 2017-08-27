@@ -26,12 +26,40 @@ package de.targodan.usb.config;
 import de.targodan.usb.io.Marshaller;
 
 /**
- *
+ * IRCClient represents a supported IRC client.
+ * 
+ * The implementations of this interface should be able to detect whether the
+ * client is installed and ideally where the fuelrats log file is located.
+ * 
  * @author corbatto
  */
 public interface IRCClient {
+    /**
+     * IsInstalled should check whether or not the client is installed.
+     * 
+     * @return 
+     */
     boolean isInstalled();
+    
+    /**
+     * GetFuelratsLogfilePath should return the path for the fuelrats log file.
+     * 
+     * @return 
+     */
     String getFuelratsLogfilePath();
+    
+    /**
+     * GetMarshaller should return a Marshaller that is able to marshal the log
+     * files of this client.
+     * 
+     * @return 
+     */
     Marshaller getMarshaller();
+    
+    /**
+     * GetName returns the name of the client.
+     * 
+     * @return 
+     */
     String getName();
 }
