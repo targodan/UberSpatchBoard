@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 /**
  * Version represents a version as defined in semantic versioning
- * {@link http://semver.org/} providing methods to parse and compare versions.
+ * <a href="http://semver.org/">SemVer</a> providing methods to parse and compare versions.
  * 
  * @author Luca Corbatto
  */

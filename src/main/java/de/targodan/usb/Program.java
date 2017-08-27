@@ -66,7 +66,6 @@ public class Program {
             h.setLevel(Level.INFO);
         }
         
-        JOptionPane.showMessageDialog(null, Arrays.toString(args));
         if(args.length >= 2 && args[0].equals("--config")) {
             CONFIG_FILE = PathSanitizer.sanitize(args[1]);
         }
