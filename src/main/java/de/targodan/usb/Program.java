@@ -25,19 +25,22 @@ package de.targodan.usb;
 
 import de.targodan.usb.config.CaseManagerFactory;
 import de.targodan.usb.config.Config;
+import de.targodan.usb.config.PathSanitizer;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class Program {
     public static DataConsumer dataConsumer;
     public static final Version VERSION = Version.parse("v1.0-alpha2");
-    public static final String CONFIG_FILE = "usb.yml";
+    public static String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
@@ -59,6 +62,11 @@ public class Program {
         rootLogger.setLevel(Level.INFO);
         for(java.util.logging.Handler h : rootLogger.getHandlers()) {
             h.setLevel(Level.INFO);
+        }
+        
+        JOptionPane.showMessageDialog(null, Arrays.toString(args));
+        if(args.length >= 2 && args[0].equals("--config")) {
+            CONFIG_FILE = PathSanitizer.sanitize(args[1]);
         }
 
         CONFIG = Config.readConfig(Program.CONFIG_FILE);
