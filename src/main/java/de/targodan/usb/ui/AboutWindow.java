@@ -39,6 +39,7 @@ public class AboutWindow extends javax.swing.JDialog {
         
         this.versionLabel.setText(Program.VERSION.toString());
         this.contributors.setText(String.join(", ", Program.CONTRIBUTORS));
+        this.javaVersion.setText("Java Version: "+System.getProperty("java.version"));
     }
 
     /**
@@ -57,12 +58,13 @@ public class AboutWindow extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         contributors = new javax.swing.JTextArea();
+        javaVersion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("USB - About");
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
-        layout.columnWidths = new int[] {0, 5, 0, 5, 0, 5, 0};
-        layout.rowHeights = new int[] {0, 10, 0, 40, 0, 10, 0};
+        layout.columnWidths = new int[] {0, 5, 0, 5, 0};
+        layout.rowHeights = new int[] {0, 10, 0, 30, 0, 30, 0};
         getContentPane().setLayout(layout);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
@@ -70,12 +72,13 @@ public class AboutWindow extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_TRAILING;
         getContentPane().add(jLabel1, gridBagConstraints);
 
         versionLabel.setText("v");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
         getContentPane().add(versionLabel, gridBagConstraints);
@@ -85,15 +88,14 @@ public class AboutWindow extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridwidth = 5;
         getContentPane().add(jLabel3, gridBagConstraints);
 
         jLabel2.setText("Thanks to:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
         getContentPane().add(jLabel2, gridBagConstraints);
 
         jScrollPane1.setMinimumSize(new java.awt.Dimension(243, 78));
@@ -103,14 +105,22 @@ public class AboutWindow extends javax.swing.JDialog {
         contributors.setRows(5);
         contributors.setTabSize(4);
         contributors.setBorder(null);
+        contributors.setPreferredSize(new java.awt.Dimension(200, 90));
         jScrollPane1.setViewportView(contributors);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(jScrollPane1, gridBagConstraints);
+
+        javaVersion.setText("Java Version:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 5;
+        getContentPane().add(javaVersion, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -121,6 +131,7 @@ public class AboutWindow extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel javaVersion;
     private javax.swing.JLabel versionLabel;
     // End of variables declaration//GEN-END:variables
 }
