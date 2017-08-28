@@ -260,6 +260,13 @@ public class CaseTable extends JTable {
                 this.relayEvent(e);
             }
         });
+        
+        // Case number
+        this.getColumnModel().getColumn(0).setMaxWidth(45);
+        // Language
+        this.getColumnModel().getColumn(2).setMaxWidth(45);
+        // Platform
+        this.getColumnModel().getColumn(3).setMaxWidth(45);
     }
 
     @Override

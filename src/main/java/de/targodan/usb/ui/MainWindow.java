@@ -53,6 +53,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         
         initComponents();
         
+        this.setTableColumnWidths();
+        
         this.consoleWindow = consoleWindow;
         
         this.runRemoveClearedCasesThread = new AtomicBoolean(true);
@@ -74,6 +76,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.removeClearedCasesThread.setName("RemoveClearedCasesThread");
         
         this.updateCases();
+    }
+    
+    private void setTableColumnWidths() {
     }
     
     private void updateCases() {
