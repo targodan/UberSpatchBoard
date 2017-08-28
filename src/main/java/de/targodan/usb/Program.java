@@ -39,7 +39,7 @@ import javax.swing.JOptionPane;
 
 public class Program {
     public static DataConsumer dataConsumer;
-    public static final Version VERSION = Version.parse("v1.0-alpha2");
+    public static final Version VERSION = Version.parse("v1.0-alpha.3");
     public static String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
