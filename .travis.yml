@@ -29,7 +29,7 @@ deploy:
       skip_cleanup: true
       file: 
         - "build/libs/UberSpatchBoard.jar"
-        - "build/launch4j/UberSpatchBoard-windows.jar"
+        - "build/launch4j/UberSpatchBoard-windows.zip"
       on:
           repo: targodan/UberSpatchBoard
           tags: true
