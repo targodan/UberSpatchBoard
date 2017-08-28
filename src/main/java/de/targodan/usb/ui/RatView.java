@@ -190,7 +190,7 @@ public class RatView extends javax.swing.JPanel implements Observer {
             .addGroup(ratNamePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(ratName)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ratNamePanelLayout.setVerticalGroup(
             ratNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
