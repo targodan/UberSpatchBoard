@@ -172,7 +172,7 @@ public class DefaultHandler implements Handler {
     
     protected Case lookupCase(Rat rat, String caseIdentifier) {
         try {
-            int caseID = Integer.valueOf(caseIdentifier);
+            int caseID = Integer.valueOf(caseIdentifier.replace("#", ""));
             return this.cm.getCase(caseID);
         } catch(Exception ex) {}
         
