@@ -25,6 +25,7 @@ package de.targodan.usb.ui;
 
 import de.targodan.usb.io.DataSource;
 import de.targodan.usb.io.IRCMessage;
+import java.awt.Window;
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
@@ -34,13 +35,14 @@ import java.util.logging.Logger;
  *
  * @author Luca Corbatto
  */
-public class MessageInjectionWindow extends javax.swing.JFrame implements DataSource {
+public class MessageInjectionWindow extends javax.swing.JDialog implements DataSource {
     private BlockingQueue<IRCMessage> output;
 
     /**
      * Creates new form MessageInjectionWindow
      */
-    public MessageInjectionWindow() {
+    public MessageInjectionWindow(Window owner) {
+        super(owner);
         initComponents();
     }
 

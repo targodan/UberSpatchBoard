@@ -25,33 +25,30 @@ package de.targodan.usb;
 
 import de.targodan.usb.config.CaseManagerFactory;
 import de.targodan.usb.config.Config;
+import de.targodan.usb.config.PathSanitizer;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.io.DataConsumer;
-import de.targodan.usb.io.DataSource;
-import de.targodan.usb.io.DefaultHandler;
-import de.targodan.usb.io.DefaultParser;
-import de.targodan.usb.io.Handler;
-import de.targodan.usb.io.HexchatMarshaller;
-import de.targodan.usb.io.Parser;
-import de.targodan.usb.io.SingleChannelFileDataSource;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
-import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class Program {
     public static DataConsumer dataConsumer;
-    public static final Version VERSION = Version.parse("v1.0-alpha2");
-    public static final String CONFIG_FILE = "usb.yml";
+    public static final Version VERSION = Version.parse("v1.0-alpha.3");
+    public static String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         "Your name could be here",
     };
     public static Config CONFIG;
 
     /**
+     * The main function will start up the UberSpatchBoard.
+     * 
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -60,13 +57,17 @@ public class Program {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
+        
         ConsoleWindow consoleWindow = new ConsoleWindow();
 
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         rootLogger.setLevel(Level.INFO);
         for(java.util.logging.Handler h : rootLogger.getHandlers()) {
             h.setLevel(Level.INFO);
+        }
+        
+        if(args.length >= 2 && args[0].equals("--config")) {
+            CONFIG_FILE = PathSanitizer.sanitize(args[1]);
         }
 
         CONFIG = Config.readConfig(Program.CONFIG_FILE);

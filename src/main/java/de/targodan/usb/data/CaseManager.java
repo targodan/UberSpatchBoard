@@ -65,6 +65,7 @@ public class CaseManager extends Observable {
         if(this.cases.containsKey(c.getNumber())) {
             throw new IllegalStateException("A case with the number " + Integer.toString(c.getNumber()) + " already exists!");
         }
+        c.attachManager(this);
         this.cases.put(c.getNumber(), c);
         
         this.setChanged();
@@ -83,10 +84,10 @@ public class CaseManager extends Observable {
     
     public void removeClosedCasesOlderThan(LocalDateTime closeTime) {
         // TODO: Check if < 0 is correct
-        this.closedCases.removeIf(item -> item.getCloseTime().compareTo(closeTime) < 0);
-        
-        this.setChanged();
-        this.notifyObservers();
+        if(this.closedCases.removeIf(item -> item.getCloseTime().compareTo(closeTime) < 0)) {
+            this.setChanged();
+            this.notifyObservers();
+        }
     }
     
     public Case lookupCaseOfClient(String clientName) {

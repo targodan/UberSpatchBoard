@@ -33,7 +33,7 @@ Any feature you'd like to see missing? Go to [issues](https://github.com/targoda
 # Contribute
 
 You know your way around Java and want to help out? Great! :smiley:
-Just make a fork and open a pull request on the `develop` branch (not the master branch).
+Please read the [Code of Conduct](CODE_OF_CONDUCT.md) and then just make a fork and open a pull request on the `develop` branch (not the master branch).
 
 Please take a look at the existing code though and adopt that code style.
 I'm sorry but that style is not debatable and pull requests not written in that style will not be accepted.

@@ -14,13 +14,22 @@ notifications:
     on_failure: change
 
 before_deploy:
-    - "./gradlew fatJar javadoc"
-    - "mv build/libs/*-all-*.jar build/libs/UberSpatchBoard.jar"
+    - "./gradlew jar fatJar createExe javadoc"
+    - "pushd build"
+    - "pushd launch4j"
+    - "zip UberSpatchBoard-windows.zip -r *"
+    - "popd"
+    - "pushd libs"
+    - "mv *-all-*.jar UberSpatchBoard.jar"
+    - "popd"
+    - "popd"
 
 deploy:
     - provider: releases
       skip_cleanup: true
-      file: build/libs/UberSpatchBoard.jar
+      file: 
+        - "build/libs/UberSpatchBoard.jar"
+        - "build/launch4j/UberSpatchBoard-windows.jar"
       on:
           repo: targodan/UberSpatchBoard
           tags: true

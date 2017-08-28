@@ -24,12 +24,18 @@
 package de.targodan.usb.config;
 
 /**
- *
- * @author corbatto
+ * OperatingSystem represents the supported operating systems.
+ * 
+ * @author Luca Corbatto
  */
 public enum OperatingSystem {
     WINDOWS, MAC, UNIX, SOLARIS;
     
+    /**
+     * GetCurrent returns the currently running operating system.
+     * 
+     * @return 
+     */
     public static OperatingSystem getCurrent() {
         String osId = System.getProperty("os.name").toLowerCase();
         if(osId.contains("win")) {

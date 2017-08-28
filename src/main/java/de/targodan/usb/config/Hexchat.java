@@ -32,8 +32,9 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
- *
- * @author corbatto
+ * Hexchat represents the HexChat IRC client.
+ * 
+ * @author Luca Corbatto
  */
 public class Hexchat implements IRCClient {
     private String getBasePath() {
@@ -84,8 +85,12 @@ public class Hexchat implements IRCClient {
         
         File fuelratsFile = Arrays.asList(fuelratsFolder.listFiles()).stream()
                 .filter(f -> f.isFile())
-                .filter(dir -> fuelratsFilePattern.matcher(dir.getName()).matches())
+                .filter(f -> fuelratsFilePattern.matcher(f.getName()).matches())
                 .findFirst().orElse(null);
+        
+        if(fuelratsFile == null) {
+            return null;
+        }
                 
         return fuelratsFile.getAbsolutePath();
     }

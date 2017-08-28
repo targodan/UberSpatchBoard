@@ -24,6 +24,7 @@
 package de.targodan.usb.ui;
 
 import de.targodan.usb.TeeOutputStream;
+import java.awt.Window;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;

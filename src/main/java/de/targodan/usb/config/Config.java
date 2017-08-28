@@ -39,12 +39,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
- *
+ * Config represents the configuration of the UberSpatchBoard.
+ * 
  * @author Luca Corbatto
  */
 public class Config {
+    /**
+     * DataSource represents the configuration of a data source.
+     */
     public static class DataSource {
         public String type;
         public String path;
@@ -52,30 +57,52 @@ public class Config {
     
     public List<DataSource> dataSources;
     
+    public float secondsUntilClearedCasesAreRemoved;
+
+    /**
+     * Creates a Config instance.
+     */
     public Config() {
         this.dataSources = new ArrayList<>();
+        this.secondsUntilClearedCasesAreRemoved = 60;
     }
     
+    /**
+     * Creates a default Config trying to detect any supported
+     * IRC clients installed on the local machine.
+     * 
+     * @return 
+     */
     public static Config getDefaultConfig() {
         Config config = new Config();
         
-        IRCClient defaultClient = Config.getDefaultIRCClient();
-        if(defaultClient != null) {
+        Config.getInstalledIRCClients().forEach((client) -> {
             DataSource ds = new DataSource();
-            ds.type = defaultClient.getName();
-            ds.path = defaultClient.getFuelratsLogfilePath();
+            ds.type = client.getName();
+            ds.path = client.getFuelratsLogfilePath();
             config.dataSources.add(ds);
-        }
+        });
         
         return config;
     }
     
-    private static IRCClient getDefaultIRCClient() {
+    /**
+     * Returns any registered IRCClient that reports as being installed.
+     * 
+     * @return 
+     */
+    private static List<IRCClient> getInstalledIRCClients() {
         return IRCClientRegistry.getSupportedClients().stream()
                 .filter(client -> client.isInstalled())
-                .findFirst().orElse(null);
+                .collect(Collectors.toList());
     }
     
+    /**
+     * Reads a configuration from a filename using the yaml format.
+     * 
+     * @param filename
+     * @return 
+     */
     public static Config readConfig(String filename) {
         Path path = Paths.get(filename);
         FileReader file = null;
@@ -107,6 +134,12 @@ public class Config {
         return config;
     }
     
+    /**
+     * Writes the given configuration to a file using the yaml formatting.
+     * 
+     * @param config
+     * @param filename 
+     */
     public static void writeConfig(Config config, String filename) {
         Path path = Paths.get(filename);
         FileWriter file;

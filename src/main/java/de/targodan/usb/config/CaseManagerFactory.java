@@ -31,18 +31,36 @@ import de.targodan.usb.io.DefaultParser;
 import de.targodan.usb.io.Handler;
 import de.targodan.usb.io.Parser;
 import de.targodan.usb.io.SingleChannelFileDataSource;
-import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author corbatto
+ * CaseManagerFactory creates a CaseManager with DataSources as defined in the
+ * given Config.
+ * 
+ * @author Luca Corbatto
  */
 public abstract class CaseManagerFactory {
+    /**
+     * Creates a CaseManager.
+     * 
+     * @return 
+     */
     public abstract CaseManager createCaseManager();
+    
+    /**
+     * Creates a DataConsumer with DataSources as defined in the Config.
+     * 
+     * @return 
+     */
     public abstract DataConsumer createDataConsumer();
     
+    /**
+     * Creates a default factory.
+     * 
+     * @param config
+     * @return 
+     */
     public static CaseManagerFactory getDefaultFactory(Config config) {
         return new DefaultCaseManagerFactory(config);
     }

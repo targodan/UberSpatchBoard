@@ -28,39 +28,103 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
- * @author corbatto
+ * Version represents a version as defined in semantic versioning
+ * <a href="http://semver.org/">SemVer</a> providing methods to parse and compare versions.
+ * 
+ * @author Luca Corbatto
  */
 public class Version {
-    public static final Pattern VERSION_STRING_PATTERN = Pattern.compile("^v?(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<bugfix>\\d+))?(?:-(?<addition>\\w+))?$");
+    public static final Pattern VERSION_STRING_PATTERN = Pattern.compile("^v?(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<bugfix>\\d+))?(?:-(?<suffix>[a-zA-Z.0-9]+))?$");
     
     private int major;
     private int minor;
-    private int bugfix;
-    private String addition;
+    private int patch;
+    private String suffix;
+    private int suffixVersion;
     
+    /**
+     * Constructs a version with just major and minor version.
+     * 
+     * @param major Major version component.
+     * @param minor Minor version component.
+     */
     public Version(int major, int minor) {
         this.major = major;
         this.minor = minor;
-        this.bugfix = 0;
-        this.addition = null;
+        this.patch = 0;
+        this.suffix = null;
+        this.suffixVersion = 0;
     }
     
-    public Version(int major, int minor, String addition) {
+    /**
+     * Constructs a version with just major and minor version and an additional
+     * suffix.
+     * 
+     * @param major Major version component.
+     * @param minor Minor version component.
+     * @param suffix Version suffix.
+     */
+    public Version(int major, int minor, String suffix) {
         this(major, minor);
-        this.addition = addition;
+        this.splitAndSetSuffix(suffix);
     }
     
-    public Version(int major, int minor, int bugfix) {
+    /**
+     * Constructs a version with just major, minor and patch version.
+     * 
+     * @param major Major version component.
+     * @param minor Minor version component.
+     * @param patch Patch version component.
+     */
+    public Version(int major, int minor, int patch) {
         this(major, minor);
-        this.bugfix = bugfix;
+        this.patch = patch;
     }
     
-    public Version(int major, int minor, int bugfix, String addition) {
-        this(major, minor, bugfix);
-        this.addition = addition;
+    /**
+     * Constructs a version with just major, minor and patch version and a suffix.
+     * 
+     * @param major Major version component.
+     * @param minor Minor version component.
+     * @param patch Patch version component.
+     * @param suffix Version suffix.
+     */
+    public Version(int major, int minor, int patch, String suffix) {
+        this(major, minor, patch);
+        this.splitAndSetSuffix(suffix);
     }
     
+    /**
+     * SplitAndSetSuffix splits the suffix on a '.' trying to interpret the second
+     * part as a number.
+     * 
+     * @param suffix 
+     */
+    private void splitAndSetSuffix(String suffix) {
+        String[] parts = suffix.split("\\.");
+        if(parts.length > 2) {
+            throw new IllegalArgumentException("The version suffix must not contain more than one '.'!");
+        }
+        this.suffix = parts[0];
+        if(parts.length == 2) {
+            try {
+                this.suffixVersion = Integer.parseUnsignedInt(parts[1]);
+            } catch(NumberFormatException ex) {
+                this.suffixVersion = 0;
+                this.suffix = suffix;
+            }
+        }
+    }
+    
+    /**
+     * Parse parses the given version string to create a Version instance.
+     * 
+     * The format is "[v]MAJOR.MINOR[.PATCH][-SUFFIX]" with the elements
+     * in brackets being optional.
+     * 
+     * @param versionString
+     * @return 
+     */
     public static Version parse(String versionString) {
         Version version = new Version(0, 0);
         
@@ -72,13 +136,13 @@ public class Version {
         String majorString = m.group("major");
         String minorString = m.group("minor");
         String bugfixString = m.group("bugfix");
-        String additionString = m.group("addition");
+        String suffixString = m.group("suffix");
         
         if(majorString == null || majorString.equals("")) {
             throw new IllegalArgumentException("Not a valid version string!");
         }
         try {
-            version.major = Integer.parseInt(majorString);
+            version.major = Integer.parseUnsignedInt(majorString);
         } catch(NumberFormatException ex) {
             throw new IllegalArgumentException("Not a valid version string!", ex);
         }
@@ -87,26 +151,34 @@ public class Version {
             throw new IllegalArgumentException("Not a valid version string!");
         }
         try {
-            version.minor = Integer.parseInt(minorString);
+            version.minor = Integer.parseUnsignedInt(minorString);
         } catch(NumberFormatException ex) {
             throw new IllegalArgumentException("Not a valid version string!", ex);
         }
         
-        version.bugfix = 0;
+        version.patch = 0;
         if(bugfixString != null && !bugfixString.equals("")) {
             try {
-                version.bugfix = Integer.parseInt(bugfixString);
+                version.patch = Integer.parseUnsignedInt(bugfixString);
             } catch(NumberFormatException ex) {}
         }
         
-        version.addition = null;
-        if(additionString != null && !additionString.equals("")) {
-            version.addition = additionString;
+        version.suffix = null;
+        if(suffixString != null && !suffixString.equals("")) {
+            version.splitAndSetSuffix(suffixString);
         }
         
         return version;
     }
 
+    /**
+     * ToString returns a string representation of the Version.
+     * 
+     * The format is "vMAJOR.MINOR[.PATCH][-SUFFIX]" with the elements
+     * in brackets being omitted if empty.
+     * 
+     * @return 
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -115,22 +187,39 @@ public class Version {
         sb.append(this.major);
         sb.append(".");
         sb.append(this.minor);
-        if(this.bugfix > 0) {
+        if(this.patch > 0) {
             sb.append(".");
-            sb.append(this.bugfix);
+            sb.append(this.patch);
         }
-        if(this.addition != null) {
+        if(this.suffix != null) {
             sb.append("-");
-            sb.append(this.addition);
+            sb.append(this.suffix);
+            if(this.suffixVersion > 0) {
+                sb.append(".");
+                sb.append(this.suffixVersion);
+            }
         }
         
         return sb.toString();
     }
     
+    /**
+     * Compares the other version to this one.
+     * 
+     * @param other
+     * @return &lt; 0 iff. this &lt; other
+     */
     public int compareTo(Version other) {
         return Version.compare(this, other);
     }
     
+    /**
+     * Compares the other version to this one.
+     * 
+     * @param v1
+     * @param v2
+     * @return &lt; 0 iff. v1 &lt; v2
+     */
     public static int compare(Version v1, Version v2) {
         if(v1.major != v2.major) {
             return v1.major - v2.major;
@@ -138,19 +227,23 @@ public class Version {
         if(v1.minor != v2.minor) {
             return v1.minor - v2.minor;
         }
-        if(v1.bugfix != v2.bugfix) {
-            return v1.bugfix - v2.bugfix;
+        if(v1.patch != v2.patch) {
+            return v1.patch - v2.patch;
         }
-        if(v1.addition == null && v2.addition != null) {
+        if(v1.suffix == null && v2.suffix != null) {
             return 1;
         }
-        if(v1.addition != null && v2.addition == null) {
+        if(v1.suffix != null && v2.suffix == null) {
             return -1;
         }
-        if(v1.addition == null && v2.addition == null) {
+        if(v1.suffix == null && v2.suffix == null) {
             return 0;
         }
-        return v1.addition.compareTo(v2.addition);
+        int suffixComp = v1.suffix.compareTo(v2.suffix);
+        if(suffixComp != 0) {
+            return suffixComp;
+        }
+        return v1.suffixVersion - v2.suffixVersion;
     }
 
     @Override
@@ -158,8 +251,9 @@ public class Version {
         int hash = 7;
         hash = 97 * hash + this.major;
         hash = 97 * hash + this.minor;
-        hash = 97 * hash + this.bugfix;
-        hash = 97 * hash + Objects.hashCode(this.addition);
+        hash = 97 * hash + this.patch;
+        hash = 97 * hash + Objects.hashCode(this.suffix);
+        hash = 97 * hash + this.suffixVersion;
         return hash;
     }
 
@@ -181,10 +275,13 @@ public class Version {
         if (this.minor != other.minor) {
             return false;
         }
-        if (this.bugfix != other.bugfix) {
+        if (this.patch != other.patch) {
             return false;
         }
-        if (!Objects.equals(this.addition, other.addition)) {
+        if (!Objects.equals(this.suffix, other.suffix)) {
+            return false;
+        }
+        if (this.suffixVersion != other.suffixVersion) {
             return false;
         }
         return true;
