@@ -114,6 +114,12 @@ public class VersionTest {
             Version result = Version.parse(versionString);
             assertThat(result, equalTo(expResult));
         }
+        {
+            String versionString = "4.0.2-alpha.1";
+            Version expResult = new Version(4, 0, 2, "alpha.1");
+            Version result = Version.parse(versionString);
+            assertThat(result, equalTo(expResult));
+        }
     }
 
     /**
@@ -138,6 +144,12 @@ public class VersionTest {
         {
             Version instance = new Version(1, 0, "alpha");
             String expResult = "v1.0-alpha";
+            String result = instance.toString();
+            assertThat(result, equalTo(expResult));
+        }
+        {
+            Version instance = new Version(1, 0, "alpha.2");
+            String expResult = "v1.0-alpha.2";
             String result = instance.toString();
             assertThat(result, equalTo(expResult));
         }
@@ -216,6 +228,24 @@ public class VersionTest {
         {
             Version v1 = new Version(2, 0, 1, "alpha1");
             Version v2 = new Version(2, 0, 1, "alpha2");
+            int result = Version.compare(v1, v2);
+            assertTrue(result < 0);
+        }
+        {
+            Version v1 = new Version(2, 0, 1, "alpha.1");
+            Version v2 = new Version(2, 0, 1, "alpha.2");
+            int result = Version.compare(v1, v2);
+            assertTrue(result < 0);
+        }
+        {
+            Version v1 = new Version(2, 0, 1, "alpha.01");
+            Version v2 = new Version(2, 0, 1, "alpha.2");
+            int result = Version.compare(v1, v2);
+            assertTrue(result < 0);
+        }
+        {
+            Version v1 = new Version(2, 0, 1, "alpha.1");
+            Version v2 = new Version(2, 0, 1, "alpha.12");
             int result = Version.compare(v1, v2);
             assertTrue(result < 0);
         }
