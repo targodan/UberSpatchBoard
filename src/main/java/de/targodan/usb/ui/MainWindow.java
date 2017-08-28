@@ -30,6 +30,7 @@ import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -39,7 +40,6 @@ import java.util.Observer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jdesktop.swingx.VerticalLayout;
 
 /**
  *
@@ -47,15 +47,16 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 public class MainWindow extends javax.swing.JFrame implements Observer {
     
-    /**
-     * Creates new form MainWindow
-     */
-    public MainWindow(ConsoleWindow consoleWindow) {
+    public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
+        this.cm = cm;
+        this.cm.addObserver(this);
+        
         initComponents();
         
-        this.consoleWindow = consoleWindow;
+        this.caseTable = new CaseTable(this.cm);
+        this.caseWrapperPanel.add(this.caseTable, BorderLayout.CENTER);
         
-        this.casePanel.setLayout(new VerticalLayout());
+        this.consoleWindow = consoleWindow;
         
         this.runRemoveClearedCasesThread = new AtomicBoolean(true);
         this.removeClearedCasesThread = new Thread(() -> {
@@ -74,14 +75,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         this.removeClearedCasesThread.setName("RemoveClearedCasesThread");
-    }
-    
-    public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
-        this(consoleWindow);
         
-        this.cm = cm;
         this.updateCases();
-        this.cm.addObserver(this);
     }
     
     private void updateCases() {
@@ -89,13 +84,13 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             throw new IllegalStateException("Can't updateCases without a CaseManager.");
         }
         
-        this.casePanel.removeAll();
-        this.cm.getClosedCases().forEach(c -> {
-            this.casePanel.add(new CaseView(c));
-        });
-        this.cm.getCases().forEach(c -> {
-            this.casePanel.add(new CaseView(c));
-        });
+//        this.casePanel.removeAll();
+//        this.cm.getClosedCases().forEach(c -> {
+//            this.casePanel.add(new CaseView(c));
+//        });
+//        this.cm.getCases().forEach(c -> {
+//            this.casePanel.add(new CaseView(c));
+//        });
         this.revalidate();
         this.repaint();
     }
@@ -117,13 +112,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void initComponents() {
 
         jToolBar1 = new javax.swing.JToolBar();
-        statusBar = new javax.swing.JPanel();
         caseBox = new javax.swing.JPanel();
         caseWrapperPanel = new javax.swing.JPanel();
-        caseViewHeader = new de.targodan.usb.ui.CaseView();
-        caseScrollPaneWrapper = new javax.swing.JPanel();
-        caseScrollPane = new javax.swing.JScrollPane();
-        casePanel = new javax.swing.JPanel();
+        statusBar = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
@@ -152,62 +143,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
 
-        javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
-        statusBar.setLayout(statusBarLayout);
-        statusBarLayout.setHorizontalGroup(
-            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        statusBarLayout.setVerticalGroup(
-            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 26, Short.MAX_VALUE)
-        );
-
         caseBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Cases"));
 
-        javax.swing.GroupLayout casePanelLayout = new javax.swing.GroupLayout(casePanel);
-        casePanel.setLayout(casePanelLayout);
-        casePanelLayout.setHorizontalGroup(
-            casePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1725, Short.MAX_VALUE)
-        );
-        casePanelLayout.setVerticalGroup(
-            casePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 777, Short.MAX_VALUE)
-        );
-
-        caseScrollPane.setViewportView(casePanel);
-
-        javax.swing.GroupLayout caseScrollPaneWrapperLayout = new javax.swing.GroupLayout(caseScrollPaneWrapper);
-        caseScrollPaneWrapper.setLayout(caseScrollPaneWrapperLayout);
-        caseScrollPaneWrapperLayout.setHorizontalGroup(
-            caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(caseScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1728, Short.MAX_VALUE))
-        );
-        caseScrollPaneWrapperLayout.setVerticalGroup(
-            caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 780, Short.MAX_VALUE)
-            .addGroup(caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(caseScrollPane))
-        );
-
-        javax.swing.GroupLayout caseWrapperPanelLayout = new javax.swing.GroupLayout(caseWrapperPanel);
-        caseWrapperPanel.setLayout(caseWrapperPanelLayout);
-        caseWrapperPanelLayout.setHorizontalGroup(
-            caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseViewHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 1106, Short.MAX_VALUE)
-            .addComponent(caseScrollPaneWrapper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        caseWrapperPanelLayout.setVerticalGroup(
-            caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(caseWrapperPanelLayout.createSequentialGroup()
-                .addComponent(caseViewHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(caseScrollPaneWrapper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
+        caseWrapperPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout caseBoxLayout = new javax.swing.GroupLayout(caseBox);
         caseBox.setLayout(caseBoxLayout);
@@ -218,6 +156,17 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         caseBoxLayout.setVerticalGroup(
             caseBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
+        statusBar.setLayout(statusBarLayout);
+        statusBarLayout.setHorizontalGroup(
+            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        statusBarLayout.setVerticalGroup(
+            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 26, Short.MAX_VALUE)
         );
 
         jMenu1.setText("File");
@@ -387,12 +336,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private final Thread removeClearedCasesThread;
     private AtomicBoolean runRemoveClearedCasesThread;
     
+    private CaseTable caseTable;
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
-    private javax.swing.JPanel casePanel;
-    private javax.swing.JScrollPane caseScrollPane;
-    private javax.swing.JPanel caseScrollPaneWrapper;
-    private de.targodan.usb.ui.CaseView caseViewHeader;
     private javax.swing.JPanel caseWrapperPanel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
