@@ -32,6 +32,8 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TextArea;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -229,6 +231,9 @@ public class CaseTable extends JTable {
                 int row = CaseTable.this.rowAtPoint(e.getPoint());
                 int column = CaseTable.this.columnAtPoint(e.getPoint());
                 Component c = CaseTable.this.cells.get(new Point(row, column));
+                if(c == null) {
+                    return;
+                }
                 
                 Rectangle pos = CaseTable.this.getCellRect(row, column, true);
                 
@@ -240,24 +245,18 @@ public class CaseTable extends JTable {
             }
             
             @Override
-            public void mouseMoved(MouseEvent e) {
-                super.mouseMoved(e);
-            }
+            public void mouseMoved(MouseEvent e) {}
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
                 this.relayEvent(e);
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-            }
+            public void mousePressed(MouseEvent e) {}
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
                 this.relayEvent(e);
             }
         });

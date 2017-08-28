@@ -53,9 +53,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         
         initComponents();
         
-        this.caseTable = new CaseTable(this.cm);
-        this.caseWrapperPanel.add(this.caseTable, BorderLayout.CENTER);
-        
         this.consoleWindow = consoleWindow;
         
         this.runRemoveClearedCasesThread = new AtomicBoolean(true);
@@ -114,6 +111,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jToolBar1 = new javax.swing.JToolBar();
         caseBox = new javax.swing.JPanel();
         caseWrapperPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new CaseTable(this.cm);
         statusBar = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -147,15 +146,21 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         caseWrapperPanel.setLayout(new java.awt.BorderLayout());
 
+        jTable1.setRowSelectionAllowed(false);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable1);
+
+        caseWrapperPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
         javax.swing.GroupLayout caseBoxLayout = new javax.swing.GroupLayout(caseBox);
         caseBox.setLayout(caseBoxLayout);
         caseBoxLayout.setHorizontalGroup(
             caseBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)
         );
         caseBoxLayout.setVerticalGroup(
             caseBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
@@ -336,8 +341,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private final Thread removeClearedCasesThread;
     private AtomicBoolean runRemoveClearedCasesThread;
     
-    private CaseTable caseTable;
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
     private javax.swing.JPanel caseWrapperPanel;
@@ -353,8 +356,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
     // End of variables declaration//GEN-END:variables
