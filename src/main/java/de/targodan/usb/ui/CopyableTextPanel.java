@@ -23,60 +23,100 @@
  */
 package de.targodan.usb.ui;
 
-import java.awt.Component;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 /**
  *
  * @author Luca Corbatto
  */
 public class CopyableTextPanel extends javax.swing.JPanel {
+    private class MouseHandler extends MouseAdapter {
+        private boolean wasInLastTime;
 
+        private void translate(MouseEvent e) {
+            e.translatePoint(-CopyableTextPanel.this.jPanel1.getX(), 0);
+        }
+
+        private boolean isInButton(Point p) {
+            JButton b = CopyableTextPanel.this.jButton1;
+            return b.getX() <= p.getX() && p.getX() <= b.getX() + b.getSize().getWidth()
+                    && b.getY() <= p.getY() && p.getY() <= b.getY() + b.getSize().getHeight();
+        }
+
+        private void relayEvent(MouseEvent e) {
+            this.translate(e);
+            if(this.isInButton(e.getPoint())) {
+                CopyableTextPanel.this.jButton1.doClick();
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            this.relayEvent(e);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            this.relayEvent(e);
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if(this.isInButton(e.getPoint())) {
+                CopyableTextPanel.this.jButton1.dispatchEvent(e);
+                CopyableTextPanel.this.jButton1.dispatchEvent(
+                        new MouseEvent(
+                                CopyableTextPanel.this.jButton1,
+                                MouseEvent.MOUSE_ENTERED,
+                                e.getWhen(),
+                                e.getModifiers(),
+                                e.getX(),
+                                e.getY(),
+                                e.getClickCount(),
+                                false)
+                );
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+        }
+    }
+    
+    
     /**
      * Creates new form CopyableTextPanel
      */
     public CopyableTextPanel() {
         initComponents();
         
-        this.addMouseListener(new MouseListener() {
-            private void relayEvent(MouseEvent e) {
-                e.translatePoint(-CopyableTextPanel.this.jPanel1.getX(), 0);
-                JButton b = CopyableTextPanel.this.jButton1;
-                if(b.getX() <= e.getX() && e.getX() <= b.getX() + b.getSize().getWidth()
-                        && b.getY() <= e.getY() && e.getY() <= b.getY() + b.getSize().getHeight()) {
-                    b.doClick();
-                }
-            }
-            
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                this.relayEvent(e);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                this.relayEvent(e);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-        });
+        this.addMouseListener(new MouseHandler());
+        this.addMouseMotionListener(new MouseHandler());
     }
     
     public CopyableTextPanel(String text) {
@@ -147,7 +187,7 @@ public class CopyableTextPanel extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

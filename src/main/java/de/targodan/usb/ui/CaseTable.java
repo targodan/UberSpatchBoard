@@ -26,14 +26,15 @@ package de.targodan.usb.ui;
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.data.Client;
+import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Event;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.TextArea;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -44,10 +45,13 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.stream.Stream;
+import javafx.util.Pair;
+import javax.swing.AbstractCellEditor;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
@@ -94,14 +98,14 @@ public class CaseTable extends JTable {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
+            return columnIndex == 6;
         }
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             switch(columnIndex) {
                 case 0:
-                    return this.getCase(rowIndex).getNumber();
+                    return new Pair<>(this.getCase(rowIndex).getNumber(), this.getCase(rowIndex));
                     
                 case 1:
                 case 2:
@@ -122,7 +126,10 @@ public class CaseTable extends JTable {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            throw new UnsupportedOperationException("Setting value is not supported.");
+            if(columnIndex == 6) {
+                String val = aValue.toString();
+                this.getCase(rowIndex).setNotes(val.split("\n"));
+            }
         }
 
         @Override
@@ -145,7 +152,7 @@ public class CaseTable extends JTable {
             if(rowIndex < this.cm.getClosedCases().size()) {
                 return this.cm.getClosedCases().get(rowIndex);
             }
-            return this.cm.getCases().get(this.cm.getClosedCases().size() + rowIndex);
+            return this.cm.getCases().get(rowIndex - this.cm.getClosedCases().size());
         }
 
         @Override
@@ -155,13 +162,44 @@ public class CaseTable extends JTable {
     }
     
     private static class CaseNumberRenderer implements TableCellRenderer {
+        private static final Color CR_BACKGROUND_COLOR = Color.RED;
+        private static final Color CR_FOREGROUND_COLOR = Color.WHITE;
+        private static final Color CLOSED_BACKGROUND_COLOR = Color.GREEN;
+        private static final Color CLOSED_FOREGROUND_COLOR = Color.BLACK;
+    
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Integer number = (Integer)value;
-            return new TextPanel("#"+String.valueOf(number));
+            Pair<Integer, Case> pair = (Pair<Integer, Case>)value;
+            TextPanel panel = new TextPanel("#"+pair.getKey().toString());
+            if(pair.getValue().isClosed()) {
+                panel.setBackground(CLOSED_BACKGROUND_COLOR);
+                panel.getLabel().setForeground(CLOSED_FOREGROUND_COLOR);
+                panel.getLabel().setFont(new Font(panel.getLabel().getFont().getFamily(), Font.PLAIN, panel.getLabel().getFont().getSize()));
+            } else if(pair.getValue().isCodeRed()) {
+                panel.setBackground(CR_BACKGROUND_COLOR);
+                panel.getLabel().setForeground(CR_FOREGROUND_COLOR);
+                panel.getLabel().setFont(new Font(panel.getLabel().getFont().getFamily(), Font.BOLD, panel.getLabel().getFont().getSize()));
+            } else if(!pair.getValue().isActive()) {
+                panel.setText("("+panel.getText()+")");
+            }
+            return panel;
         }
     }
     private static class ClientRenderer implements TableCellRenderer {
+        protected String platformToString(Platform platform) {
+            switch(platform) {
+                case PC:
+                    return "PC";
+
+                case PS4:
+                    return "PS4";
+
+                case XBOX:
+                    return "XBox";
+            }
+            throw new IllegalArgumentException("Platform \""+platform.toString()+"\" is not supported.");
+        }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Client client = (Client)value;
@@ -173,7 +211,7 @@ public class CaseTable extends JTable {
                     return new TextPanel(client.getLanguage().toUpperCase());
                     
                 case 3:
-                    return new TextPanel(client.getPlatform().toString());
+                    return new TextPanel(this.platformToString(client.getPlatform()));
             }
             throw new IllegalArgumentException("Requested rendering for column "+column+" on ClientRenderer but only columns 1, 2 and 3 are suported.");
         }
@@ -211,7 +249,66 @@ public class CaseTable extends JTable {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             List<String> notes = (List<String>)value;
-            return new TextArea(String.join("\n", notes));
+            return new MultiTextPanel(String.join("\n", notes));
+        }
+    }
+    
+    private static class NotesEditor extends AbstractCellEditor implements TableCellEditor {
+        private Map<Point, Component> cells;
+        private MultiTextPanel panel;
+        
+        public NotesEditor(Map<Point, Component> cells) {
+            this.cells = cells;
+        }
+        
+        @Override
+        public Object getCellEditorValue() {
+            return this.panel.getText();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if(column == 6) {
+                this.panel = (MultiTextPanel)this.cells.get(new Point(row, column));
+                return this.panel;
+            }
+            return null;
+        }
+    }
+    
+    private class MouseHandler extends MouseAdapter {
+        private void relayEvent(MouseEvent e) {
+            int row = CaseTable.this.rowAtPoint(e.getPoint());
+            int column = CaseTable.this.columnAtPoint(e.getPoint());
+            Component c = CaseTable.this.cells.get(new Point(row, column));
+            if(c == null) {
+                return;
+            }
+
+            Rectangle pos = CaseTable.this.getCellRect(row, column, true);
+
+            e.translatePoint(-(int)pos.getX(), -(int)pos.getY());
+            c.dispatchEvent(e);
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            this.relayEvent(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            this.relayEvent(e);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            this.relayEvent(e);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            this.relayEvent(e);
         }
     }
     
@@ -226,40 +323,10 @@ public class CaseTable extends JTable {
         this.setDefaultRenderer(Set.class, new RatsRenderer());
         this.setDefaultRenderer(List.class, new NotesRenderer());
         
-        this.addMouseListener(new MouseAdapter() {
-            private void relayEvent(MouseEvent e) {
-                int row = CaseTable.this.rowAtPoint(e.getPoint());
-                int column = CaseTable.this.columnAtPoint(e.getPoint());
-                Component c = CaseTable.this.cells.get(new Point(row, column));
-                if(c == null) {
-                    return;
-                }
-                
-                Rectangle pos = CaseTable.this.getCellRect(row, column, true);
-                
-                c.dispatchEvent(new MouseEvent(
-                        e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(),
-                        e.getX()-(int)pos.getX(),
-                        e.getY()-(int)pos.getY(),
-                        e.getClickCount(), false));
-            }
-            
-            @Override
-            public void mouseMoved(MouseEvent e) {}
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                this.relayEvent(e);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {}
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                this.relayEvent(e);
-            }
-        });
+        this.setDefaultEditor(List.class, new NotesEditor(this.cells));
+        
+        this.addMouseListener(new MouseHandler());
+        this.addMouseMotionListener(new MouseHandler());
         
         // Case number
         this.getColumnModel().getColumn(0).setMaxWidth(45);

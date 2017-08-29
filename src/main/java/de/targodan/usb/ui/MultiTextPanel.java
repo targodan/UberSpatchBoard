@@ -23,36 +23,30 @@
  */
 package de.targodan.usb.ui;
 
-import javax.swing.JLabel;
-
 /**
  *
  * @author Luca Corbatto
  */
-public class TextPanel extends javax.swing.JPanel {
+public class MultiTextPanel extends javax.swing.JPanel {
 
     /**
-     * Creates new form TextPanel
+     * Creates new form MultiTextPanel
      */
-    public TextPanel() {
+    public MultiTextPanel() {
         initComponents();
     }
-
-    public TextPanel(String text) {
-        this();
+    
+    public MultiTextPanel(String text) {
+        initComponents();
         this.setText(text);
     }
     
-    public void setText(String text) {
-        this.jLabel1.setText(text);
-    }
-    
     public String getText() {
-        return this.jLabel1.getText();
+        return this.jTextArea1.getText();
     }
     
-    public JLabel getLabel() {
-        return this.jLabel1;
+    public void setText(String text) {
+        this.jTextArea1.setText(text);
     }
 
     /**
@@ -64,30 +58,28 @@ public class TextPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
-        jLabel1.setText("jLabel1");
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }
