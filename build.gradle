@@ -54,6 +54,7 @@ dependencies {
 compileJava {
     options.warnings = true
     options.deprecation = true
+    options.compilerArgs += ['-Xlint:unchecked']
 }
 
 compileTestJava {

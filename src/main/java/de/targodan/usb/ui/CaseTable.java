@@ -161,6 +161,7 @@ public class CaseTable extends JTable {
         }
     }
     
+    @SuppressWarnings("unchecked")
     private static class CaseNumberRenderer implements TableCellRenderer {
         private static final Color CR_BACKGROUND_COLOR = Color.RED;
         private static final Color CR_FOREGROUND_COLOR = Color.WHITE;
@@ -223,6 +224,8 @@ public class CaseTable extends JTable {
             return new CopyableTextPanel(system.getName());
         }
     }
+    
+    @SuppressWarnings("unchecked")
     private static class RatsRenderer implements TableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -245,6 +248,8 @@ public class CaseTable extends JTable {
             return panel;
         }
     }
+    
+    @SuppressWarnings("unchecked")
     private static class NotesRenderer implements TableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
