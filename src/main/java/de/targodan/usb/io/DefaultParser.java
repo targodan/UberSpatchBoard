@@ -158,7 +158,7 @@ public class DefaultParser implements Parser {
         try {
             cmdType = this.parseCommandType(cmd);
         } catch(Exception ex) {
-            Logger.getLogger(DefaultParser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DefaultParser.class.getName()).log(Level.WARNING, "Command \"{0}\" not supported.", cmd);
             return false;
         }
         
