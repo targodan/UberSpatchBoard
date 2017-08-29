@@ -26,38 +26,81 @@ package de.targodan.usb.data;
 import java.util.Objects;
 
 /**
+ * Represents reports by rats like "fr+" and so on.
+ * 
+ * Note: This class has some unexpected behaviour when it comes to the equal method.
+ * @see Report#equals(java.lang.Object) 
  *
- * @author corbatto
+ * @author Luca Corbatto
  */
 public class Report {
-    public enum Type {
+    /**
+     * Represents the type of report.
+     */
+    public static enum Type {
         SYS, FR, WR, BC, COMMS, INST, PARTY
     }
     
     protected final Type type;
     protected final boolean positive;
 
+    /**
+     * Constructs a Report of the given type with the given status.
+     * 
+     * @param type The type of the report.
+     * @param positive Whether or not the report was positive ("+").
+     */
     public Report(Type type, boolean positive) {
         this.type = type;
         this.positive = positive;
     }
 
+    /**
+     * Returns the type of the report.
+     * 
+     * @return the type of the report.
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * Returns true if the report is positive ("+").
+     * 
+     * @return true if the report is positive ("+").
+     */
     public boolean isPositive() {
         return positive;
     }
     
+    /**
+     * @see Report#isPositive()
+     * 
+     * @return true if the report is positive ("+").
+     */
     public boolean isPlus() {
         return this.isPositive();
     }
     
+    
+    /**
+     * Returns the inversion of Report#isPlus.
+     * @see Report#isPlus()
+     * 
+     * @return true if the report is negative ("-").
+     */
     public boolean isMinus() {
         return !this.isPositive();
     }
 
+    /**
+     * Returns the hash code of this report.
+     * 
+     * The hash code only contains the type of the report, not the
+     * positive-state. Keep this in mind when using this class in Sets.
+     * 
+     * @return the hash code of this report.
+     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -65,6 +108,17 @@ public class Report {
         return hash;
     }
 
+    /**
+     * Returns true if the type of this report is the same as the type of the 
+     * given report.
+     * 
+     * Equals only compares the type of the reports, not the
+     * positive-state. Keep this in mind when using this class in Sets.
+     * 
+     * @param obj The object to compare this to.
+     * @return true if the type of this report is the same as the type of the 
+     * given report.
+     */
     @Override
     public boolean equals(Object obj) {
         if(this == obj) {

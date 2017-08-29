@@ -78,7 +78,7 @@ public class CaseTable extends JTable {
         
         @Override
         public int getRowCount() {
-            return this.cm.getCases().size() + this.cm.getClosedCases().size();
+            return this.cm.getOpenCases().size() + this.cm.getClosedCases().size();
         }
 
         @Override
@@ -152,7 +152,7 @@ public class CaseTable extends JTable {
             if(rowIndex < this.cm.getClosedCases().size()) {
                 return this.cm.getClosedCases().get(rowIndex);
             }
-            return this.cm.getCases().get(rowIndex - this.cm.getClosedCases().size());
+            return this.cm.getOpenCases().get(rowIndex - this.cm.getClosedCases().size());
         }
 
         @Override

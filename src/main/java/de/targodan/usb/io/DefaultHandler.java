@@ -344,7 +344,7 @@ public class DefaultHandler implements Handler {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
         }
-        c.setCaseRed(!c.isCodeRed());
+        c.setCodeRed(!c.isCodeRed());
     }
     
     void handleCommandUnassign(Command cmd) {

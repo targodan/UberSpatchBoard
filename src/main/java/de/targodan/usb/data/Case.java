@@ -34,8 +34,9 @@ import java.util.Observable;
 import java.util.Set;
 
 /**
- *
- * @author corbatto
+ * The Case class represents a fuelrats case.
+ * 
+ * @author Luca Corbatto
  */
 public class Case extends Observable {
     private boolean active;
@@ -52,15 +53,34 @@ public class Case extends Observable {
     
     private CaseManager attachedManager;
 
-    public Case(int number, Client client, System system, boolean caseRed) {
-        this(number, client, system, caseRed, LocalDateTime.now());
+    /**
+     * Constructs a Case with number, client, system and codeRed status.
+     * 
+     * The opening time will be set to the current time.
+     * 
+     * @param number Number of the case as given by MechaSqueak.
+     * @param client The client information.
+     * @param system The system as reported by the client or rats.
+     * @param codeRed Whether or not the case is a code red.
+     */
+    public Case(int number, Client client, System system, boolean codeRed) {
+        this(number, client, system, codeRed, LocalDateTime.now());
     }
 
-    public Case(int number, Client client, System system, boolean caseRed, LocalDateTime openTime) {
+    /**
+     * Constructs a Case with number, client, system and codeRed status.
+     * 
+     * @param number Number of the case as given by MechaSqueak.
+     * @param client The client information.
+     * @param system The system as reported by the client or rats.
+     * @param codeRed Whether or not the case is a code red.
+     * @param openTime The time at which the case was opened.
+     */
+    public Case(int number, Client client, System system, boolean codeRed, LocalDateTime openTime) {
         this.number = number;
         this.client = client;
         this.system = system;
-        this.codeRed = caseRed;
+        this.codeRed = codeRed;
         
         this.active = true;
         this.calls = new ArrayList<>();
@@ -73,6 +93,12 @@ public class Case extends Observable {
         this.attachedManager = null;
     }
     
+    /**
+     * Assigns a rat to a case.
+     * 
+     * @param rat 
+     * @throws IllegalStateException If there are already 3 rats assigned.
+     */
     public void assignRat(Rat rat) {
         if(this.rats.size() >= 3 && !this.rats.contains(rat)) {
             throw new IllegalStateException("There have already been 3 rats assigned to this case. Unassign first!");
@@ -83,6 +109,11 @@ public class Case extends Observable {
         this.notifyObservers();
     }
     
+    /**
+     * Unassigns a rat.
+     * 
+     * @param rat 
+     */
     public void unassignRat(Rat rat) {
         this.rats.remove(rat);
         
@@ -90,30 +121,65 @@ public class Case extends Observable {
         this.notifyObservers();
     }
 
+    /**
+     * Returns true if the case is active.
+     * 
+     * @return true iff. the case is active.
+     */
     public boolean isActive() {
         return this.active;
     }
 
+    /**
+     * Returns the case number.
+     * 
+     * @return the case number.
+     */
     public int getNumber() {
         return this.number;
     }
 
+    /**
+     * Returns the client.
+     * 
+     * @return the client.
+     */
     public Client getClient() {
         return this.client;
     }
 
+    /**
+     * Returns the system.
+     * 
+     * @return the system.
+     */
     public System getSystem() {
         return this.system;
     }
 
+    /**
+     * Returns the assigned rats.
+     * 
+     * @return the assigned rats.
+     */
     public Set<Rat> getRats() {
         return Collections.unmodifiableSet(this.rats);
     }
 
+    /**
+     * Returns the notes.
+     * 
+     * @return the notes.
+     */
     public List<String> getNotes() {
         return Collections.unmodifiableList(this.notes);
     }
     
+    /**
+     * Adds a note.
+     * 
+     * @param note 
+     */
     public void addNote(String note) {
         this.notes.add(note);
         
@@ -121,26 +187,50 @@ public class Case extends Observable {
         this.notifyObservers();
     }
     
-    public void setNotes(String[] note) {
+    /**
+     * Overwrites all notes with the given ones.
+     * 
+     * @param notes 
+     */
+    public void setNotes(String[] notes) {
         this.notes.clear();
-        this.notes.addAll(Arrays.asList(note));
+        this.notes.addAll(Arrays.asList(notes));
         
         this.setChanged();
         this.notifyObservers();
     }
 
+    /**
+     * Returns the rat who got first limpet.
+     * 
+     * @return the rat who got first limpet.
+     */
     public Rat getFirstLimpet() {
         return this.firstLimpet;
     }
 
+    /**
+     * Returns true if the case is a code red.
+     * @return true if the case is a code red.
+     */
     public boolean isCodeRed() {
         return this.codeRed;
     }
 
+    /**
+     * Returns the opening time.
+     * 
+     * @return the opening time.
+     */
     public LocalDateTime getOpenTime() {
         return this.openTime;
     }
 
+    /**
+     * Sets the cases active state.
+     * 
+     * @param active 
+     */
     public void setActive(boolean active) {
         this.active = active;
         
@@ -148,6 +238,10 @@ public class Case extends Observable {
         this.notifyObservers();
     }
 
+    /**
+     * Sets the client.
+     * @param client 
+     */
     public void setClient(Client client) {
         this.client = client;
         
@@ -155,6 +249,11 @@ public class Case extends Observable {
         this.notifyObservers();
     }
 
+    /**
+     * Sets the system.
+     * 
+     * @param system 
+     */
     public void setSystem(System system) {
         this.system = system;
         
@@ -162,23 +261,38 @@ public class Case extends Observable {
         this.notifyObservers();
     }
 
+    /**
+     * Sets the rat who first limpeted.
+     * @param firstLimpet 
+     */
     public void setFirstLimpet(Rat firstLimpet) {
         this.firstLimpet = firstLimpet;
         
         this.notifyObservers();
     }
 
-    public void setCaseRed(boolean caseRed) {
+    /**
+     * Sets the cases code red state.
+     * @param caseRed 
+     */
+    public void setCodeRed(boolean caseRed) {
         this.codeRed = caseRed;
         
         this.setChanged();
         this.notifyObservers();
     }
 
+    /**
+     * Returns the time the case was closed or null if the case is still open.
+     * @return the time the case was closed or null if the case is still open.
+     */
     public LocalDateTime getCloseTime() {
         return this.closeTime;
     }
     
+    /**
+     * Closes the case with now as the closing time.
+     */
     public void close() {
         this.closeTime = LocalDateTime.now();
         if(this.attachedManager != null) {
@@ -189,6 +303,10 @@ public class Case extends Observable {
         this.notifyObservers();
     }
     
+    /**
+     * Returns true if the case is closed.
+     * @return the time the case was closed or null if the case is still open.
+     */
     public boolean isClosed() {
         return this.closeTime != null;
     }
@@ -197,6 +315,15 @@ public class Case extends Observable {
         this.attachedManager = manager;
     }
     
+    /**
+     * Adds a jump call of a rat.
+     * 
+     * Rats that call won't be automatically assigned. However if the rat was
+     * already assigned they won't be added again but instead their jumps will
+     * be updated.
+     * 
+     * @param rat 
+     */
     public void addCall(Rat rat) {
         this.calls.add(rat);
         
@@ -212,10 +339,25 @@ public class Case extends Observable {
         this.notifyObservers();
     }
     
+    /**
+     * Returns all unassigned rats that have called for this case.
+     * 
+     * @return all unassigned rats that have called for this case.
+     */
     public List<Rat> getCalls() {
         return Collections.unmodifiableList(this.calls);
     }
     
+    /**
+     * Searches for a rat with the given IRC name.
+     * 
+     * Preferably an assigned rat is returned. If no assigned rat with this name
+     * can be found an unassigned rat that has called jumps will be returned. If
+     * no such rat can be found either null is returned.
+     * 
+     * @param ircName
+     * @return A rat with the given name or null if no such rat can be found.
+     */
     public Rat lookupAssociatedRat(String ircName) {
                 // Try and find rat among assigned rats.
         return this.rats.stream()

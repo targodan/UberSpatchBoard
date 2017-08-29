@@ -283,7 +283,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_onCloseMenuClicked
 
     private void onAddTestCaseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onAddTestCaseClicked
-        Case testCase = new Case(this.cm.getCases().size()+1, new Client("Kies", "Kies", Platform.PC, "de"), new de.targodan.usb.data.System("Cubeo"), false, LocalDateTime.now());
+        Case testCase = new Case(this.cm.getOpenCases().size()+1, new Client("Kies", "Kies", Platform.PC, "de"), new de.targodan.usb.data.System("Cubeo"), false, LocalDateTime.now());
         Rat rat = new Rat("testRat");
         rat.setJumps(5);
         rat.setAssigned(true);

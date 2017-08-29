@@ -24,8 +24,9 @@
 package de.targodan.usb.data;
 
 /**
- *
- * @author corbatto
+ * The Platform Elite is running on.
+ * 
+ * @author Luca Corbatto
  */
 public enum Platform {
     PC,

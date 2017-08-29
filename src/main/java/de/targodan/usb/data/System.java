@@ -27,26 +27,53 @@ import java.util.Objects;
 import java.util.Observable;
 
 /**
- *
- * @author corbatto
+ * Represents an ED System.
+ * 
+ * @author Luca Corbatto
  */
 public class System extends Observable {
     protected final String name;
     protected boolean confirmed;
 
+    /**
+     * Constructs a System with the given name.
+     * 
+     * @param name The name of the system.
+     */
     public System(String name) {
         this.name = name;
-        this.confirmed = true;
+        this.confirmed = false;
     }
 
+    /**
+     * Returns the name of the system.
+     * 
+     * @return the name of the system.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns true if the system was confirmed.
+     * 
+     * "Confirmed" as in: A rat has confirmed that the client is in fact in this
+     * system.
+     * 
+     * @return true if the system was confirmed.
+     */
     public boolean isConfirmed() {
         return confirmed;
     }
 
+    /**
+     * Sets the confirmed status of this system.
+     * 
+     * "Confirmed" as in: A rat has confirmed that the client is in fact in this
+     * system.
+     * 
+     * @param confirmed The confirmed status.
+     */
     public void setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
         
