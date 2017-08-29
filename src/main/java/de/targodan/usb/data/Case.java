@@ -25,6 +25,7 @@ package de.targodan.usb.data;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -115,6 +116,14 @@ public class Case extends Observable {
     
     public void addNote(String note) {
         this.notes.add(note);
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public void setNotes(String[] note) {
+        this.notes.clear();
+        this.notes.addAll(Arrays.asList(note));
         
         this.setChanged();
         this.notifyObservers();
