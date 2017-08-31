@@ -55,6 +55,8 @@ Also please try and keep your commit messages reasonably descriptive.
 I don't like seeing commit messages like "Did stuff".
 There is always `git rebase -i`. :wink:
 
+For more details on the contribution process please take a look at the [Contribution guidelines](https://github.com/targodan/UberSpatchBoard/blob/master/.github/CONTRIBUTING.md).
+
 Your favourite IRC client is not supported? No problem, it's quite easy to add support for any logging IRC client. Just take a look at this tutorial: [How to add support for any IRC client?](https://github.com/targodan/UberSpatchBoard/wiki/How-to-add-support-for-any-IRC-client%3F)
 
 # License
