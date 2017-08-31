@@ -23,9 +23,22 @@
  */
 package de.targodan.usb;
 
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.util.IOUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Version represents a version as defined in semantic versioning
@@ -169,6 +182,39 @@ public class Version {
         }
         
         return version;
+    }
+    
+    public static Version getLatestVersionFromGithub() {
+        String url = "https://api.github.com/repos/targodan/UberSpatchBoard/releases/latest";
+        HttpRequestFactory fac = new NetHttpTransport().createRequestFactory();
+        try {
+            HttpRequest request = fac.buildGetRequest(new GenericUrl(url));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType("application/json");
+            headers.setAcceptEncoding("application/vnd.github.v3+json");
+            request.setHeaders(headers);
+            
+            HttpResponse response = request.execute();
+            
+            ByteArrayOutputStream jsonStream = new ByteArrayOutputStream();
+            IOUtils.copy(response.getContent(), jsonStream);
+            
+            String jsonContent;
+            if(response.getContentEncoding() == null) {
+                jsonContent = jsonStream.toString("utf-8");
+            } else {
+                jsonContent = jsonStream.toString(response.getContentEncoding());
+            }
+            
+            JSONObject jsonObj = new JSONObject(jsonContent);
+            String version = jsonObj.getString("tag_name");
+            
+            return Version.parse(version);
+        } catch (IOException | JSONException ex) {
+            Logger.getLogger(Version.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
     }
 
     /**

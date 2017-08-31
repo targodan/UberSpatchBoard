@@ -31,11 +31,9 @@ import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 public class Program {
     public static DataConsumer dataConsumer;
