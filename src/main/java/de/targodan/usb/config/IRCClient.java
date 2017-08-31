@@ -24,6 +24,7 @@
 package de.targodan.usb.config;
 
 import de.targodan.usb.io.Marshaller;
+import java.util.Set;
 
 /**
  * IRCClient represents a supported IRC client.
@@ -62,4 +63,12 @@ public interface IRCClient {
      * @return 
      */
     String getName();
+    
+    /**
+     * GetSupportedOperatingSystems returns a set of operating systems that are
+     * supported by the IRC client.
+     * 
+     * @return a set of operating systems that are supported by the IRC client.
+     */
+    Set<OperatingSystem> getSupportedOperatingSystems();
 }

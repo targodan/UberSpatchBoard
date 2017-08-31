@@ -26,6 +26,7 @@ package de.targodan.usb.config;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The IRCClientRegistry keeps track of all supported IRC client types.
@@ -67,7 +68,9 @@ public class IRCClientRegistry {
      */
     public static List<IRCClient> getSupportedClients() {
         IRCClientRegistry.init();
-        return Collections.unmodifiableList(IRCClientRegistry.supportedClients);
+        return IRCClientRegistry.supportedClients.stream()
+                .filter(client -> client.getSupportedOperatingSystems().contains(OperatingSystem.getCurrent()))
+                .collect(Collectors.toList());
     }
     
     /**

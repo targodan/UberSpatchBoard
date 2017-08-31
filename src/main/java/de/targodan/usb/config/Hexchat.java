@@ -29,6 +29,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -37,6 +40,11 @@ import java.util.regex.Pattern;
  * @author Luca Corbatto
  */
 public class Hexchat implements IRCClient {
+    public static final Set<OperatingSystem> SUPPORTED_OPERATING_SYSTEMS
+            = Collections.unmodifiableSet(
+                EnumSet.of(OperatingSystem.UNIX, OperatingSystem.WINDOWS, OperatingSystem.MAC)
+            );
+    
     private String getBasePath() {
         String path;
         switch(OperatingSystem.getCurrent()) {
@@ -60,7 +68,6 @@ public class Hexchat implements IRCClient {
     @Override
     public boolean isInstalled() {
         File f = new File(this.getBasePath());
-        String path = f.getAbsolutePath();
         return f.exists();
     }
     
@@ -103,5 +110,10 @@ public class Hexchat implements IRCClient {
     @Override
     public String getName() {
         return "hexchat";
+    }
+
+    @Override
+    public Set<OperatingSystem> getSupportedOperatingSystems() {
+        return Hexchat.SUPPORTED_OPERATING_SYSTEMS;
     }
 }
