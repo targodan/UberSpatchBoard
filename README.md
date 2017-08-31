@@ -5,10 +5,22 @@ The ultimate spatch board for dispatching fuel rats cases.
 
 # How to Install
 
-Just download the latest ".jar"-file from [releases](https://github.com/targodan/UberSpatchBoard/releases) put it wherever you want and double click to start it. Done.
-
 **NOTE:** So far only HexChat is supported. The default place where it is looking for the logfile is `%appdata%\hexchat\logs\fuelrats\#fuelrats.log` or on linux `~/.config/hexchat/fuelrats/fuelrats.log`.
 If your HexChat logs to some other location go to `File` -> `Settings` and change the location.
+
+## Archlinux
+
+Just install the package from the AUR using your favourite AUR helper. `pacaur -S uberspatchboard-git`
+
+## Windows
+
+Just download the latest "\*-windows.zip"-file from [releases](https://github.com/targodan/UberSpatchBoard/releases) unzip it to wherever you want and double click the exe-file to start it. Done.
+
+If you want to move the jar file to a different location without loosing your settings do also move the file `usb.yml` with the jar file as that contains the configuration.
+
+## Other OS
+
+Just download the latest ".jar"-file from [releases](https://github.com/targodan/UberSpatchBoard/releases) put it wherever you want and double click to start it. If double clicking doesn't work you may need to execute it via `java -jar UberSpatchBoard.jar`.
 
 If you want to move the jar file to a different location without loosing your settings do also move the file `usb.yml` with the jar file as that contains the configuration.
 
@@ -42,6 +54,8 @@ With mixed styles the code would grow to be absolutely hideous and ultimately un
 Also please try and keep your commit messages reasonably descriptive.
 I don't like seeing commit messages like "Did stuff".
 There is always `git rebase -i`. :wink:
+
+Your favourite IRC client is not supported? No problem, it's quite easy to add support for any logging IRC client. Just take a look at this tutorial: [How to add support for any IRC client?](https://github.com/targodan/UberSpatchBoard/wiki/How-to-add-support-for-any-IRC-client%3F)
 
 # License
 
