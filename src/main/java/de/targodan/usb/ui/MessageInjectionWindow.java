@@ -23,9 +23,12 @@
  */
 package de.targodan.usb.ui;
 
+import de.targodan.usb.Program;
 import de.targodan.usb.io.DataSource;
 import de.targodan.usb.io.IRCMessage;
 import java.awt.Window;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
@@ -44,6 +47,37 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
     public MessageInjectionWindow(Window owner) {
         super(owner);
         initComponents();
+        
+        this.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent we) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent we) {
+                Program.dataConsumer.removeDataSource(MessageInjectionWindow.this);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent we) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent we) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent we) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent we) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent we) {
+            }
+        });
     }
 
     /**
@@ -167,6 +201,17 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
     public void stop() {
         this.output = null;
     }
+
+    @Override
+    public String getShortName() {
+        return "injecter window";
+    }
+
+    @Override
+    public String getName() {
+        return "injecter window";
+    }
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField channel;

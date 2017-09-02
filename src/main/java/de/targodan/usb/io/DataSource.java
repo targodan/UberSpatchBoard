@@ -32,4 +32,6 @@ import java.util.concurrent.BlockingQueue;
 public interface DataSource {
     void listen(BlockingQueue<IRCMessage> output);
     void stop();
+    String getName();
+    String getShortName();
 }

@@ -30,6 +30,7 @@ import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
+import de.targodan.usb.io.DataConsumer;
 import java.awt.Dimension;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -39,12 +40,14 @@ import java.util.Observer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author Luca Corbatto
  */
-public class MainWindow extends javax.swing.JFrame {
+public class MainWindow extends javax.swing.JFrame implements Observer {
+    private DataConsumer dataConsumer;
     
     public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
         this.cm = cm;
@@ -72,6 +75,44 @@ public class MainWindow extends javax.swing.JFrame {
         this.removeClearedCasesThread.setName("RemoveClearedCasesThread");
     }
     
+    private void updateDataConsumerLabel() {
+        StringBuilder shortName = new StringBuilder();
+        StringBuilder longName = new StringBuilder();
+        if(this.dataConsumer.isRunning()) {
+            shortName.append("Reading from: ");
+        } else {
+            shortName.append("Connected to: ");
+        }
+        shortName.append(
+                this.dataConsumer.getDataSources().stream()
+                    .map(ds -> ds.getShortName())
+                    .collect(Collectors.joining(", "))
+            );
+        longName.append(
+                this.dataConsumer.getDataSources().stream()
+                    .map(ds -> "\""+ds.getName()+"\"")
+                    .collect(Collectors.joining(", "))
+            );
+        
+        this.dataConsumerLabel.setText(shortName.toString());
+        this.dataConsumerLabel.setToolTipText(longName.toString());
+    }
+    
+    @Override
+    public void update(Observable o, Object o1) {
+        java.awt.EventQueue.invokeLater(() -> {
+            if(o == this.dataConsumer) {
+                this.updateDataConsumerLabel();
+            }
+        });
+    }
+
+    public void setDataConsumer(DataConsumer dataConsumer) {
+        this.dataConsumer = dataConsumer;
+        this.updateDataConsumerLabel();
+        this.dataConsumer.addObserver(this);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -87,6 +128,7 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new CaseTable(this.cm);
         statusBar = new javax.swing.JPanel();
+        dataConsumerLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
@@ -133,19 +175,11 @@ public class MainWindow extends javax.swing.JFrame {
         );
         caseBoxLayout.setVerticalGroup(
             caseBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
-        statusBar.setLayout(statusBarLayout);
-        statusBarLayout.setHorizontalGroup(
-            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        statusBarLayout.setVerticalGroup(
-            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 26, Short.MAX_VALUE)
-        );
+        dataConsumerLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        statusBar.add(dataConsumerLabel);
 
         jMenu1.setText("File");
 
@@ -317,6 +351,7 @@ public class MainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
     private javax.swing.JPanel caseWrapperPanel;
+    private javax.swing.JLabel dataConsumerLabel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;

@@ -31,11 +31,9 @@ import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.ui.ConsoleWindow;
 import de.targodan.usb.ui.MainWindow;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 public class Program {
     public static DataConsumer dataConsumer;
@@ -86,6 +84,7 @@ public class Program {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             MainWindow window = new MainWindow(consoleWindow, cm);
+            window.setDataConsumer(Program.dataConsumer);
             window.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {

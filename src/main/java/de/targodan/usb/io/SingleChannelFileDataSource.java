@@ -33,15 +33,28 @@ import java.io.FileReader;
  * @author Luca Corbatto
  */
 public class SingleChannelFileDataSource extends ReaderDataSource {
+    private final File file;
+    
     public SingleChannelFileDataSource(String channelName, String fileName, Marshaller marshaller) throws FileNotFoundException {
         super(null, marshaller, channelName);
         
-        File f = new File(fileName);
-        if(!f.canRead()) {
+        this.file = new File(fileName);
+        if(!this.file.canRead()) {
             throw new IllegalArgumentException("File \""+fileName+"\" is not readable.");
         }
-        this.reader = new BufferedReader(new FileReader(f));
+        this.reader = new BufferedReader(new FileReader(this.file));
         
         this.goToEndOfReader();
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "file://"+this.file.getPath();
+    }
+
+    @Override
+    public String getShortName() {
+        return "file://..."+File.separator+this.file.getName();
     }
 }

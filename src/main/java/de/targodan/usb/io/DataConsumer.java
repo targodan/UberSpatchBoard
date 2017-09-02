@@ -24,7 +24,9 @@
 package de.targodan.usb.io;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -37,7 +39,7 @@ import java.util.logging.Logger;
  *
  * @author Luca Corbatto
  */
-public class DataConsumer {
+public class DataConsumer extends Observable {
     private final BlockingQueue<IRCMessage> queue;
     private final Parser parser;
     private final AtomicBoolean run;
@@ -68,6 +70,24 @@ public class DataConsumer {
         if(this.run.get() && !this.done.get()) {
             this.createAndStartThread(ds);
         }
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public void removeDataSource(DataSource ds) {
+        this.dataSources.remove(ds);
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public List<DataSource> getDataSources() {
+        return Collections.unmodifiableList(this.dataSources);
+    }
+    
+    public boolean isRunning() {
+        return this.run.get();
     }
     
     public void start() {
@@ -77,6 +97,9 @@ public class DataConsumer {
         this.dataSources.forEach(ds -> {
             this.createAndStartThread(ds);
         });
+        
+        this.setChanged();
+        this.notifyObservers();
         
         IRCMessage msg;
         while(this.run.get()) {
@@ -125,5 +148,8 @@ public class DataConsumer {
                 break;
             }
         }
+        
+        this.setChanged();
+        this.notifyObservers();
     }
 }

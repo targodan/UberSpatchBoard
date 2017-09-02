@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  *
  * @author Luca Corbatto
  */
-public class ReaderDataSource implements DataSource {
+public abstract class ReaderDataSource implements DataSource {
     protected Marshaller marshaller;
     protected final AtomicBoolean run;
     protected final AtomicBoolean done;
