@@ -30,7 +30,6 @@ import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -45,15 +44,12 @@ import java.util.logging.Logger;
  *
  * @author Luca Corbatto
  */
-public class MainWindow extends javax.swing.JFrame implements Observer {
+public class MainWindow extends javax.swing.JFrame {
     
     public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
         this.cm = cm;
-        this.cm.addObserver(this);
         
         initComponents();
-        
-        this.setTableColumnWidths();
         
         this.consoleWindow = consoleWindow;
         
@@ -74,36 +70,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         this.removeClearedCasesThread.setName("RemoveClearedCasesThread");
-        
-        this.updateCases();
     }
     
-    private void setTableColumnWidths() {
-    }
-    
-    private void updateCases() {
-        if(this.cm == null) {
-            throw new IllegalStateException("Can't updateCases without a CaseManager.");
-        }
-        
-//        this.casePanel.removeAll();
-//        this.cm.getClosedCases().forEach(c -> {
-//            this.casePanel.add(new CaseView(c));
-//        });
-//        this.cm.getCases().forEach(c -> {
-//            this.casePanel.add(new CaseView(c));
-//        });
-        this.revalidate();
-        this.repaint();
-    }
-    
-    @Override
-    public void update(Observable o, Object arg) {
-        java.awt.EventQueue.invokeLater(() -> {
-            this.updateCases();
-        });
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
