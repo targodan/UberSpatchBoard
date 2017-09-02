@@ -40,7 +40,7 @@ public class Program {
     public static final Version VERSION = Version.parse("v1.0-alpha.3");
     public static String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
-        "Your name could be here",
+        // Your name could be here
     };
     public static Config CONFIG;
 

@@ -24,6 +24,8 @@
 package de.targodan.usb.ui;
 
 import de.targodan.usb.Program;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -38,7 +40,11 @@ public class AboutWindow extends javax.swing.JDialog {
         initComponents();
         
         this.versionLabel.setText(Program.VERSION.toString());
-        this.contributors.setText(String.join(", ", Program.CONTRIBUTORS));
+        this.contributors.setText(
+                String.join(", ", Arrays.stream(Program.CONTRIBUTORS).sorted().collect(Collectors.toList()))
+                + (Program.CONTRIBUTORS.length > 0 ? "\n" : "")
+                + "Your name could be here"
+        );
         this.javaVersion.setText("Java Version: "+System.getProperty("java.version"));
     }
 
