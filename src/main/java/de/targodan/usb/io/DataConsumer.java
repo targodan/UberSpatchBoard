@@ -75,7 +75,7 @@ public class DataConsumer extends Observable {
         Thread t = new Thread(() -> {
             ds.listen(this.queue);
         });
-        t.setName("DataSourceThread_"+ds.getClass().getName());
+        t.setName("DataSourceThread_"+ds.getShortName());
         this.threads.add(t);
         t.start();
     }
