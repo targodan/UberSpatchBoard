@@ -80,7 +80,7 @@ public class Rat extends User {
     public Rat(String ircName, String cmdrName, Platform platform) {
         super(ircName, cmdrName, platform);
         
-        this.jumps = 0;
+        this.jumps = -1;
         this.reports = new HashSet<>();
         this.assigned = false;
     }
