@@ -30,7 +30,6 @@ import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Event;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -45,7 +44,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.stream.Stream;
-import javafx.util.Pair;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -171,16 +169,16 @@ public class CaseTable extends JTable {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Pair<Integer, Case> pair = (Pair<Integer, Case>)value;
-            TextPanel panel = new TextPanel("#"+pair.getKey().toString());
-            if(pair.getValue().isClosed()) {
+            TextPanel panel = new TextPanel("#"+pair.getLeft().toString());
+            if(pair.getRight().isClosed()) {
                 panel.setBackground(CLOSED_BACKGROUND_COLOR);
                 panel.getLabel().setForeground(CLOSED_FOREGROUND_COLOR);
                 panel.getLabel().setFont(new Font(panel.getLabel().getFont().getFamily(), Font.PLAIN, panel.getLabel().getFont().getSize()));
-            } else if(pair.getValue().isCodeRed()) {
+            } else if(pair.getRight().isCodeRed()) {
                 panel.setBackground(CR_BACKGROUND_COLOR);
                 panel.getLabel().setForeground(CR_FOREGROUND_COLOR);
                 panel.getLabel().setFont(new Font(panel.getLabel().getFont().getFamily(), Font.BOLD, panel.getLabel().getFont().getSize()));
-            } else if(!pair.getValue().isActive()) {
+            } else if(!pair.getRight().isActive()) {
                 panel.setText("("+panel.getText()+")");
             }
             return panel;
