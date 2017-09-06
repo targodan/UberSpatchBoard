@@ -26,10 +26,38 @@ package de.targodan.usb.io;
 import java.util.concurrent.BlockingQueue;
 
 /**
- *
- * @author corbatto
+ * Implementations of DataSource represent a data source for IRC messages.
+ * 
+ * @author Luca Corbatto
  */
 public interface DataSource {
+    /**
+     * Listen should listen for data sending all IRCMessages to the given queue.
+     * 
+     * This method will block until stop is called.
+     * 
+     * @see DataSource#stop() 
+     * 
+     * @param output The BlockingQueue that will be receiving the IRC messages.
+     */
     void listen(BlockingQueue<IRCMessage> output);
+    
+    /**
+     * Stop should stop the listening.
+     */
     void stop();
+    
+    /**
+     * Returns the long name of the DataSource.
+     * 
+     * @return the long name of the DataSource.
+     */
+    String getName();
+    
+    /**
+     * Returns the short name of the DataSource.
+     * 
+     * @return the short name of the DataSource.
+     */
+    String getShortName();
 }

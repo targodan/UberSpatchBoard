@@ -389,7 +389,7 @@ public class DefaultParser implements Parser {
         throw new IllegalArgumentException("Report \""+report+"\" unknown.");
     }
     
-    Platform parsePlatform(String platform) {
+    protected Platform parsePlatform(String platform) {
         switch(platform.toLowerCase()) {
             case "pc":
                 return Platform.PC;
