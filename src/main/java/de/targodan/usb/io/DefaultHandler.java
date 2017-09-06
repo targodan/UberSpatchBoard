@@ -227,6 +227,11 @@ public class DefaultHandler implements Handler {
         return null;
     }
     
+    /**
+     * Handles the !close command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandClose(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -244,6 +249,11 @@ public class DefaultHandler implements Handler {
         c.close();
     }
     
+    /**
+     * Handles the !go command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandHardAssign(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -261,10 +271,22 @@ public class DefaultHandler implements Handler {
         }
     }
     
+    /**
+     * Handles the !grab command.
+     * 
+     * This is not really supported yet, so it will just write a warning to the log and return.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandGrab(Command cmd) {
         Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Grab not yet supported.", cmd);
     }
     
+    /**
+     * Handles the !inject command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandInject(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -274,6 +296,11 @@ public class DefaultHandler implements Handler {
         c.addNote(cmd.getParameter(1));
     }
     
+    /**
+     * Handles the !md command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandMarkDeletion(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -283,6 +310,11 @@ public class DefaultHandler implements Handler {
         c.close();
     }
     
+    /**
+     * Handles the !cmdr command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandSetCMDRName(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -292,6 +324,11 @@ public class DefaultHandler implements Handler {
         c.getClient().setCMDRName(cmd.getParameter(1));
     }
     
+    /**
+     * Handles the !ircnick command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandIRCNick(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -301,6 +338,11 @@ public class DefaultHandler implements Handler {
         c.getClient().setIRCName(cmd.getParameter(1));
     }
     
+    /**
+     * Handles the !pc command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandSetPlatformPC(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -310,6 +352,11 @@ public class DefaultHandler implements Handler {
         c.getClient().setPlatform(Platform.PC);
     }
     
+    /**
+     * Handles the !ps4 command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandSetPlatformPS4(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -319,6 +366,11 @@ public class DefaultHandler implements Handler {
         c.getClient().setPlatform(Platform.PS4);
     }
     
+    /**
+     * Handles the !xb command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandSetPlatformXBox(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -328,6 +380,11 @@ public class DefaultHandler implements Handler {
         c.getClient().setPlatform(Platform.XBOX);
     }
     
+    /**
+     * Handles the !sys command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandSetSystem(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -337,6 +394,12 @@ public class DefaultHandler implements Handler {
         c.setSystem(new System(cmd.getParameter(1)));
     }
     
+    /**
+     * Handles soft assigning rats by using "go # rat1 rat2 ..." (same as !go
+     * command without the '!'.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandSoftAssign(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -353,11 +416,21 @@ public class DefaultHandler implements Handler {
         }
     }
     
+    /**
+     * Handles the !sub command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandSubstitute(Command cmd) {
         Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Substitute not yet properly supported. Redirecting to inject.", cmd);
         this.handleCommandInject(new Command(Command.Type.INJECT, new String[]{cmd.getParameter(0), cmd.getParameter(2)}));
     }
     
+    /**
+     * Handles the !active command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandToggleActive(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -367,6 +440,11 @@ public class DefaultHandler implements Handler {
         c.setActive(!c.isActive());
     }
     
+    /**
+     * Handles the !cr command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandToggleCodered(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
@@ -376,6 +454,11 @@ public class DefaultHandler implements Handler {
         c.setCodeRed(!c.isCodeRed());
     }
     
+    /**
+     * Handles the !unassign command.
+     * 
+     * @param cmd The command to be handled.
+     */
     protected void handleCommandUnassign(Command cmd) {
         Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
