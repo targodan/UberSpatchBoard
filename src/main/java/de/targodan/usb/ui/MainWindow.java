@@ -60,10 +60,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.removeClearedCasesThread = new Thread(() -> {
             while(this.runRemoveClearedCasesThread.get()) {
                 try {
-                    Thread t = Thread.currentThread();
-                    synchronized(t) {
-                        t.wait(200);
-                    }
+                    Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
