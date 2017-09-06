@@ -35,6 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * DefaultHandler represents the default implementation of the Handler
+ * interface.
  *
  * @author Luca Corbatto
  */
@@ -43,6 +45,9 @@ public class DefaultHandler implements Handler {
     protected Map<Platform, Case> latestCases;
     protected CaseManager cm;
     
+    /**
+     * Constructs a DefaultHandler.
+     */
     public DefaultHandler() {
         this.latestCases = new HashMap<>();
     }
@@ -143,7 +148,7 @@ public class DefaultHandler implements Handler {
             throw new IllegalStateException("Call RegisterCaseManager before calling any of the handle* functions.");
         }
         
-        Case c = this.lookupCase(rat, caseIdentifier);
+        Case c = this.lookupCase(caseIdentifier, rat);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Recieved call but couldn't find related case.", rat);
             return;
@@ -157,7 +162,7 @@ public class DefaultHandler implements Handler {
             throw new IllegalStateException("Call RegisterCaseManager before calling any of the handle* functions.");
         }
         
-        Case c = this.lookupCase(new Rat(ratIrcName), caseIdentifier);
+        Case c = this.lookupCase(caseIdentifier, new Rat(ratIrcName));
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Recieved report but couldn't find related case.");
             return;
@@ -170,23 +175,47 @@ public class DefaultHandler implements Handler {
         rat.insertReport(report);
     }
     
-    protected Case lookupCase(Rat rat, String caseIdentifier) {
-        try {
-            int caseID = Integer.valueOf(caseIdentifier.replace("#", ""));
-            return this.cm.getCase(caseID);
-        } catch(Exception ex) {}
-        
-        // Was no numeral, so we'll assume it's the clients name.
-        Case c = this.cm.lookupCaseOfClient(caseIdentifier);
-        if(c != null) {
-            return c;
+    /**
+     * Returns the determined Case.
+     * 
+     * First this method will try to find a case by the caseIdentifier. The
+     * caseIdentifier can be either the case number or the name of the client.
+     * If no case can be found by caseIdentifier it will try to find an open
+     * case with the given rat already assigned. If that does not work either
+     * the case will be guessed the latest added case of the same platform as
+     * the rat. If all fails null will be returned.
+     * 
+     * @param caseIdentifier The case identifier to search for, can be null.
+     * @param rat The rat to search for, can be null.
+     * @return 
+     */
+    protected Case lookupCase(String caseIdentifier, Rat rat) {
+        if(caseIdentifier != null) {
+            try {
+                int caseID = Integer.valueOf(caseIdentifier.replace("#", ""));
+                return this.cm.getCase(caseID);
+            } catch(Exception ex) {}
+
+            // Was no numeral, so we'll assume it's the clients name.
+            Case c = this.cm.lookupCaseOfClient(caseIdentifier);
+            if(c != null) {
+                return c;
+            }
         }
         
-        // Couldn't find the client name, try to guess the case via platform
-        if(rat != null && rat.getPlatform() != null) {
-            Case latestPlatformCase = this.latestCases.get(rat.getPlatform());
-            if(latestPlatformCase != null && latestPlatformCase.isActive()) {
-                return latestPlatformCase;
+        if(rat != null) {
+            // Couldn't find the client name, try to find the rat.
+            Case c = this.cm.lookupCaseWithRat(rat);
+            if(c != null) {
+                return c;
+            }
+            
+            // Couldn't find the rat, try to guess the case via platform
+            if(rat.getPlatform() != null) {
+                Case latestPlatformCase = this.latestCases.get(rat.getPlatform());
+                if(latestPlatformCase != null && latestPlatformCase.isActive()) {
+                    return latestPlatformCase;
+                }
             }
         }
         
@@ -198,8 +227,8 @@ public class DefaultHandler implements Handler {
         return null;
     }
     
-    void handleCommandClose(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandClose(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -215,8 +244,8 @@ public class DefaultHandler implements Handler {
         c.close();
     }
     
-    void handleCommandHardAssign(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandHardAssign(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -232,12 +261,12 @@ public class DefaultHandler implements Handler {
         }
     }
     
-    void handleCommandGrab(Command cmd) {
+    protected void handleCommandGrab(Command cmd) {
         Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Grab not yet supported.", cmd);
     }
     
-    void handleCommandInject(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandInject(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -245,8 +274,8 @@ public class DefaultHandler implements Handler {
         c.addNote(cmd.getParameter(1));
     }
     
-    void handleCommandMarkDeletion(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandMarkDeletion(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -254,8 +283,8 @@ public class DefaultHandler implements Handler {
         c.close();
     }
     
-    void handleCommandSetCMDRName(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandSetCMDRName(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -263,8 +292,8 @@ public class DefaultHandler implements Handler {
         c.getClient().setCMDRName(cmd.getParameter(1));
     }
     
-    void handleCommandIRCNick(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandIRCNick(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -272,8 +301,8 @@ public class DefaultHandler implements Handler {
         c.getClient().setIRCName(cmd.getParameter(1));
     }
     
-    void handleCommandSetPlatformPC(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandSetPlatformPC(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -281,8 +310,8 @@ public class DefaultHandler implements Handler {
         c.getClient().setPlatform(Platform.PC);
     }
     
-    void handleCommandSetPlatformPS4(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandSetPlatformPS4(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -290,8 +319,8 @@ public class DefaultHandler implements Handler {
         c.getClient().setPlatform(Platform.PS4);
     }
     
-    void handleCommandSetPlatformXBox(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandSetPlatformXBox(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -299,8 +328,8 @@ public class DefaultHandler implements Handler {
         c.getClient().setPlatform(Platform.XBOX);
     }
     
-    void handleCommandSetSystem(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandSetSystem(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -308,8 +337,8 @@ public class DefaultHandler implements Handler {
         c.setSystem(new System(cmd.getParameter(1)));
     }
     
-    void handleCommandSoftAssign(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandSoftAssign(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -324,13 +353,13 @@ public class DefaultHandler implements Handler {
         }
     }
     
-    void handleCommandSubstitute(Command cmd) {
+    protected void handleCommandSubstitute(Command cmd) {
         Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Substitute not yet properly supported. Redirecting to inject.", cmd);
         this.handleCommandInject(new Command(Command.Type.INJECT, new String[]{cmd.getParameter(0), cmd.getParameter(2)}));
     }
     
-    void handleCommandToggleActive(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandToggleActive(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -338,8 +367,8 @@ public class DefaultHandler implements Handler {
         c.setActive(!c.isActive());
     }
     
-    void handleCommandToggleCodered(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandToggleCodered(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;
@@ -347,8 +376,8 @@ public class DefaultHandler implements Handler {
         c.setCodeRed(!c.isCodeRed());
     }
     
-    void handleCommandUnassign(Command cmd) {
-        Case c = this.lookupCase(null, cmd.getParameter(0));
+    protected void handleCommandUnassign(Command cmd) {
+        Case c = this.lookupCase(cmd.getParameter(0), null);
         if(c == null) {
             Logger.getLogger(DefaultHandler.class.getName()).log(Level.WARNING, "Could not find case for command.", cmd);
             return;

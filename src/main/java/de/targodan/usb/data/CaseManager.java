@@ -139,4 +139,28 @@ public class CaseManager extends Observable {
                 .filter(elem -> elem.getClient().getIRCName().equals(clientName) || elem.getClient().getCMDRName().equals(clientName))
                 .findFirst().orElse(null);
     }
+    
+    /**
+     * Returns the Case where a Rat with the same IRC name as the given rat has
+     * been assigned or at least has called for the case.
+     * 
+     * @param rat The rat to search for.
+     * @return the Case where a Rat with the same IRC name as the given rat has
+     * been assigned or at least has called for the case.
+     */
+    public Case lookupCaseWithRat(Rat rat) {
+        Case c = this.cases.values().stream()
+                .filter(
+                        elem -> elem.getRats().stream().anyMatch(r -> r.getIRCName().equals(rat.getIRCName()))
+                )
+                .findFirst().orElse(null);
+        if(c == null) {
+            c = this.cases.values().stream()
+                .filter(
+                        elem -> elem.getCalls().stream().anyMatch(r -> r.getIRCName().equals(rat.getIRCName()))
+                )
+                .findFirst().orElse(null);
+        }
+        return c;
+    }
 }
