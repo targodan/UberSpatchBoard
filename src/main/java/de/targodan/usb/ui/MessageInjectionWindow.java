@@ -27,6 +27,8 @@ import de.targodan.usb.Program;
 import de.targodan.usb.io.DataSource;
 import de.targodan.usb.io.IRCMessage;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.time.LocalDateTime;
@@ -76,6 +78,21 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
 
             @Override
             public void windowDeactivated(WindowEvent we) {
+            }
+        });
+        
+        this.message.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {}
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    MessageInjectionWindow.this.onSendButtonClicked(null);
+                }
             }
         });
     }
