@@ -181,6 +181,12 @@ public class CaseTable extends JTable {
             } else if(!pair.getRight().isActive()) {
                 panel.setText("("+panel.getText()+")");
             }
+            
+            int height = panel.getPreferredSize().height;
+            if(height > 0) {
+                table.setRowHeight(row, height);
+            }
+            
             return panel;
         }
     }
