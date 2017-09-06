@@ -26,6 +26,7 @@ package de.targodan.usb.io;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -97,25 +98,12 @@ public abstract class ReaderDataSource implements DataSource {
                         .log(Level.SEVERE, null, ex);
             }
             
-            try {
-                line = this.reader.readLine();
-            } catch (IOException ex) {
-                Logger.getLogger(SingleChannelFileDataSource.class.getName())
-                        .log(Level.SEVERE, null, ex);
-                break;
-            }
+            line = this.tryReadLine();
             if(line == null) {
                 continue;
             }
             
-            IRCMessage msg;
-            try {
-                msg = this.marshaller.marshall(line);
-            } catch(Exception ex) {
-                Logger.getLogger(SingleChannelFileDataSource.class.getName())
-                        .log(Level.SEVERE, null, ex);
-                continue;
-            }
+            IRCMessage msg = this.tryMarshall(line);
             if(msg == null) {
                 continue;
             }
@@ -124,17 +112,33 @@ public abstract class ReaderDataSource implements DataSource {
                 msg = new IRCMessage(msg.getTimestamp(), msg.getSender(), this.overrideChannelName, msg.getContent());
             }
             
-            while(!output.offer(msg)) {
-                while(output.remainingCapacity() == 0) {
-                    try {
-                        Thread.currentThread().wait(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(ReaderDataSource.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            try {
+                while(!output.offer(msg, this.readPause/2, TimeUnit.MILLISECONDS)) {}
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ReaderDataSource.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         this.done.set(true);
+    }
+    
+    private String tryReadLine() {
+        try {
+            return this.reader.readLine();
+        } catch (IOException ex) {
+            Logger.getLogger(SingleChannelFileDataSource.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    private IRCMessage tryMarshall(String line) {
+        try {
+            return this.marshaller.marshall(line);
+        } catch(Exception ex) {
+            Logger.getLogger(SingleChannelFileDataSource.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override

@@ -263,10 +263,10 @@ public class CaseTable extends JTable {
     }
     
     private static class NotesEditor extends AbstractCellEditor implements TableCellEditor {
-        private Map<Point, Component> cells;
+        private Map<Pair<Integer, Integer>, Component> cells;
         private MultiTextPanel panel;
         
-        public NotesEditor(Map<Point, Component> cells) {
+        public NotesEditor(Map<Pair<Integer, Integer>, Component> cells) {
             this.cells = cells;
         }
         
@@ -349,10 +349,10 @@ public class CaseTable extends JTable {
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         Component c = super.prepareRenderer(renderer, row, column);
         
-        this.cells.put(new Point(row, column), c);
+        this.cells.put(new Pair<>(row, column), c);
         
         return c;
     }
     
-    private Map<Point, Component> cells;
+    private Map<Pair<Integer, Integer>, Component> cells;
 }

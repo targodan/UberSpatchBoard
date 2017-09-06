@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -195,18 +196,14 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
         }
         IRCMessage msg = new IRCMessage(LocalDateTime.now(), this.ircNickname.getText(), this.channel.getText(), this.message.getText());
         
-        new Thread(() -> {
-            while(!this.output.offer(msg)) {
-                while(this.output.remainingCapacity() == 0) {
-                    try {
-                        Thread.currentThread().wait(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(MessageInjectionWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                while(!this.output.offer(msg, 100, TimeUnit.MILLISECONDS)) {}
+                this.sendComplete();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MessageInjectionWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.sendComplete();
-        }).start();
+        });
     }//GEN-LAST:event_onSendButtonClicked
 
     @Override
