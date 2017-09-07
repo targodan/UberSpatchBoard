@@ -56,8 +56,8 @@ public class Config {
     }
     
     public List<DataSource> dataSources;
-    
     public float secondsUntilClearedCasesAreRemoved;
+    public boolean showTestMenu;
 
     /**
      * Creates a Config instance.
@@ -65,6 +65,7 @@ public class Config {
     public Config() {
         this.dataSources = new ArrayList<>();
         this.secondsUntilClearedCasesAreRemoved = 60;
+        this.showTestMenu = false;
     }
     
     /**
@@ -176,6 +177,7 @@ public class Config {
      * @param config The config to be configured.
      */
     protected static void setYamlConfig(YamlConfig config) {
+        config.writeConfig.setWriteDefaultValues(true);
         config.setClassTag("config", Config.class);
         config.setClassTag("dataSource", Config.DataSource.class);
     }

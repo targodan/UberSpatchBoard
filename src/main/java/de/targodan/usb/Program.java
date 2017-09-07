@@ -83,7 +83,7 @@ public class Program {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            MainWindow window = new MainWindow(consoleWindow, cm);
+            MainWindow window = new MainWindow(consoleWindow, cm, CONFIG.showTestMenu);
             window.setDataConsumer(Program.dataConsumer);
             window.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override

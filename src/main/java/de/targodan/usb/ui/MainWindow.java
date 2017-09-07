@@ -49,12 +49,13 @@ import java.util.stream.Collectors;
 public class MainWindow extends javax.swing.JFrame implements Observer {
     private DataConsumer dataConsumer;
     
-    public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
+    public MainWindow(ConsoleWindow consoleWindow, CaseManager cm, boolean showTestMenu) {
         this.cm = cm;
         
         initComponents();
         
         this.consoleWindow = consoleWindow;
+        this.testMenu.setVisible(showTestMenu);
         
         this.runRemoveClearedCasesThread = new AtomicBoolean(true);
         this.removeClearedCasesThread = new Thread(() -> {
@@ -131,7 +132,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jMenuItem8 = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        testMenu = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -199,8 +200,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Test");
-        jMenu2.setToolTipText("");
+        testMenu.setText("Test");
+        testMenu.setToolTipText("");
+        testMenu.setOpaque(false);
 
         jMenuItem4.setText("Show Console");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
@@ -208,7 +210,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 onShowConsoleClicked(evt);
             }
         });
-        jMenu2.add(jMenuItem4);
+        testMenu.add(jMenuItem4);
 
         jMenuItem2.setText("Add test Case");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -216,7 +218,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 onAddTestCaseClicked(evt);
             }
         });
-        jMenu2.add(jMenuItem2);
+        testMenu.add(jMenuItem2);
 
         jMenuItem3.setText("Open injection Window");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
@@ -224,9 +226,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 onOpenInjectionWindowClicked(evt);
             }
         });
-        jMenu2.add(jMenuItem3);
+        testMenu.add(jMenuItem3);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(testMenu);
 
         jMenu3.setText("Help");
 
@@ -349,7 +351,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel caseWrapperPanel;
     private javax.swing.JLabel dataConsumerLabel;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -366,5 +367,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JTable jTable1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
+    private javax.swing.JMenu testMenu;
     // End of variables declaration//GEN-END:variables
 }
