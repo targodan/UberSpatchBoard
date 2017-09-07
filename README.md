@@ -5,8 +5,7 @@ The ultimate spatch board for dispatching fuel rats cases.
 
 # How to Install
 
-**NOTE:** So far only HexChat is supported. The default place where it is looking for the logfile is `%appdata%\hexchat\logs\fuelrats\#fuelrats.log` or on linux `~/.config/hexchat/fuelrats/fuelrats.log`.
-If your HexChat logs to some other location go to `File` -> `Settings` and change the location.
+**NOTE:** So far only HexChat and mIRC are supported. If your logs are in some other location from the default go to `File` -> `Settings` and change the location.
 
 ## Archlinux
 
