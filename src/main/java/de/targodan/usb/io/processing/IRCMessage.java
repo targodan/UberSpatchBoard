@@ -27,8 +27,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- *
- * @author corbatto
+ * IRCMessage represents an IRC message including the timestamp, sender, channel
+ * and content.
+ * 
+ * This class is immutable.
+ * 
+ * @author Luca Corbatto
  */
 public class IRCMessage {
     protected final LocalDateTime timestamp;
@@ -37,25 +41,52 @@ public class IRCMessage {
     protected final String channel;
     protected final String content;
 
-    public IRCMessage(LocalDateTime timestamp, String fromUser, String channel, String message) {
+    /**
+     * Constructs an IRCMessage.
+     * 
+     * @param timestamp The time and date at which the message was sent.
+     * @param sender The name of the user who sent the message.
+     * @param channel The name of the channel in which the message was sent.
+     * @param content The content of the message.
+     */
+    public IRCMessage(LocalDateTime timestamp, String sender, String channel, String content) {
         this.timestamp = timestamp;
-        this.sender = fromUser;
+        this.sender = sender;
         this.channel = channel;
-        this.content = message;
+        this.content = content;
     }
 
+    /**
+     * Returns the time and date at which the message was sent.
+     * @return the time and date at which the message was sent.
+     */
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Returns the name of the user who sent the message.
+     * 
+     * @return the name of the user who sent the message.
+     */
     public String getSender() {
         return sender;
     }
 
+    /**
+     * Returns the name of the channel in which the message was sent.
+     * 
+     * @return the name of the channel in which the message was sent.
+     */
     public String getChannel() {
         return channel;
     }
 
+    /**
+     * Returns the content of the message.
+     * 
+     * @return the content of the message.
+     */
     public String getContent() {
         return content;
     }

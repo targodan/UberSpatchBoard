@@ -24,8 +24,9 @@
 package de.targodan.usb.io.processing;
 
 /**
+ * Represents the parsing result.
  *
- * @author corbatto
+ * @author Luca Corbatto
  */
 public enum ParseResult {
     WAS_RATSIGNAL,

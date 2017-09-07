@@ -23,6 +23,7 @@
  */
 package de.targodan.usb.io;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 

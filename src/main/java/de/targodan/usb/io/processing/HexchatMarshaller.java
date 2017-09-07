@@ -30,6 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * This implementation of Marshaller marshalls lines as formatted by the HexChat
+ * IRC client.
  *
  * @author Luca Corbatto
  */
@@ -37,11 +39,21 @@ public class HexchatMarshaller implements Marshaller {
     protected Pattern usernameMessagePattern;
     protected Pattern sanitizationPattern;
     
+    /**
+     * Constructs a HexchatMarshaller.
+     */
     public HexchatMarshaller() {
         this.usernameMessagePattern = Pattern.compile("(.*?)\t(.*)");
         this.sanitizationPattern = Pattern.compile("\\.?:?\\<?[+\\-%@]?(?<clean>.*?)\\>?:?\\.?");
     }
     
+    /**
+     * Parses the month by String identifier.
+     * 
+     * @param month The month to be parsed.
+     * @return the parsed month.
+     * @throws IllegalArgumentException If the given String cannot be parsed.
+     */
     protected Month parseMonth(String month) {
         switch(month.toLowerCase()) {
             case "jan":
@@ -73,6 +85,16 @@ public class HexchatMarshaller implements Marshaller {
         }
     }
     
+    /**
+     * Returns the year of the IRCMessage.
+     * 
+     * This is guessing the year of the message. As the year is not logged by
+     * HexChat we expect it to be the current year unless we *just* had new 
+     * years eve.
+     * 
+     * @param messageMonth The month in which the message was sent.
+     * @return The year the message was most likely sent in.
+     */
     protected int getYear(Month messageMonth) {
         // Sort of a workaround in case this runs over newyears.
         int currentYear = LocalDate.now().getYear();
@@ -85,6 +107,13 @@ public class HexchatMarshaller implements Marshaller {
         }
     }
     
+    /**
+     * Parses the given String as a date time.
+     * 
+     * @param dateTime The String representation of the date time.
+     * @return the parsed LocalDateTime.
+     * @throws IllegalArgumentException if the String could not be parsed.
+     */
     protected LocalDateTime parseDateTime(String dateTime) {
         String[] parts = dateTime.split(" ");
         
@@ -106,6 +135,15 @@ public class HexchatMarshaller implements Marshaller {
                 );
     }
     
+    /**
+     * Sanitizes the given username.
+     * 
+     * This strips any pre- and postfixes added by HexChat, like "&lt;NAME&gt;"
+     * or ".:+NAME:." and so on.
+     * 
+     * @param name The name to be sanitized.
+     * @return the sanitized username.
+     */
     protected String sanitizeUsername(String name) {
         Matcher m = this.sanitizationPattern.matcher(name);
         if(!m.matches()) {

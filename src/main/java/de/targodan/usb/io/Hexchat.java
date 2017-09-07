@@ -46,6 +46,11 @@ public class Hexchat implements IRCClient {
                 EnumSet.of(OperatingSystem.UNIX, OperatingSystem.WINDOWS, OperatingSystem.MAC)
             );
     
+    /**
+     * Returns the base HexChat path that contains the log files and configs.
+     * 
+     * @return the base HexChat path that contains the log files and configs.
+     */
     private String getBasePath() {
         String path;
         switch(OperatingSystem.getCurrent()) {

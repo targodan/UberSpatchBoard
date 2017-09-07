@@ -62,11 +62,20 @@ public abstract class CaseManagerFactory {
         return new DefaultCaseManagerFactory(config);
     }
     
+    /**
+     * The default implementation of the CaseManagerFactory.
+     */
     private static class DefaultCaseManagerFactory extends CaseManagerFactory {
         private Config config = null;
         private CaseManager cm = null;
         private DataConsumer dc = null;
         
+        /**
+         * Constructs a new CaseManagerFactory that will create a CaseManager
+         * with DataSources as defined by the given config.
+         * 
+         * @param config The configuration to be used for creating the DataSources.
+         */
         public DefaultCaseManagerFactory(Config config) {
             this.config = config;
         }

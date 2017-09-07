@@ -24,9 +24,17 @@
 package de.targodan.usb.io.processing;
 
 /**
- *
+ * Implementations of Marshaller should marshall an arbitrary Object into an
+ * IRCMessage.
+ * 
  * @author Luca Corbatto
  */
 public interface Marshaller {
+    /**
+     * Marshalls an Object into an IRCMessage.
+     * 
+     * @param o The Object to be marshalled.
+     * @return The marshalled IRCMessage.
+     */
     IRCMessage marshall(Object o);
 }

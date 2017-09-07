@@ -29,14 +29,50 @@ import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
 
 /**
- *
+ * Implementations of Handler handle commands calls and reports calling the
+ * appropriate methods on the registered CaseManager.
+ * 
  * @author Luca Corbatto
  */
 public interface Handler {
+    /**
+     * Registers a CaseManager.
+     * 
+     * This CaseManager will be used to handle the commands calls and reports
+     * that come in.
+     * 
+     * @param cm The CaseManager to be registered.
+     */
     void registerCaseManager(CaseManager cm);
     
+    /**
+     * Handles the creation of a new Case.
+     * 
+     * @param c The new Case to be added to the CaseManager.
+     */
     void handleNewCase(Case c);
+    
+    /**
+     * Handles a command.
+     * 
+     * @param cmd The command to be handled.
+     */
     void handleCommand(Command cmd);
+    
+    /**
+     * Handles a jump call.
+     * 
+     * @param rat The jump call to be handled.
+     * @param caseIdentifier The identifier of the case the jump call is associated with.
+     */
     void handleCall(Rat rat, String caseIdentifier);
+    
+    /**
+     * Handles a report.
+     * 
+     * @param ratIrcName The IRC name of the rat that reported.
+     * @param report The report.
+     * @param caseIdentifier The identifier of the Case the report is associated with.
+     */
     void handleReport(String ratIrcName, Report report, String caseIdentifier);
 }
