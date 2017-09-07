@@ -36,7 +36,6 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -163,7 +162,7 @@ public class CaseTable extends JTable {
             }
             
             int height = panel.getPreferredSize().height;
-            if(height > 0) {
+            if(height > 0 && table.getRowHeight(row) != height) {
                 table.setRowHeight(row, height);
             }
             
@@ -188,17 +187,26 @@ public class CaseTable extends JTable {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Client client = (Client)value;
+            Component c = CaseTable.this.cells.get(new Pair<>(row, column));
+            if(c == null) {
                 switch(column) {
                     case 1:
-                    return new CopyableTextPanel(client.getCMDRName());
+                        c = new CopyableTextPanel(client.getCMDRName());
+                        break;
 
                     case 2:
-                    return new TextPanel(client.getLanguage().toUpperCase());
+                        c = new TextPanel(client.getLanguage().toUpperCase());
+                        break;
 
                     case 3:
-                    return new TextPanel(this.platformToString(client.getPlatform()));
+                        c = new TextPanel(this.platformToString(client.getPlatform()));
+                        break;
+
+                    default:
+                        throw new IllegalArgumentException("Requested rendering for column "+column+" on ClientRenderer but only columns 1, 2 and 3 are suported.");
+                }
             }
-            throw new IllegalArgumentException("Requested rendering for column "+column+" on ClientRenderer but only columns 1, 2 and 3 are suported.");
+            return c;
         }
     }
     private static class SystemRenderer implements TableCellRenderer {
@@ -225,7 +233,7 @@ public class CaseTable extends JTable {
                     .mapToInt(c -> c.getPreferredSize().height)
                     .sum();
             
-            if(height > 0) {
+            if(height > 0 && table.getRowHeight(row) != height) {
                 table.setRowHeight(row, height);
             }
             
