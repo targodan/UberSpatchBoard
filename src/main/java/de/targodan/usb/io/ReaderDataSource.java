@@ -68,10 +68,10 @@ public abstract class ReaderDataSource implements DataSource {
         }
         
         // Go to EOF
-        String line = "";
-        while(line != null) {
+        long skipped = 1;
+        while(skipped > 0) {
             try {
-                line = this.reader.readLine();
+                skipped = this.reader.skip(1024);
             } catch (IOException ex) {
                 Logger.getLogger(SingleChannelFileDataSource.class.getName())
                         .log(Level.SEVERE, null, ex);
