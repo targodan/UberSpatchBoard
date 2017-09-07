@@ -111,7 +111,7 @@ public abstract class CaseManagerFactory {
                 
                 try {
                     Logger.getLogger(CaseManagerFactory.class.getName()).log(Level.INFO, "Requesting DataSource {0}:\"{1}\"", new Object[]{ircClient.getName(), filePath});
-                    DataSource ds = new SingleChannelFileDataSource("#fuelrats", filePath, ircClient.getMarshaller());
+                    DataSource ds = new SingleChannelFileDataSource("#fuelrats", filePath, ircClient.getDefaultLogFileEncoding(), ircClient.getMarshaller());
                     this.dc.addDataSource(ds);
                     Logger.getLogger(CaseManagerFactory.class.getName()).log(Level.INFO, "DataSource successful.");
                 } catch (Exception ex) {

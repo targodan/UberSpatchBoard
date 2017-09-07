@@ -25,8 +25,10 @@ package de.targodan.usb.io;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  *
@@ -35,14 +37,17 @@ import java.io.FileReader;
 public class SingleChannelFileDataSource extends ReaderDataSource {
     private final File file;
     
-    public SingleChannelFileDataSource(String channelName, String fileName, Marshaller marshaller) throws FileNotFoundException {
+    public SingleChannelFileDataSource(String channelName, String fileName, Charset charset, Marshaller marshaller) throws FileNotFoundException {
         super(null, marshaller, channelName);
         
         this.file = new File(fileName);
         if(!this.file.canRead()) {
             throw new IllegalArgumentException("File \""+fileName+"\" is not readable.");
         }
-        this.reader = new BufferedReader(new FileReader(this.file));
+        this.reader = new BufferedReader(
+                new IRCFormatFilteringReader(
+                        new InputStreamReader(
+                                new FileInputStream(this.file), charset)));
         
         this.goToEndOfReader();
     }

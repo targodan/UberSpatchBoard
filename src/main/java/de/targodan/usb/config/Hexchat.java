@@ -26,6 +26,7 @@ package de.targodan.usb.config;
 import de.targodan.usb.io.HexchatMarshaller;
 import de.targodan.usb.io.Marshaller;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -115,5 +116,10 @@ public class Hexchat implements IRCClient {
     @Override
     public Set<OperatingSystem> getSupportedOperatingSystems() {
         return Hexchat.SUPPORTED_OPERATING_SYSTEMS;
+    }
+
+    @Override
+    public Charset getDefaultLogFileEncoding() {
+        return Charset.forName("UTF-8");
     }
 }

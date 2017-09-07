@@ -24,6 +24,7 @@
 package de.targodan.usb.config;
 
 import de.targodan.usb.io.Marshaller;
+import java.nio.charset.Charset;
 import java.util.Set;
 
 /**
@@ -71,4 +72,10 @@ public interface IRCClient {
      * @return a set of operating systems that are supported by the IRC client.
      */
     Set<OperatingSystem> getSupportedOperatingSystems();
+    
+    /**
+     * GetDefaultLogFileEncoding returns the default charset for log files.
+     * @return the default charset for log files.
+     */
+    Charset getDefaultLogFileEncoding();
 }
