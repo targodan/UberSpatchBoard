@@ -294,7 +294,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void onOpenInjectionWindowClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onOpenInjectionWindowClicked
         MessageInjectionWindow window = new MessageInjectionWindow(this);
         window.setVisible(true);
-        Program.dataConsumer.addDataSource(window);
     }//GEN-LAST:event_onOpenInjectionWindowClicked
 
     private void onShowConsoleClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onShowConsoleClicked
