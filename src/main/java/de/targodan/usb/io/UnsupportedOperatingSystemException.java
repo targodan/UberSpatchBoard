@@ -27,6 +27,23 @@ package de.targodan.usb.io;
  *
  * @author Luca Corbatto
  */
-public interface Marshaller {
-    IRCMessage marshall(Object o);
+public class UnsupportedOperatingSystemException extends Exception {
+
+    /**
+     * Creates a new instance of
+     * <code>UnsupportedOperatingSystemException</code> without detail message.
+     */
+    public UnsupportedOperatingSystemException() {
+    }
+
+    /**
+     * Constructs an instance of
+     * <code>UnsupportedOperatingSystemException</code> with the specified
+     * detail message.
+     *
+     * @param msg the detail message.
+     */
+    public UnsupportedOperatingSystemException(String msg) {
+        super(msg);
+    }
 }

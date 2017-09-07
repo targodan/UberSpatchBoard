@@ -27,36 +27,65 @@ import java.util.Objects;
 import java.util.Observable;
 
 /**
- *
- * @author corbatto
+ * Represents an IRC User that also has an ED account.
+ * 
+ * @author Luca Corbatto
  */
 public class User extends Observable {
     protected String ircName;
     protected String cmdrName;
     protected Platform platform;
     
+    /**
+     * Constructs a User with the given IRC name.
+     * 
+     * @param ircName The IRC name.
+     */
     public User(String ircName) {
         this.ircName = ircName;
         this.cmdrName = null;
         this.platform = null;
     }
     
+    /**
+     * Constructs a User with the given IRC and CMDR name.
+     * 
+     * @param ircName The IRC name.
+     * @param cmdrName The ED commander name.
+     */
     public User(String ircName, String cmdrName) {
         this.ircName = ircName;
         this.cmdrName = cmdrName;
         this.platform = null;
     }
 
+    /**
+     * Constructs a User with the given IRC name, a CMDR name and a platform.
+     * 
+     * @param ircName The IRC name.
+     * @param cmdrName The ED commander name.
+     * @param platform The platform this user plays ED on.
+     */
     public User(String ircName, String cmdrName, Platform platform) {
         this.ircName = ircName;
         this.cmdrName = cmdrName;
         this.platform = platform;
     }
 
+    /**
+     * Returns the IRC name.
+     * 
+     * @return the IRC name.
+     */
     public String getIRCName() {
         return ircName;
     }
 
+    /**
+     * Sets the IRC name.
+     * 
+     * @param ircName The IRC name.
+     */
     public void setIRCName(String ircName) {
         this.ircName = ircName;
         
@@ -64,10 +93,20 @@ public class User extends Observable {
         this.notifyObservers();
     }
 
+    /**
+     * Returns the commander name.
+     * 
+     * @return the commander name.
+     */
     public String getCMDRName() {
         return cmdrName != null ? cmdrName : ircName;
     }
 
+    /**
+     * Sets the commander name.
+     * 
+     * @param cmdrName The commander name.
+     */
     public void setCMDRName(String cmdrName) {
         this.cmdrName = cmdrName;
         
@@ -75,10 +114,20 @@ public class User extends Observable {
         this.notifyObservers();
     }
 
+    /**
+     * Returns the platform this user plays ED on.
+     * 
+     * @return the platform this user plays ED on.
+     */
     public Platform getPlatform() {
         return platform;
     }
 
+    /**
+     * Sets the platform this user plays ED on.
+     * 
+     * @param platform The platform this user plays ED on.
+     */
     public void setPlatform(Platform platform) {
         this.platform = platform;
         

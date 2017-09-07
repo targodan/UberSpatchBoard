@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The IRCClientRegistry keeps track of all supported IRC client types.
@@ -48,13 +48,14 @@ public class IRCClientRegistry {
             return;
         }
         IRCClientRegistry.registerClient(new Hexchat());
+        IRCClientRegistry.registerClient(new mIRC());
         IRCClientRegistry.isInitialized = true;
     }
     
     /**
      * RegisterClient registers an IRCClient instance.
      * 
-     * @param client 
+     * @param client The client to be registered.
      */
     public static void registerClient(IRCClient client) {
         IRCClientRegistry.supportedClients.add(client);
@@ -63,11 +64,13 @@ public class IRCClientRegistry {
     /**
      * GetSupportedClients returns all previously registered IRCClients.
      * 
-     * @return 
+     * @return a List of supported clients.
      */
     public static List<IRCClient> getSupportedClients() {
         IRCClientRegistry.init();
-        return Collections.unmodifiableList(IRCClientRegistry.supportedClients);
+        return IRCClientRegistry.supportedClients.stream()
+                .filter(client -> client.getSupportedOperatingSystems().contains(OperatingSystem.getCurrent()))
+                .collect(Collectors.toList());
     }
     
     /**

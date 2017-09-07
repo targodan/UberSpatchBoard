@@ -21,16 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.io;
+package de.targodan.usb.io.processing;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 /**
- *
+ * Command represents a command and its parameters.
+ * 
  * @author Luca Corbatto
  */
 public class Command {
+    /**
+     * Type represents a command type. 
+     */
     public enum Type {
         SOFT_ASSIGN, HARD_ASSIGN,
         UNASSIGN,
@@ -50,15 +54,32 @@ public class Command {
     protected final Type type;
     protected final String[] parameters;
 
+    /**
+     * Constructs a new command of the given type with the given parameters.
+     * 
+     * @param type The type of the command.
+     * @param parameters The commands parameters.
+     */
     public Command(Type type, String[] parameters) {
         this.type = type;
         this.parameters = parameters;
     }
 
+    /**
+     * Returns the type of the command.
+     * 
+     * @return the type of the command.
+     */
     public Type getType() {
         return this.type;
     }
 
+    /**
+     * Returns the i-th parameter.
+     * 
+     * @param i The index of the parameter to be returned.
+     * @return the i-th parameter.
+     */
     public String getParameter(int i) {
         if(i >= this.parameters.length) {
             throw new IllegalArgumentException("Requested parameter with index "+Integer.toString(i)+" but only "+Integer.toString(this.parameters.length)+" parameters available for command type "+this.type.toString()+".");
@@ -66,6 +87,11 @@ public class Command {
         return this.parameters[i];
     }
     
+    /**
+     * Returns the number of parameters this command received.
+     * 
+     * @return the number of parameters this command received.
+     */
     public int getParameterCount() {
         return this.parameters.length;
     }
@@ -98,6 +124,4 @@ public class Command {
         }
         return true;
     }
-    
-    
 }

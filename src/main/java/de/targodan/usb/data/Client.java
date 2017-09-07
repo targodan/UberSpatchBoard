@@ -24,24 +24,43 @@
 package de.targodan.usb.data;
 
 /**
- *
- * @author corbatto
+ * Client is a User with a language.
+ * 
+ * @author Luca Corbatto
  */
 public class Client extends User {
     protected String language;
     
+    /**
+     * Construct a Client with the given names, platform and language.
+     * 
+     * @param ircName
+     * @param cmdrName
+     * @param platform
+     * @param language Two character language code.
+     */
     public Client(String ircName, String cmdrName, Platform platform, String language) {
         super(ircName, cmdrName, platform);
         
-        this.language = language;
+        this.language = language.toUpperCase();
     }
 
+    /**
+     * Returns the language of the client.
+     * 
+     * @return Two character upper case language code.
+     */
     public String getLanguage() {
         return language;
     }
 
+    /**
+     * Sets the language of the client.
+     * 
+     * @param language Two character language code.
+     */
     public void setLanguage(String language) {
-        this.language = language;
+        this.language = language.toUpperCase();
         
         this.setChanged();
         this.notifyObservers();

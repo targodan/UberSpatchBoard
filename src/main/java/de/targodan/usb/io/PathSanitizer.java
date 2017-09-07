@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -102,7 +102,7 @@ public class PathSanitizer {
      * @return 
      */
     protected static String sanitizeUnix(String path) {
-        path = path.replaceFirst("^~", System.getProperty("user.home"));
+        path = path.replaceFirst("^~", sanitizeReplaceString(System.getProperty("user.home")));
         Matcher m = Pattern.compile("\\$(?<var>[a-zA-Z0-9_]+)").matcher(path);
         while(m.find()) {
             path = m.replaceFirst(sanitizeReplaceString(environment.get(m.group("var"))));

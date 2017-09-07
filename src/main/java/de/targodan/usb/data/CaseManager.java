@@ -33,34 +33,58 @@ import java.util.Observable;
 import java.util.Set;
 
 /**
- *
- * @author corbatto
+ * The CaseManager keeps track of and manages cases.
+ * 
+ * @author Luca Corbatto
  */
 public class CaseManager extends Observable {
     protected final Set<Case> closedCases;
     protected final Map<Integer, Case> cases;
 
+    /**
+     * Constructs a new CaseManager.
+     */
     public CaseManager() {
         this.closedCases = new HashSet<>();
         this.cases = new HashMap<>();
     }
     
+    /**
+     * Returns a case with the given case number.
+     * 
+     * @param number The number of the case as given by MechaSqueak.
+     * @return The requested case or null.
+     */
     public Case getCase(int number) {
         return this.cases.get(number);
     }
     
-    public List<Case> getCases() {
+    /**
+     * Returns all open cases.
+     * @return all open cases.
+     */
+    public List<Case> getOpenCases() {
         return this.cases.values().stream()
                 .sorted((i1, i2) -> i1.getOpenTime().compareTo(i2.getOpenTime()))
                 .collect(Collectors.toList());
     }
     
+    /**
+     * Returns all closed cases.
+     * 
+     * @return all closed cases.
+     */
     public List<Case> getClosedCases() {
         return this.closedCases.stream()
                 .sorted((i1, i2) -> i1.getOpenTime().compareTo(i2.getOpenTime()))
                 .collect(Collectors.toList());
     }
     
+    /**
+     * Adds a case.
+     * 
+     * @param c 
+     */
     public void addCase(Case c) {
         if(this.cases.containsKey(c.getNumber())) {
             throw new IllegalStateException("A case with the number " + Integer.toString(c.getNumber()) + " already exists!");
@@ -72,6 +96,14 @@ public class CaseManager extends Observable {
         this.notifyObservers();
     }
     
+    /**
+     * Notifies the CaseManager that the case c was closed.
+     * 
+     * You typically don't need to call this as Case.close() does this
+     * automatically.
+     * 
+     * @param c 
+     */
     public void notifyCaseClosed(Case c) {
         Case closedCase = this.cases.remove(c.getNumber());
         if(closedCase != null) {
@@ -82,17 +114,53 @@ public class CaseManager extends Observable {
         this.notifyObservers();
     }
     
+    /**
+     * Removes closed cases that have been closed before closeTime.
+     * 
+     * @param closeTime 
+     */
     public void removeClosedCasesOlderThan(LocalDateTime closeTime) {
-        // TODO: Check if < 0 is correct
-        if(this.closedCases.removeIf(item -> item.getCloseTime().compareTo(closeTime) < 0)) {
+        if(this.closedCases.removeIf(item -> item.getCloseTime().isBefore(closeTime))) {
             this.setChanged();
             this.notifyObservers();
         }
     }
     
+    /**
+     * Returns the Case where the clients IRC or CMDR name are equal to the
+     * given name or null if no such case exists.
+     * 
+     * @param clientName
+     * @return the Case where the clients IRC or CMDR name are equal to the
+     * given name or null if no such case exists.
+     */
     public Case lookupCaseOfClient(String clientName) {
         return this.cases.values().stream()
                 .filter(elem -> elem.getClient().getIRCName().equals(clientName) || elem.getClient().getCMDRName().equals(clientName))
                 .findFirst().orElse(null);
+    }
+    
+    /**
+     * Returns the Case where a Rat with the same IRC name as the given rat has
+     * been assigned or at least has called for the case.
+     * 
+     * @param rat The rat to search for.
+     * @return the Case where a Rat with the same IRC name as the given rat has
+     * been assigned or at least has called for the case.
+     */
+    public Case lookupCaseWithRat(Rat rat) {
+        Case c = this.cases.values().stream()
+                .filter(
+                        elem -> elem.getRats().stream().anyMatch(r -> r.getIRCName().equals(rat.getIRCName()))
+                )
+                .findFirst().orElse(null);
+        if(c == null) {
+            c = this.cases.values().stream()
+                .filter(
+                        elem -> elem.getCalls().stream().anyMatch(r -> r.getIRCName().equals(rat.getIRCName()))
+                )
+                .findFirst().orElse(null);
+        }
+        return c;
     }
 }

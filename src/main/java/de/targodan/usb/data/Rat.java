@@ -31,8 +31,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
- * @author corbatto
+ * Rat is a User with additional information about the jumps called and if they
+ * have been assigned to a case.
+ * 
+ * @author Luca Corbatto
  */
 public class Rat extends User {
     private static Pattern platformPattern;
@@ -42,25 +44,58 @@ public class Rat extends User {
     
     protected final Set<Report> reports;
     
+    /**
+     * Construct a Rat with only an IRC name and the platform guessed based on
+     * the IRC name.
+     * 
+     * @see Rat#guessPlatform(java.lang.String)
+     * 
+     * @param ircName 
+     */
     public Rat(String ircName) {
         this(ircName, null, Rat.guessPlatform(ircName));
     }
     
+    /**
+     * Construct a Rat with an IRC name and a commander name, the platform is
+     * guessed based on the IRC name.
+     * 
+     * @see Rat#guessPlatform(java.lang.String)
+     * 
+     * @param ircName 
+     * @param cmdrName 
+     */
     public Rat(String ircName, String cmdrName) {
         this(ircName, cmdrName, Rat.guessPlatform(ircName));
     }
     
+    
+    /**
+     * Construct a Rat with an IRC name, a commander name and the platform.
+     * 
+     * @param ircName 
+     * @param cmdrName 
+     * @param platform 
+     */
     public Rat(String ircName, String cmdrName, Platform platform) {
         super(ircName, cmdrName, platform);
         
-        this.jumps = 0;
+        this.jumps = -1;
         this.reports = new HashSet<>();
         this.assigned = false;
     }
     
+    /**
+     * Guesses the platform based on the IRC name.
+     * 
+     * It looks for postfixes like "[PC]", "|PC" or similar. 
+     * 
+     * @param ircName
+     * @return 
+     */
     private static Platform guessPlatform(String ircName) {
         if(Rat.platformPattern == null) {
-            Rat.platformPattern = Pattern.compile(".*\\[.*(?<platform>(pc|ps|xb))", Pattern.CASE_INSENSITIVE);
+            Rat.platformPattern = Pattern.compile(".*[\\[|].*(?<platform>(pc|ps|xb))", Pattern.CASE_INSENSITIVE);
         }
         Matcher m = Rat.platformPattern.matcher(ircName);
         if(!m.matches()) {
@@ -80,10 +115,20 @@ public class Rat extends User {
         return null;
     }
 
+    /**
+     * Returns the number of jumps the Rat has left to reach the client.
+     * 
+     * @return the number of jumps the Rat has left to reach the client.
+     */
     public int getJumps() {
         return jumps;
     }
 
+    /**
+     * Sets the number of jumps the Rat has left to reach the client.
+     * 
+     * @param jumps 
+     */
     public void setJumps(int jumps) {
         this.jumps = jumps;
         
@@ -91,10 +136,21 @@ public class Rat extends User {
         this.notifyObservers();
     }
     
+    /**
+     * Returns the reports this Rat has made so far.
+     * 
+     * @return the reports this Rat has made so far.
+     */
     public Collection<Report> getReports() {
         return Collections.unmodifiableCollection(this.reports);
     }
     
+    /**
+     * Inserts a new Report overwriting reports of the same kind.
+     * @see Report#equals(java.lang.Object)
+     * 
+     * @param report 
+     */
     public void insertReport(Report report) {
         if(this.reports.contains(report)) {
             this.reports.remove(report);
@@ -105,10 +161,20 @@ public class Rat extends User {
         this.notifyObservers();
     }
 
+    /**
+     * Returns true if the Rat has been assigned to a case.
+     * 
+     * @return true if the Rat has been assigned to a case.
+     */
     public boolean isAssigned() {
         return assigned;
     }
 
+    /**
+     * Sets the assigned status of this rat.
+     * 
+     * @param assigned 
+     */
     public void setAssigned(boolean assigned) {
         this.assigned = assigned;
         

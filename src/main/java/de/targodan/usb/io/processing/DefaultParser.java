@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.io;
+package de.targodan.usb.io.processing;
 
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.Client;
@@ -35,7 +35,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * DefaultParser is the default implementation of the Parser interface.
+ * 
+ * It handles parsing of the MechaSqueak commands as well as rat calls and
+ * reports and a few extra commands.
+ * 
  * @author Luca Corbatto
  */
 public class DefaultParser implements Parser {
@@ -58,6 +62,9 @@ public class DefaultParser implements Parser {
         "sys", "fr", "wr", "wb", "bc", "comm", "comms", "inst", "party",
     };
     
+    /**
+     * Constructs a new DefaultParser.
+     */
     public DefaultParser() {
         this.handler = null;
         
@@ -118,6 +125,12 @@ public class DefaultParser implements Parser {
         return ParseResult.IGNORED;
     }
     
+    /**
+     * Tries to parse a RATSIGNAL and send it to the attached handler.
+     * 
+     * @param message The message to be parsed.
+     * @return true if the message was parsed as a RATSIGNAL.
+     */
     protected boolean parseAndHandleRatsignal(IRCMessage message) {
         Matcher m = this.ratsignalPattern.matcher(message.getContent());
         if(!m.matches()) {
@@ -137,7 +150,7 @@ public class DefaultParser implements Parser {
                 new Client(ircNick, cmdrName, this.parsePlatform(m.group("platform")), m.group("language").toLowerCase()),
                 new System(m.group("system")),
                 !m.group("o2").equals("OK"),
-                message.timestamp
+                message.getTimestamp()
         );
         
         this.handler.handleNewCase(c);
@@ -145,6 +158,12 @@ public class DefaultParser implements Parser {
         return true;
     }
     
+    /**
+     * Tries to parse a command and send it to the attached handler.
+     * 
+     * @param message The message to be parsed.
+     * @return true if the message was parsed as a command.
+     */
     protected boolean parseAndHandleCommand(IRCMessage message) {
         Matcher m = this.commandPattern.matcher(message.getContent().trim());
         if(!m.matches()) {
@@ -158,7 +177,7 @@ public class DefaultParser implements Parser {
         try {
             cmdType = this.parseCommandType(cmd);
         } catch(Exception ex) {
-            Logger.getLogger(DefaultParser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DefaultParser.class.getName()).log(Level.WARNING, "Command \"{0}\" not supported.", cmd);
             return false;
         }
         
@@ -176,6 +195,14 @@ public class DefaultParser implements Parser {
         return true;
     }
     
+    /**
+     * Tries to parse the jump call of a rat.
+     * 
+     * Like "5j #2".
+     * 
+     * @param message The message to be parsed.
+     * @return true if the message was parsed as a call.
+     */
     protected boolean parseAndHandleCall(IRCMessage message) {
         Matcher m = this.callPattern.matcher(message.getContent().trim());
         if(!m.matches()) {
@@ -190,6 +217,17 @@ public class DefaultParser implements Parser {
         return true;
     }
     
+    /**
+     * Sanitizes a case identifier.
+     * 
+     * It tries to interpret the identifier first as a case number optionally 
+     * prefixed by a '#' or a 'c' and returns just the number. If that fails it
+     * interprets the identifier as client name and returns the same string as
+     * the input.
+     * 
+     * @param caseIdentifier The identifier to be sanitized.
+     * @return The sanitized case identifier.
+     */
     protected String sanitizeCaseIdentifier(String caseIdentifier) {
         if(caseIdentifier == null || caseIdentifier.length() == 0) {
             return "";
@@ -209,6 +247,14 @@ public class DefaultParser implements Parser {
         throw new IllegalArgumentException("This should never happen.");
     }
     
+    /**
+     * Tries to parse a report and send it to the attached handler.
+     * 
+     * Reports include "sys+", "fr+" and so on.
+     * 
+     * @param message The message to be parsed.
+     * @return true if the message was parsed as a RATSIGNAL.
+     */
     protected boolean parseAndHandleReport(IRCMessage message) {
         // Dirty hack for supporting multiple reports in a single line, avert your eyes.
         boolean matchedAtLeastOnce = false;
@@ -242,6 +288,13 @@ public class DefaultParser implements Parser {
         return matchedAtLeastOnce;
     }
     
+    /**
+     * Tries to parse the command type by string identifier.
+     * 
+     * @param cmd The command string to be parsed.
+     * @return The command type.
+     * @throws IllegalArgumentException If the command type is unknown.
+     */
     protected Command.Type parseCommandType(String cmd) {
         cmd = cmd.toLowerCase();
         if(cmd.equals("go")) {
@@ -318,6 +371,16 @@ public class DefaultParser implements Parser {
         throw new IllegalArgumentException("Command \""+cmd+"\" not recognized.");
     }
     
+    /**
+     * Tries to split the argument string according to the formatting the given
+     * command expects.
+     * 
+     * @param cmd The command type dictating the format.
+     * @param params The parameter string.
+     * @return An array of individual parameters.
+     * @throws IllegalArgumentException If the parameter string does not fit the
+     * commands format.
+     */
     protected String[] splitArgumentsOfCommand(Command.Type cmd, String params) {
         params = params.trim();
         
@@ -359,6 +422,13 @@ public class DefaultParser implements Parser {
         return new String[]{};
     }
     
+    /**
+     * Tries to parse a report type by string identifier.
+     * 
+     * @param report The string to be parsed.
+     * @return The report type.
+     * @throws IllegalArgumentException If the report is unknown.
+     */
     protected Report.Type parseReportType(String report) {
         report = report.toLowerCase();
         switch(report) {
@@ -389,7 +459,14 @@ public class DefaultParser implements Parser {
         throw new IllegalArgumentException("Report \""+report+"\" unknown.");
     }
     
-    Platform parsePlatform(String platform) {
+    /**
+     * Tries to parse the platform by string identifier.
+     * 
+     * @param platform The string to be parsed.
+     * @return The platform.
+     * @throws IllegalArgumentException If the platform is unknown.
+     */
+    protected Platform parsePlatform(String platform) {
         switch(platform.toLowerCase()) {
             case "pc":
                 return Platform.PC;

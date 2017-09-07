@@ -68,7 +68,11 @@ public class RatView extends javax.swing.JPanel implements Observer {
         }
         
         this.ratName.setText(this.getRatName());
-        this.jumps.setText(Integer.toString(this.rat.getJumps())+"j");
+        if(this.rat.getJumps() == -1) {
+            this.jumps.setText("?j");
+        } else {
+            this.jumps.setText(Integer.toString(this.rat.getJumps())+"j");
+        }
         this.updateReports();
         
         this.revalidate();
@@ -190,7 +194,7 @@ public class RatView extends javax.swing.JPanel implements Observer {
             .addGroup(ratNamePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(ratName)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ratNamePanelLayout.setVerticalGroup(
             ratNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

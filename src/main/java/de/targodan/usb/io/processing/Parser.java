@@ -21,13 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.io;
+package de.targodan.usb.io.processing;
 
 /**
+ * Implementations of Parser should parse and handle a message.
  *
- * @author corbatto
+ * @author Luca Corbatto
  */
 public interface Parser {
+    /**
+     * The Handler that is supposed to be used for handling the parsing result.
+     * 
+     * @param handler The Handler to be used.
+     */
     void registerHandler(Handler handler);
+    
+    /**
+     * Parses and handles a message.
+     * 
+     * @param message The message to be parsed and handled.
+     * @return The parsing result.
+     */
     ParseResult parseAndHandle(IRCMessage message);
 }

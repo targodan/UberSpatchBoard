@@ -23,25 +23,46 @@
  */
 package de.targodan.usb.io;
 
+import de.targodan.usb.io.processing.Marshaller;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
+ * The SingleChannelFileDataSource is a ReaderDataSource that creates a reader
+ * from a file.
  *
  * @author Luca Corbatto
  */
 public class SingleChannelFileDataSource extends ReaderDataSource {
-    public SingleChannelFileDataSource(String channelName, String fileName, Marshaller marshaller) throws FileNotFoundException {
-        super(null, marshaller, channelName);
+    private final File file;
+    
+    public SingleChannelFileDataSource(String channelName, String fileName, Charset charset, Marshaller marshaller) throws FileNotFoundException {
+        super(marshaller, channelName);
         
-        File f = new File(fileName);
-        if(!f.canRead()) {
+        this.file = new File(fileName);
+        if(!this.file.canRead()) {
             throw new IllegalArgumentException("File \""+fileName+"\" is not readable.");
         }
-        this.reader = new BufferedReader(new FileReader(f));
+        this.reader = new BufferedReader(
+                new IRCFormatFilteringReader(
+                        new InputStreamReader(
+                                new FileInputStream(this.file), charset)));
         
         this.goToEndOfReader();
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "file://"+this.file.getPath();
+    }
+
+    @Override
+    public String getShortName() {
+        return "file://..."+File.separator+this.file.getName();
     }
 }

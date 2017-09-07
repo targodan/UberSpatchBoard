@@ -21,71 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.data;
+package de.targodan.usb.ui;
 
 import java.util.Objects;
-import java.util.Observable;
 
 /**
- * Represents an ED System.
+ * A pair of values.
  * 
  * @author Luca Corbatto
+ * @param <LeftT> The type of the left value.
+ * @param <RightT> The type of the right value.
  */
-public class System extends Observable {
-    protected final String name;
-    protected boolean confirmed;
-
-    /**
-     * Constructs a System with the given name.
-     * 
-     * @param name The name of the system.
-     */
-    public System(String name) {
-        this.name = name;
-        this.confirmed = false;
+public class Pair<LeftT, RightT> {
+    private final LeftT left;
+    private final RightT right;
+    
+    public Pair(LeftT left, RightT right) {
+        this.left = left;
+        this.right = right;
     }
-
-    /**
-     * Returns the name of the system.
-     * 
-     * @return the name of the system.
-     */
-    public String getName() {
-        return name;
+    
+    public LeftT getLeft() {
+        return this.left;
     }
-
-    /**
-     * Returns true if the system was confirmed.
-     * 
-     * "Confirmed" as in: A rat has confirmed that the client is in fact in this
-     * system.
-     * 
-     * @return true if the system was confirmed.
-     */
-    public boolean isConfirmed() {
-        return confirmed;
-    }
-
-    /**
-     * Sets the confirmed status of this system.
-     * 
-     * "Confirmed" as in: A rat has confirmed that the client is in fact in this
-     * system.
-     * 
-     * @param confirmed The confirmed status.
-     */
-    public void setConfirmed(boolean confirmed) {
-        this.confirmed = confirmed;
-        
-        this.setChanged();
-        this.notifyObservers();
+    
+    public RightT getRight() {
+        return this.right;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 29 * hash + Objects.hashCode(this.name);
-        hash = 29 * hash + (this.confirmed ? 1 : 0);
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.left);
+        hash = 89 * hash + Objects.hashCode(this.right);
         return hash;
     }
 
@@ -100,15 +68,13 @@ public class System extends Observable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final System other = (System) obj;
-        if (this.confirmed != other.confirmed) {
+        final Pair<?, ?> other = (Pair<?, ?>) obj;
+        if (!Objects.equals(this.left, other.left)) {
             return false;
         }
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(this.right, other.right)) {
             return false;
         }
         return true;
     }
-    
-    
 }

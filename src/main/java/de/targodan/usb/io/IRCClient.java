@@ -23,42 +23,59 @@
  */
 package de.targodan.usb.io;
 
-import de.targodan.usb.io.processing.IRCMessage;
-import java.util.concurrent.BlockingQueue;
+import de.targodan.usb.io.processing.Marshaller;
+import java.nio.charset.Charset;
+import java.util.Set;
 
 /**
- * Implementations of DataSource represent a data source for IRC messages.
+ * IRCClient represents a supported IRC client.
  * 
- * @author Luca Corbatto
+ * The implementations of this interface should be able to detect whether the
+ * client is installed and ideally where the fuelrats log file is located.
+ * 
+ * @author corbatto
  */
-public interface DataSource {
+public interface IRCClient {
     /**
-     * Listen should listen for data sending all IRCMessages to the given queue.
+     * IsInstalled should check whether or not the client is installed.
      * 
-     * This method will block until stop is called.
-     * 
-     * @see DataSource#stop() 
-     * 
-     * @param output The BlockingQueue that will be receiving the IRC messages.
+     * @return 
      */
-    void listen(BlockingQueue<IRCMessage> output);
+    boolean isInstalled();
     
     /**
-     * Stop should stop the listening.
+     * GetFuelratsLogfilePath should return the path for the fuelrats log file.
+     * 
+     * @return 
      */
-    void stop();
+    String getFuelratsLogfilePath();
     
     /**
-     * Returns the long name of the DataSource.
+     * GetMarshaller should return a Marshaller that is able to marshal the log
+     * files of this client.
      * 
-     * @return the long name of the DataSource.
+     * @return 
+     */
+    Marshaller getMarshaller();
+    
+    /**
+     * GetName returns the name of the client.
+     * 
+     * @return 
      */
     String getName();
     
     /**
-     * Returns the short name of the DataSource.
+     * GetSupportedOperatingSystems returns a set of operating systems that are
+     * supported by the IRC client.
      * 
-     * @return the short name of the DataSource.
+     * @return a set of operating systems that are supported by the IRC client.
      */
-    String getShortName();
+    Set<OperatingSystem> getSupportedOperatingSystems();
+    
+    /**
+     * GetDefaultLogFileEncoding returns the default charset for log files.
+     * @return the default charset for log files.
+     */
+    Charset getDefaultLogFileEncoding();
 }

@@ -30,6 +30,7 @@ import de.targodan.usb.data.Client;
 import de.targodan.usb.data.Platform;
 import de.targodan.usb.data.Rat;
 import de.targodan.usb.data.Report;
+import de.targodan.usb.io.DataConsumer;
 import java.awt.Dimension;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -39,32 +40,27 @@ import java.util.Observer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jdesktop.swingx.VerticalLayout;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author Luca Corbatto
  */
 public class MainWindow extends javax.swing.JFrame implements Observer {
+    private DataConsumer dataConsumer;
     
-    /**
-     * Creates new form MainWindow
-     */
-    public MainWindow(ConsoleWindow consoleWindow) {
+    public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
+        this.cm = cm;
+        
         initComponents();
         
         this.consoleWindow = consoleWindow;
-        
-        this.casePanel.setLayout(new VerticalLayout());
         
         this.runRemoveClearedCasesThread = new AtomicBoolean(true);
         this.removeClearedCasesThread = new Thread(() -> {
             while(this.runRemoveClearedCasesThread.get()) {
                 try {
-                    Thread t = Thread.currentThread();
-                    synchronized(t) {
-                        t.wait(200);
-                    }
+                    Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -76,37 +72,44 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.removeClearedCasesThread.setName("RemoveClearedCasesThread");
     }
     
-    public MainWindow(ConsoleWindow consoleWindow, CaseManager cm) {
-        this(consoleWindow);
-        
-        this.cm = cm;
-        this.updateCases();
-        this.cm.addObserver(this);
-    }
-    
-    private void updateCases() {
-        if(this.cm == null) {
-            throw new IllegalStateException("Can't updateCases without a CaseManager.");
+    private void updateDataConsumerLabel() {
+        StringBuilder shortName = new StringBuilder();
+        StringBuilder longName = new StringBuilder();
+        if(this.dataConsumer.isRunning()) {
+            shortName.append("Reading from: ");
+        } else {
+            shortName.append("Connected to: ");
         }
+        shortName.append(
+                this.dataConsumer.getDataSources().stream()
+                    .map(ds -> ds.getShortName())
+                    .collect(Collectors.joining(", "))
+            );
+        longName.append(
+                this.dataConsumer.getDataSources().stream()
+                    .map(ds -> "\""+ds.getName()+"\"")
+                    .collect(Collectors.joining(", "))
+            );
         
-        this.casePanel.removeAll();
-        this.cm.getClosedCases().forEach(c -> {
-            this.casePanel.add(new CaseView(c));
-        });
-        this.cm.getCases().forEach(c -> {
-            this.casePanel.add(new CaseView(c));
-        });
-        this.revalidate();
-        this.repaint();
+        this.dataConsumerLabel.setText(shortName.toString());
+        this.dataConsumerLabel.setToolTipText(longName.toString());
     }
     
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable o, Object o1) {
         java.awt.EventQueue.invokeLater(() -> {
-            this.updateCases();
+            if(o == this.dataConsumer) {
+                this.updateDataConsumerLabel();
+            }
         });
     }
 
+    public void setDataConsumer(DataConsumer dataConsumer) {
+        this.dataConsumer = dataConsumer;
+        this.updateDataConsumerLabel();
+        this.dataConsumer.addObserver(this);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -117,13 +120,12 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void initComponents() {
 
         jToolBar1 = new javax.swing.JToolBar();
-        statusBar = new javax.swing.JPanel();
         caseBox = new javax.swing.JPanel();
         caseWrapperPanel = new javax.swing.JPanel();
-        caseViewHeader = new de.targodan.usb.ui.CaseView();
-        caseScrollPaneWrapper = new javax.swing.JPanel();
-        caseScrollPane = new javax.swing.JScrollPane();
-        casePanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new CaseTable(this.cm);
+        statusBar = new javax.swing.JPanel();
+        dataConsumerLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
@@ -152,73 +154,29 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
 
-        javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
-        statusBar.setLayout(statusBarLayout);
-        statusBarLayout.setHorizontalGroup(
-            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        statusBarLayout.setVerticalGroup(
-            statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 26, Short.MAX_VALUE)
-        );
-
         caseBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Cases"));
 
-        javax.swing.GroupLayout casePanelLayout = new javax.swing.GroupLayout(casePanel);
-        casePanel.setLayout(casePanelLayout);
-        casePanelLayout.setHorizontalGroup(
-            casePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1725, Short.MAX_VALUE)
-        );
-        casePanelLayout.setVerticalGroup(
-            casePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 777, Short.MAX_VALUE)
-        );
+        caseWrapperPanel.setLayout(new java.awt.BorderLayout());
 
-        caseScrollPane.setViewportView(casePanel);
+        jTable1.setRowSelectionAllowed(false);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable1);
 
-        javax.swing.GroupLayout caseScrollPaneWrapperLayout = new javax.swing.GroupLayout(caseScrollPaneWrapper);
-        caseScrollPaneWrapper.setLayout(caseScrollPaneWrapperLayout);
-        caseScrollPaneWrapperLayout.setHorizontalGroup(
-            caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(caseScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1728, Short.MAX_VALUE))
-        );
-        caseScrollPaneWrapperLayout.setVerticalGroup(
-            caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 780, Short.MAX_VALUE)
-            .addGroup(caseScrollPaneWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(caseScrollPane))
-        );
-
-        javax.swing.GroupLayout caseWrapperPanelLayout = new javax.swing.GroupLayout(caseWrapperPanel);
-        caseWrapperPanel.setLayout(caseWrapperPanelLayout);
-        caseWrapperPanelLayout.setHorizontalGroup(
-            caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseViewHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 1106, Short.MAX_VALUE)
-            .addComponent(caseScrollPaneWrapper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        caseWrapperPanelLayout.setVerticalGroup(
-            caseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(caseWrapperPanelLayout.createSequentialGroup()
-                .addComponent(caseViewHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(caseScrollPaneWrapper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
+        caseWrapperPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout caseBoxLayout = new javax.swing.GroupLayout(caseBox);
         caseBox.setLayout(caseBoxLayout);
         caseBoxLayout.setHorizontalGroup(
             caseBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)
         );
         caseBoxLayout.setVerticalGroup(
             caseBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(caseWrapperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
         );
+
+        dataConsumerLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        statusBar.add(dataConsumerLabel);
 
         jMenu1.setText("File");
 
@@ -324,7 +282,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_onCloseMenuClicked
 
     private void onAddTestCaseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onAddTestCaseClicked
-        Case testCase = new Case(this.cm.getCases().size()+1, new Client("Kies", "Kies", Platform.PC, "de"), new de.targodan.usb.data.System("Cubeo"), false, LocalDateTime.now());
+        Case testCase = new Case(this.cm.getOpenCases().size()+1, new Client("Kies", "Kies", Platform.PC, "de"), new de.targodan.usb.data.System("Cubeo"), false, LocalDateTime.now());
         Rat rat = new Rat("testRat");
         rat.setJumps(5);
         rat.setAssigned(true);
@@ -336,7 +294,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void onOpenInjectionWindowClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onOpenInjectionWindowClicked
         MessageInjectionWindow window = new MessageInjectionWindow(this);
         window.setVisible(true);
-        Program.dataConsumer.addDataSource(window);
     }//GEN-LAST:event_onOpenInjectionWindowClicked
 
     private void onShowConsoleClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onShowConsoleClicked
@@ -389,11 +346,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel caseBox;
-    private javax.swing.JPanel casePanel;
-    private javax.swing.JScrollPane caseScrollPane;
-    private javax.swing.JPanel caseScrollPaneWrapper;
-    private de.targodan.usb.ui.CaseView caseViewHeader;
     private javax.swing.JPanel caseWrapperPanel;
+    private javax.swing.JLabel dataConsumerLabel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -406,8 +360,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBar;
     // End of variables declaration//GEN-END:variables

@@ -21,16 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
+import de.targodan.usb.io.processing.DefaultHandler;
+import de.targodan.usb.io.processing.Handler;
+import de.targodan.usb.io.processing.DefaultParser;
+import de.targodan.usb.io.processing.Parser;
 import de.targodan.usb.data.CaseManager;
-import de.targodan.usb.io.DataConsumer;
-import de.targodan.usb.io.DataSource;
-import de.targodan.usb.io.DefaultHandler;
-import de.targodan.usb.io.DefaultParser;
-import de.targodan.usb.io.Handler;
-import de.targodan.usb.io.Parser;
-import de.targodan.usb.io.SingleChannelFileDataSource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,11 +62,20 @@ public abstract class CaseManagerFactory {
         return new DefaultCaseManagerFactory(config);
     }
     
+    /**
+     * The default implementation of the CaseManagerFactory.
+     */
     private static class DefaultCaseManagerFactory extends CaseManagerFactory {
         private Config config = null;
         private CaseManager cm = null;
         private DataConsumer dc = null;
         
+        /**
+         * Constructs a new CaseManagerFactory that will create a CaseManager
+         * with DataSources as defined by the given config.
+         * 
+         * @param config The configuration to be used for creating the DataSources.
+         */
         public DefaultCaseManagerFactory(Config config) {
             this.config = config;
         }
@@ -111,7 +117,7 @@ public abstract class CaseManagerFactory {
                 
                 try {
                     Logger.getLogger(CaseManagerFactory.class.getName()).log(Level.INFO, "Requesting DataSource {0}:\"{1}\"", new Object[]{ircClient.getName(), filePath});
-                    DataSource ds = new SingleChannelFileDataSource("#fuelrats", filePath, ircClient.getMarshaller());
+                    DataSource ds = new SingleChannelFileDataSource("#fuelrats", filePath, ircClient.getDefaultLogFileEncoding(), ircClient.getMarshaller());
                     this.dc.addDataSource(ds);
                     Logger.getLogger(CaseManagerFactory.class.getName()).log(Level.INFO, "DataSource successful.");
                 } catch (Exception ex) {

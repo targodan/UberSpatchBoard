@@ -21,14 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
-import de.targodan.usb.io.HexchatMarshaller;
-import de.targodan.usb.io.Marshaller;
+import de.targodan.usb.io.processing.HexchatMarshaller;
+import de.targodan.usb.io.processing.Marshaller;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -37,6 +41,16 @@ import java.util.regex.Pattern;
  * @author Luca Corbatto
  */
 public class Hexchat implements IRCClient {
+    public static final Set<OperatingSystem> SUPPORTED_OPERATING_SYSTEMS
+            = Collections.unmodifiableSet(
+                EnumSet.of(OperatingSystem.UNIX, OperatingSystem.WINDOWS, OperatingSystem.MAC)
+            );
+    
+    /**
+     * Returns the base HexChat path that contains the log files and configs.
+     * 
+     * @return the base HexChat path that contains the log files and configs.
+     */
     private String getBasePath() {
         String path;
         switch(OperatingSystem.getCurrent()) {
@@ -60,7 +74,6 @@ public class Hexchat implements IRCClient {
     @Override
     public boolean isInstalled() {
         File f = new File(this.getBasePath());
-        String path = f.getAbsolutePath();
         return f.exists();
     }
     
@@ -103,5 +116,15 @@ public class Hexchat implements IRCClient {
     @Override
     public String getName() {
         return "hexchat";
+    }
+
+    @Override
+    public Set<OperatingSystem> getSupportedOperatingSystems() {
+        return Hexchat.SUPPORTED_OPERATING_SYSTEMS;
+    }
+
+    @Override
+    public Charset getDefaultLogFileEncoding() {
+        return Charset.forName("UTF-8");
     }
 }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.io;
+package de.targodan.usb.io.processing;
 
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.Client;
@@ -115,10 +115,6 @@ public class DefaultParserTest {
     @Test
     public void testParseAndHandleCommand() {
         System.out.println("parseAndHandleCommand");
-        
-        
-//            Command cmd = new Command(Command.Type.SOFT_ASSIGN, new String[] {});
-//            verify(mockHandler).handleCommand(cmd);
         
         {
             IRCMessage message = new IRCMessage(LocalDateTime.now(), "Kies", "#fuelrats", "go 2 Kies");

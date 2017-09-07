@@ -21,45 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
-
-import de.targodan.usb.io.Marshaller;
+package de.targodan.usb.io;
 
 /**
- * IRCClient represents a supported IRC client.
+ * OperatingSystem represents the supported operating systems.
  * 
- * The implementations of this interface should be able to detect whether the
- * client is installed and ideally where the fuelrats log file is located.
- * 
- * @author corbatto
+ * @author Luca Corbatto
  */
-public interface IRCClient {
-    /**
-     * IsInstalled should check whether or not the client is installed.
-     * 
-     * @return 
-     */
-    boolean isInstalled();
+public enum OperatingSystem {
+    WINDOWS, MAC, UNIX, SOLARIS;
     
     /**
-     * GetFuelratsLogfilePath should return the path for the fuelrats log file.
+     * GetCurrent returns the currently running operating system.
      * 
      * @return 
      */
-    String getFuelratsLogfilePath();
-    
-    /**
-     * GetMarshaller should return a Marshaller that is able to marshal the log
-     * files of this client.
-     * 
-     * @return 
-     */
-    Marshaller getMarshaller();
-    
-    /**
-     * GetName returns the name of the client.
-     * 
-     * @return 
-     */
-    String getName();
+    public static OperatingSystem getCurrent() {
+        String osId = System.getProperty("os.name").toLowerCase();
+        if(osId.contains("win")) {
+            return WINDOWS;
+        } else if(osId.contains("mac")) {
+            return MAC;
+        } else if(osId.contains("nix") || osId.contains("nux") || osId.contains("aix")) {
+            return UNIX;
+        } else if(osId.contains("sunos")) {
+            return SOLARIS;
+        } else {
+            // Wat?
+            throw new IllegalStateException("OS not supported.");
+        }
+    }
 }

@@ -23,11 +23,21 @@
  */
 package de.targodan.usb.ui;
 
+import de.targodan.usb.Program;
 import de.targodan.usb.io.DataSource;
-import de.targodan.usb.io.IRCMessage;
+import de.targodan.usb.io.IRCFormatFilteringReader;
+import de.targodan.usb.io.processing.IRCMessage;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.nio.CharBuffer;
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,6 +54,23 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
     public MessageInjectionWindow(Window owner) {
         super(owner);
         initComponents();
+        
+        Program.dataConsumer.addDataSource(this);
+        
+        this.message.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {}
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    MessageInjectionWindow.this.onSendButtonClicked(null);
+                }
+            }
+        });
     }
 
     /**
@@ -66,55 +93,58 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("USB - Inject IRC Messages");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
-        layout.columnWidths = new int[] {0, 5, 0};
-        layout.rowHeights = new int[] {0, 5, 0, 5, 0, 5, 0};
+        layout.columnWidths = new int[] {0, 5, 0, 5, 0, 5, 0};
+        layout.rowHeights = new int[] {0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0};
         getContentPane().setLayout(layout);
 
         jLabel1.setText("IRC Nickname");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
         getContentPane().add(jLabel1, gridBagConstraints);
 
         ircNickname.setMinimumSize(new java.awt.Dimension(100, 20));
         ircNickname.setPreferredSize(new java.awt.Dimension(100, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         getContentPane().add(ircNickname, gridBagConstraints);
 
         jLabel2.setText("Channel");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
         getContentPane().add(jLabel2, gridBagConstraints);
 
         channel.setMinimumSize(new java.awt.Dimension(100, 20));
         channel.setPreferredSize(new java.awt.Dimension(100, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         getContentPane().add(channel, gridBagConstraints);
 
         jLabel3.setText("Message");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
         getContentPane().add(jLabel3, gridBagConstraints);
 
         message.setMinimumSize(new java.awt.Dimension(100, 20));
         message.setPreferredSize(new java.awt.Dimension(400, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
         getContentPane().add(message, gridBagConstraints);
 
         jButton1.setText("Send");
@@ -125,8 +155,8 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 3;
         getContentPane().add(jButton1, gridBagConstraints);
 
         pack();
@@ -142,21 +172,36 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
         if(this.output == null) {
             return;
         }
-        IRCMessage msg = new IRCMessage(LocalDateTime.now(), this.ircNickname.getText(), this.channel.getText(), this.message.getText());
         
-        new Thread(() -> {
-            while(!this.output.offer(msg)) {
-                while(this.output.remainingCapacity() == 0) {
-                    try {
-                        Thread.currentThread().wait(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(MessageInjectionWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+        StringBuilder msgContent = new StringBuilder();
+        char[] buf = new char[128];
+        int numRead;
+        try(BufferedReader reader = new BufferedReader(new IRCFormatFilteringReader(new StringReader(this.message.getText())))) {
+            while(true) {
+                numRead = reader.read(buf);
+                if(numRead > 0) {
+                    msgContent.append(buf, 0, numRead);
+                } else{
+                    break;
                 }
             }
-            this.sendComplete();
-        }).start();
+        } catch(IOException ex) {}
+        
+        IRCMessage msg = new IRCMessage(LocalDateTime.now(), this.ircNickname.getText(), this.channel.getText(), msgContent.toString());
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                while(!this.output.offer(msg, 100, TimeUnit.MILLISECONDS)) {}
+                this.sendComplete();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MessageInjectionWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }//GEN-LAST:event_onSendButtonClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Program.dataConsumer.removeDataSource(this);
+    }//GEN-LAST:event_formWindowClosing
 
     @Override
     public void listen(BlockingQueue<IRCMessage> output) {
@@ -167,6 +212,17 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
     public void stop() {
         this.output = null;
     }
+
+    @Override
+    public String getShortName() {
+        return "injecter window";
+    }
+
+    @Override
+    public String getName() {
+        return "injecter window";
+    }
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField channel;

@@ -23,18 +23,24 @@
  */
 package de.targodan.usb.io;
 
+import de.targodan.usb.io.processing.IRCMessage;
+import de.targodan.usb.io.processing.Marshaller;
 import java.io.BufferedReader;
+import java.io.Reader;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * ReaderDataSource is an implementation of DataSource reading Strings from a
+ * BufferedReader.
+ * 
  * @author Luca Corbatto
  */
-public class ReaderDataSource implements DataSource {
+public abstract class ReaderDataSource implements DataSource {
     protected Marshaller marshaller;
     protected final AtomicBoolean run;
     protected final AtomicBoolean done;
@@ -43,34 +49,73 @@ public class ReaderDataSource implements DataSource {
     
     protected BufferedReader reader;
     
-    public ReaderDataSource(BufferedReader reader, Marshaller marshaller) {
+    /**
+     * Constructs a ReaderDataSource with the given BufferedReader and Marshaler.
+     * 
+     * @param reader The Reader to read from.
+     * @param marshaller The Marshaler to be used for marshaling the messages.
+     */
+    public ReaderDataSource(Reader reader, Marshaller marshaller) {
+        this(marshaller);
+        this.reader = new BufferedReader(new IRCFormatFilteringReader(reader));
+        
+        this.goToEndOfReader();
+    }
+    
+    /**
+     * Constructs a ReaderDataSource with the given BufferedReader, Marshaler
+     * and channel name that will override the marshaled channel.
+     * 
+     * @param reader The Reader to read from.
+     * @param marshaller The Marshaler to be used for marshaling the messages.
+     * @param overrideChannelName The name of the channel that will be used for
+     * any message.
+     */
+    public ReaderDataSource(BufferedReader reader, Marshaller marshaller, String overrideChannelName) {
+        this(reader, marshaller);
+        this.overrideChannelName = overrideChannelName;
+        
+        this.goToEndOfReader();
+    }
+    
+    /**
+     * Constructs a ReaderDataSource with the given Marshaller.
+     * 
+     * @param marshaller The Marshaler to be used for marshaling the messages.
+     */
+    protected ReaderDataSource(Marshaller marshaller) {
         this.marshaller = marshaller;
         this.run = new AtomicBoolean(true);
         this.done = new AtomicBoolean(false);
         this.readPause = 200; // milliseconds
-        this.overrideChannelName = null;
-        
-        this.reader = reader;
-        
-        this.goToEndOfReader();
     }
     
-    public ReaderDataSource(BufferedReader reader, Marshaller marshaller, String overrideChannelName) {
-        this(reader, marshaller);
-        
-        this.goToEndOfReader();
+    /**
+     * Constructs a ReaderDataSource with the given Marshaller and channel name.
+     * 
+     * @param marshaller The Marshaler to be used for marshaling the messages.
+     * @param overrideChannelName The name of the channel that will be used for
+     * any message.
+     */
+    protected ReaderDataSource(Marshaller marshaller, String overrideChannelName) {
+        this(marshaller);
+        this.overrideChannelName = overrideChannelName;
     }
     
+    /**
+     * Goes to the end of the Reader, discarding anything read during the
+     * process.
+     */
     protected final void goToEndOfReader() {
         if(this.reader == null) {
             return;
         }
         
         // Go to EOF
-        String line = "";
-        while(line != null) {
+        long skipped = 1;
+        while(skipped > 0) {
             try {
-                line = this.reader.readLine();
+                skipped = this.reader.skip(1024);
             } catch (IOException ex) {
                 Logger.getLogger(SingleChannelFileDataSource.class.getName())
                         .log(Level.SEVERE, null, ex);
@@ -97,25 +142,12 @@ public class ReaderDataSource implements DataSource {
                         .log(Level.SEVERE, null, ex);
             }
             
-            try {
-                line = this.reader.readLine();
-            } catch (IOException ex) {
-                Logger.getLogger(SingleChannelFileDataSource.class.getName())
-                        .log(Level.SEVERE, null, ex);
-                break;
-            }
+            line = this.tryReadLine();
             if(line == null) {
                 continue;
             }
             
-            IRCMessage msg;
-            try {
-                msg = this.marshaller.marshall(line);
-            } catch(Exception ex) {
-                Logger.getLogger(SingleChannelFileDataSource.class.getName())
-                        .log(Level.SEVERE, null, ex);
-                continue;
-            }
+            IRCMessage msg = this.tryMarshall(line);
             if(msg == null) {
                 continue;
             }
@@ -124,17 +156,44 @@ public class ReaderDataSource implements DataSource {
                 msg = new IRCMessage(msg.getTimestamp(), msg.getSender(), this.overrideChannelName, msg.getContent());
             }
             
-            while(!output.offer(msg)) {
-                while(output.remainingCapacity() == 0) {
-                    try {
-                        Thread.currentThread().wait(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(ReaderDataSource.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            try {
+                while(!output.offer(msg, this.readPause/2, TimeUnit.MILLISECONDS)) {}
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ReaderDataSource.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         this.done.set(true);
+    }
+    
+    /**
+     * Tries to read a line returning the read line or null if reading failed.
+     * 
+     * @return the read line or null if reading failed.
+     */
+    private String tryReadLine() {
+        try {
+            return this.reader.readLine();
+        } catch (IOException ex) {
+            Logger.getLogger(SingleChannelFileDataSource.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    /**
+     * Tries to marshal a line returning an IRCMessage or null if reading failed.
+     * 
+     * @param line 
+     * @return an IRCMessage or null if reading failed.
+     */
+    private IRCMessage tryMarshall(String line) {
+        try {
+            return this.marshaller.marshall(line);
+        } catch(Exception ex) {
+            Logger.getLogger(SingleChannelFileDataSource.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override

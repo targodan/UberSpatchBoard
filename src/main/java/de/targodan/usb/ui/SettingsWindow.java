@@ -24,8 +24,9 @@
 package de.targodan.usb.ui;
 
 import de.targodan.usb.Program;
-import de.targodan.usb.config.Config;
-import de.targodan.usb.config.IRCClientRegistry;
+import de.targodan.usb.io.Config;
+import de.targodan.usb.io.IRCClient;
+import de.targodan.usb.io.IRCClientRegistry;
 import java.awt.Window;
 import java.io.File;
 import javax.swing.DefaultComboBoxModel;
@@ -38,6 +39,7 @@ import javax.swing.filechooser.FileFilter;
  * @author corbatto
  */
 public class SettingsWindow extends javax.swing.JDialog {
+    private IRCClient selectedClient;
 
     /**
      * Creates new form SettingsWindow
@@ -71,6 +73,9 @@ public class SettingsWindow extends javax.swing.JDialog {
                 this.ircClient.setSelectedItem(Program.CONFIG.dataSources.get(0).type);
             }
         }
+        
+        this.selectedClient = IRCClientRegistry.getIRCClientByName((String)this.ircClient.getSelectedItem());
+        this.setFileChooser();
     }
 
     /**
@@ -215,7 +220,25 @@ public class SettingsWindow extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_onSearchFileClicked
 
+    private void setFileChooser() {
+        if(this.selectedClient == null) {
+            return;
+        }
+        File f = new File(this.logfile.getText());
+        this.fileChooser.setCurrentDirectory(f.getParentFile());
+    }
+    
     private void onIRCClientChange(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onIRCClientChange
+        IRCClient newClinet = IRCClientRegistry.getIRCClientByName((String)this.ircClient.getSelectedItem());
+        
+        if(this.selectedClient != null
+                && (this.logfile.getText().length() == 0 
+                        || this.logfile.getText().equals(this.selectedClient.getFuelratsLogfilePath()))) {
+            this.logfile.setText(newClinet.getFuelratsLogfilePath());
+        }
+        this.selectedClient = newClinet;
+        this.setFileChooser();
+        
         this.updateConfig();
     }//GEN-LAST:event_onIRCClientChange
 
