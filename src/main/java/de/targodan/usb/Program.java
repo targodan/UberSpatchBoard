@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 
 public class Program {
     public static DataConsumer dataConsumer;
-    public static final Version VERSION = Version.parse("v1.0-beta.2");
+    public static final Version VERSION = Version.parse("v1.0-beta.3");
     public static String CONFIG_FILE = "usb.yml";
     public static final String[] CONTRIBUTORS = new String[] {
         // Your name could be here
@@ -83,7 +83,7 @@ public class Program {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            MainWindow window = new MainWindow(consoleWindow, cm);
+            MainWindow window = new MainWindow(consoleWindow, cm, CONFIG.showTestMenu);
             window.setDataConsumer(Program.dataConsumer);
             window.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override

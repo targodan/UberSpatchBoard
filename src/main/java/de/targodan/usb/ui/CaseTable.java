@@ -36,7 +36,6 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -46,8 +45,7 @@ import java.util.stream.Stream;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -57,20 +55,18 @@ import javax.swing.table.TableModel;
  * @author Luca Corbatto
  */
 public class CaseTable extends JTable {
-    private static class Model implements TableModel, Observer {
-        private static String[] COLUMNS = new String[] {
+    private static class Model extends AbstractTableModel implements TableModel, Observer {
+        private static final String[] COLUMNS = new String[] {
             "Case", "CMDR Name", "Lang", "Plat", "System", "Rats", "Notes"
         };
-        private static Class<?>[] COLUMN_CLASSES = new Class<?>[] {
+        private static final Class<?>[] COLUMN_CLASSES = new Class<?>[] {
             Integer.class, Client.class, Client.class, Client.class, de.targodan.usb.data.System.class, Set.class, List.class
         };
-        private CaseManager cm;
-        private Set<TableModelListener> listeners;
+        private final CaseManager cm;
         
         public Model(CaseManager cm) {
             this.cm = cm;
             this.cm.addObserver(this);
-            this.listeners = new HashSet<>();
         }
         
         @Override
@@ -128,22 +124,6 @@ public class CaseTable extends JTable {
                 this.getCase(rowIndex).setNotes(val.split("\n"));
             }
         }
-
-        @Override
-        public void addTableModelListener(TableModelListener l) {
-            this.listeners.add(l);
-        }
-
-        @Override
-        public void removeTableModelListener(TableModelListener l) {
-            this.listeners.remove(l);
-        }
-        
-        private void notifyListeners() {
-            this.listeners.forEach(l -> {
-                l.tableChanged(new TableModelEvent(this));
-            });
-        }
         
         private Case getCase(int rowIndex) {
             if(rowIndex < this.cm.getClosedCases().size()) {
@@ -154,7 +134,7 @@ public class CaseTable extends JTable {
 
         @Override
         public void update(Observable o, Object arg) {
-            this.notifyListeners();
+            this.fireTableStructureChanged();
         }
     }
     
@@ -182,14 +162,14 @@ public class CaseTable extends JTable {
             }
             
             int height = panel.getPreferredSize().height;
-            if(height > 0) {
+            if(height > 0 && table.getRowHeight(row) != height) {
                 table.setRowHeight(row, height);
             }
             
             return panel;
         }
     }
-    private static class ClientRenderer implements TableCellRenderer {
+    private class ClientRenderer implements TableCellRenderer {
         protected String platformToString(Platform platform) {
             switch(platform) {
                 case PC:
@@ -207,17 +187,26 @@ public class CaseTable extends JTable {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Client client = (Client)value;
-            switch(column) {
-                case 1:
-                    return new CopyableTextPanel(client.getCMDRName());
-                    
-                case 2:
-                    return new TextPanel(client.getLanguage().toUpperCase());
-                    
-                case 3:
-                    return new TextPanel(this.platformToString(client.getPlatform()));
+            Component c = CaseTable.this.cells.get(new Pair<>(row, column));
+            if(c == null) {
+                switch(column) {
+                    case 1:
+                        c = new CopyableTextPanel(client.getCMDRName());
+                        break;
+
+                    case 2:
+                        c = new TextPanel(client.getLanguage().toUpperCase());
+                        break;
+
+                    case 3:
+                        c = new TextPanel(this.platformToString(client.getPlatform()));
+                        break;
+
+                    default:
+                        throw new IllegalArgumentException("Requested rendering for column "+column+" on ClientRenderer but only columns 1, 2 and 3 are suported.");
+                }
             }
-            throw new IllegalArgumentException("Requested rendering for column "+column+" on ClientRenderer but only columns 1, 2 and 3 are suported.");
+            return c;
         }
     }
     private static class SystemRenderer implements TableCellRenderer {
@@ -244,7 +233,7 @@ public class CaseTable extends JTable {
                     .mapToInt(c -> c.getPreferredSize().height)
                     .sum();
             
-            if(height > 0) {
+            if(height > 0 && table.getRowHeight(row) != height) {
                 table.setRowHeight(row, height);
             }
             
@@ -262,7 +251,7 @@ public class CaseTable extends JTable {
     }
     
     private static class NotesEditor extends AbstractCellEditor implements TableCellEditor {
-        private Map<Pair<Integer, Integer>, Component> cells;
+        private final Map<Pair<Integer, Integer>, Component> cells;
         private MultiTextPanel panel;
         
         public NotesEditor(Map<Pair<Integer, Integer>, Component> cells) {
