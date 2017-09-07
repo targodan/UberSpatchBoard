@@ -109,7 +109,7 @@ public class IRCFormatFilteringReader extends Reader {
         }
         
         Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
-        return (!Character.isISOControl(c)) &&
+        return (Character.isWhitespace(c) || !Character.isISOControl(c)) &&
                 block != null &&
                 !block.equals(Character.UnicodeBlock.SPECIALS);
     }
