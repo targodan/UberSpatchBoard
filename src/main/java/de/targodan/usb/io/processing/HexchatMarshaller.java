@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.io;
+package de.targodan.usb.io.processing;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

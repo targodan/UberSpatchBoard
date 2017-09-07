@@ -24,15 +24,31 @@
 package de.targodan.usb.io;
 
 /**
- *
- * @author corbatto
+ * OperatingSystem represents the supported operating systems.
+ * 
+ * @author Luca Corbatto
  */
-public enum ParseResult {
-    WAS_RATSIGNAL,
-    WAS_CALL,
-    WAS_REPORT,
-    WAS_CALL_AND_REPORT,
-    WAS_COMMAND,
+public enum OperatingSystem {
+    WINDOWS, MAC, UNIX, SOLARIS;
     
-    IGNORED,
+    /**
+     * GetCurrent returns the currently running operating system.
+     * 
+     * @return 
+     */
+    public static OperatingSystem getCurrent() {
+        String osId = System.getProperty("os.name").toLowerCase();
+        if(osId.contains("win")) {
+            return WINDOWS;
+        } else if(osId.contains("mac")) {
+            return MAC;
+        } else if(osId.contains("nix") || osId.contains("nux") || osId.contains("aix")) {
+            return UNIX;
+        } else if(osId.contains("sunos")) {
+            return SOLARIS;
+        } else {
+            // Wat?
+            throw new IllegalStateException("OS not supported.");
+        }
+    }
 }

@@ -23,6 +23,9 @@
  */
 package de.targodan.usb.io;
 
+import de.targodan.usb.io.processing.IRCMessage;
+import de.targodan.usb.io.processing.ParseResult;
+import de.targodan.usb.io.processing.Parser;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

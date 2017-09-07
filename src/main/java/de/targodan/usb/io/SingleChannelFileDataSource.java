@@ -23,6 +23,7 @@
  */
 package de.targodan.usb.io;
 
+import de.targodan.usb.io.processing.Marshaller;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

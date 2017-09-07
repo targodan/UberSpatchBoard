@@ -21,16 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
+import de.targodan.usb.io.processing.DefaultHandler;
+import de.targodan.usb.io.processing.Handler;
+import de.targodan.usb.io.processing.DefaultParser;
+import de.targodan.usb.io.processing.Parser;
 import de.targodan.usb.data.CaseManager;
-import de.targodan.usb.io.DataConsumer;
-import de.targodan.usb.io.DataSource;
-import de.targodan.usb.io.DefaultHandler;
-import de.targodan.usb.io.DefaultParser;
-import de.targodan.usb.io.Handler;
-import de.targodan.usb.io.Parser;
-import de.targodan.usb.io.SingleChannelFileDataSource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -24,8 +24,8 @@
 package de.targodan.usb.ui;
 
 import de.targodan.usb.Program;
-import de.targodan.usb.config.Config;
-import de.targodan.usb.config.IRCClientRegistry;
+import de.targodan.usb.io.Config;
+import de.targodan.usb.io.IRCClientRegistry;
 import java.awt.Window;
 import java.io.File;
 import javax.swing.DefaultComboBoxModel;

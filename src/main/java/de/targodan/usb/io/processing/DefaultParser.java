@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.io;
+package de.targodan.usb.io.processing;
 
 import de.targodan.usb.data.Case;
 import de.targodan.usb.data.Client;
@@ -150,7 +150,7 @@ public class DefaultParser implements Parser {
                 new Client(ircNick, cmdrName, this.parsePlatform(m.group("platform")), m.group("language").toLowerCase()),
                 new System(m.group("system")),
                 !m.group("o2").equals("OK"),
-                message.timestamp
+                message.getTimestamp()
         );
         
         this.handler.handleNewCase(c);

@@ -21,34 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io.processing;
 
 /**
- * OperatingSystem represents the supported operating systems.
- * 
- * @author Luca Corbatto
+ *
+ * @author corbatto
  */
-public enum OperatingSystem {
-    WINDOWS, MAC, UNIX, SOLARIS;
+public enum ParseResult {
+    WAS_RATSIGNAL,
+    WAS_CALL,
+    WAS_REPORT,
+    WAS_CALL_AND_REPORT,
+    WAS_COMMAND,
     
-    /**
-     * GetCurrent returns the currently running operating system.
-     * 
-     * @return 
-     */
-    public static OperatingSystem getCurrent() {
-        String osId = System.getProperty("os.name").toLowerCase();
-        if(osId.contains("win")) {
-            return WINDOWS;
-        } else if(osId.contains("mac")) {
-            return MAC;
-        } else if(osId.contains("nix") || osId.contains("nux") || osId.contains("aix")) {
-            return UNIX;
-        } else if(osId.contains("sunos")) {
-            return SOLARIS;
-        } else {
-            // Wat?
-            throw new IllegalStateException("OS not supported.");
-        }
-    }
+    IGNORED,
 }

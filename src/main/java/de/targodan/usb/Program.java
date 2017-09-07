@@ -23,9 +23,9 @@
  */
 package de.targodan.usb;
 
-import de.targodan.usb.config.CaseManagerFactory;
-import de.targodan.usb.config.Config;
-import de.targodan.usb.config.PathSanitizer;
+import de.targodan.usb.io.CaseManagerFactory;
+import de.targodan.usb.io.Config;
+import de.targodan.usb.io.PathSanitizer;
 import de.targodan.usb.data.CaseManager;
 import de.targodan.usb.io.DataConsumer;
 import de.targodan.usb.ui.ConsoleWindow;

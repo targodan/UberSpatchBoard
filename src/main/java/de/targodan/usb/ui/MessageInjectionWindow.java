@@ -26,7 +26,7 @@ package de.targodan.usb.ui;
 import de.targodan.usb.Program;
 import de.targodan.usb.io.DataSource;
 import de.targodan.usb.io.IRCFormatFilteringReader;
-import de.targodan.usb.io.IRCMessage;
+import de.targodan.usb.io.processing.IRCMessage;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

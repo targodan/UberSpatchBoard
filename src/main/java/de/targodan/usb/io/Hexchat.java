@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
-import de.targodan.usb.io.HexchatMarshaller;
-import de.targodan.usb.io.Marshaller;
+import de.targodan.usb.io.processing.HexchatMarshaller;
+import de.targodan.usb.io.processing.Marshaller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Path;

@@ -23,6 +23,7 @@
  */
 package de.targodan.usb.io;
 
+import de.targodan.usb.io.processing.IRCMessage;
 import java.util.concurrent.BlockingQueue;
 
 /**

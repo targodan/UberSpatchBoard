@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
-import de.targodan.usb.io.Marshaller;
+import de.targodan.usb.io.processing.Marshaller;
 import java.nio.charset.Charset;
 import java.util.Set;
 

@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.targodan.usb.config;
+package de.targodan.usb.io;
 
+import com.esotericsoftware.yamlbeans.YamlConfig;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
@@ -32,7 +33,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -117,6 +117,7 @@ public class Config {
         Config config = null;
         if(file != null) {
             YamlReader reader = new YamlReader(file);
+            Config.setYamlConfig(reader.getConfig());
             try {
                 config = reader.read(Config.class);
                 reader.close();
@@ -155,6 +156,7 @@ public class Config {
             return;
         }
         YamlWriter writer = new YamlWriter(file);
+        Config.setYamlConfig(writer.getConfig());
         try {
             writer.write(config);
             writer.close();
@@ -164,5 +166,17 @@ public class Config {
         } catch (IOException ex) {
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    /**
+     * Configure the YamlConfig.
+     * 
+     * This sets the class tags.
+     * 
+     * @param config The config to be configured.
+     */
+    protected static void setYamlConfig(YamlConfig config) {
+        config.setClassTag("config", Config.class);
+        config.setClassTag("dataSource", Config.DataSource.class);
     }
 }
