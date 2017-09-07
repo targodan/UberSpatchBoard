@@ -32,7 +32,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -278,7 +277,7 @@ public class CaseTable extends JTable {
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             if(column == 6) {
-                this.panel = (MultiTextPanel)this.cells.get(new Point(row, column));
+                this.panel = (MultiTextPanel)this.cells.get(new Pair<>(row, column));
                 return this.panel;
             }
             return null;
@@ -289,7 +288,7 @@ public class CaseTable extends JTable {
         private void relayEvent(MouseEvent e) {
             int row = CaseTable.this.rowAtPoint(e.getPoint());
             int column = CaseTable.this.columnAtPoint(e.getPoint());
-            Component c = CaseTable.this.cells.get(new Point(row, column));
+            Component c = CaseTable.this.cells.get(new Pair<>(row, column));
             if(c == null) {
                 return;
             }
@@ -354,5 +353,5 @@ public class CaseTable extends JTable {
         return c;
     }
     
-    private Map<Pair<Integer, Integer>, Component> cells;
+    private final Map<Pair<Integer, Integer>, Component> cells;
 }
