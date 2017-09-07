@@ -232,8 +232,8 @@ public class SettingsWindow extends javax.swing.JDialog {
         IRCClient newClinet = IRCClientRegistry.getIRCClientByName((String)this.ircClient.getSelectedItem());
         
         if(this.selectedClient != null
-                && this.selectedClient != newClinet
-                && this.logfile.getText().equals(this.selectedClient.getFuelratsLogfilePath())) {
+                && (this.logfile.getText().length() == 0 
+                        || this.logfile.getText().equals(this.selectedClient.getFuelratsLogfilePath()))) {
             this.logfile.setText(newClinet.getFuelratsLogfilePath());
         }
         this.selectedClient = newClinet;

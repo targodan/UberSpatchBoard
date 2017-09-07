@@ -35,16 +35,14 @@ import java.util.regex.Pattern;
  *
  * @author Luca Corbatto
  */
-public class HexchatMarshaller implements Marshaller {
+public class HexchatMarshaller extends AbstractMarshaller {
     protected Pattern usernameMessagePattern;
-    protected Pattern sanitizationPattern;
     
     /**
      * Constructs a HexchatMarshaller.
      */
     public HexchatMarshaller() {
         this.usernameMessagePattern = Pattern.compile("(.*?)\t(.*)");
-        this.sanitizationPattern = Pattern.compile("\\.?:?\\<?[+\\-%@]?(?<clean>.*?)\\>?:?\\.?");
     }
     
     /**
@@ -133,23 +131,6 @@ public class HexchatMarshaller implements Marshaller {
                     Integer.valueOf(timeParts[1]),
                     Integer.valueOf(timeParts[2])
                 );
-    }
-    
-    /**
-     * Sanitizes the given username.
-     * 
-     * This strips any pre- and postfixes added by HexChat, like "&lt;NAME&gt;"
-     * or ".:+NAME:." and so on.
-     * 
-     * @param name The name to be sanitized.
-     * @return the sanitized username.
-     */
-    protected String sanitizeUsername(String name) {
-        Matcher m = this.sanitizationPattern.matcher(name);
-        if(!m.matches()) {
-            throw new UnknownError("This should never happen.");
-        }
-        return m.group("clean");
     }
    
     @Override

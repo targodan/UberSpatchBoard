@@ -48,13 +48,14 @@ public class IRCClientRegistry {
             return;
         }
         IRCClientRegistry.registerClient(new Hexchat());
+        IRCClientRegistry.registerClient(new mIRC());
         IRCClientRegistry.isInitialized = true;
     }
     
     /**
      * RegisterClient registers an IRCClient instance.
      * 
-     * @param client 
+     * @param client The client to be registered.
      */
     public static void registerClient(IRCClient client) {
         IRCClientRegistry.supportedClients.add(client);
@@ -63,7 +64,7 @@ public class IRCClientRegistry {
     /**
      * GetSupportedClients returns all previously registered IRCClients.
      * 
-     * @return 
+     * @return a List of supported clients.
      */
     public static List<IRCClient> getSupportedClients() {
         IRCClientRegistry.init();
