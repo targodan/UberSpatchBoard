@@ -56,12 +56,7 @@ public abstract class ReaderDataSource implements DataSource {
      * @param marshaller The Marshaler to be used for marshaling the messages.
      */
     public ReaderDataSource(Reader reader, Marshaller marshaller) {
-        this.marshaller = marshaller;
-        this.run = new AtomicBoolean(true);
-        this.done = new AtomicBoolean(false);
-        this.readPause = 200; // milliseconds
-        this.overrideChannelName = null;
-        
+        this(marshaller);
         this.reader = new BufferedReader(new IRCFormatFilteringReader(reader));
         
         this.goToEndOfReader();
@@ -78,8 +73,33 @@ public abstract class ReaderDataSource implements DataSource {
      */
     public ReaderDataSource(BufferedReader reader, Marshaller marshaller, String overrideChannelName) {
         this(reader, marshaller);
+        this.overrideChannelName = overrideChannelName;
         
         this.goToEndOfReader();
+    }
+    
+    /**
+     * Constructs a ReaderDataSource with the given Marshaller.
+     * 
+     * @param marshaller The Marshaler to be used for marshaling the messages.
+     */
+    protected ReaderDataSource(Marshaller marshaller) {
+        this.marshaller = marshaller;
+        this.run = new AtomicBoolean(true);
+        this.done = new AtomicBoolean(false);
+        this.readPause = 200; // milliseconds
+    }
+    
+    /**
+     * Constructs a ReaderDataSource with the given Marshaller and channel name.
+     * 
+     * @param marshaller The Marshaler to be used for marshaling the messages.
+     * @param overrideChannelName The name of the channel that will be used for
+     * any message.
+     */
+    protected ReaderDataSource(Marshaller marshaller, String overrideChannelName) {
+        this(marshaller);
+        this.overrideChannelName = overrideChannelName;
     }
     
     /**

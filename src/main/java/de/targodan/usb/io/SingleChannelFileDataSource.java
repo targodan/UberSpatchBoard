@@ -32,6 +32,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 /**
+ * The SingleChannelFileDataSource is a ReaderDataSource that creates a reader
+ * from a file.
  *
  * @author Luca Corbatto
  */
@@ -39,7 +41,7 @@ public class SingleChannelFileDataSource extends ReaderDataSource {
     private final File file;
     
     public SingleChannelFileDataSource(String channelName, String fileName, Charset charset, Marshaller marshaller) throws FileNotFoundException {
-        super(null, marshaller, channelName);
+        super(marshaller, channelName);
         
         this.file = new File(fileName);
         if(!this.file.canRead()) {
