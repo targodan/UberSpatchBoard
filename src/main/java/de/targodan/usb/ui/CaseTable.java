@@ -157,7 +157,8 @@ public class CaseTable extends JTable {
                 panel.setBackground(CR_BACKGROUND_COLOR);
                 panel.getLabel().setForeground(CR_FOREGROUND_COLOR);
                 panel.getLabel().setFont(new Font(panel.getLabel().getFont().getFamily(), Font.BOLD, panel.getLabel().getFont().getSize()));
-            } else if(!pair.getRight().isActive()) {
+            }
+            if(!pair.getRight().isActive()) {
                 panel.setText("("+panel.getText()+")");
             }
             
