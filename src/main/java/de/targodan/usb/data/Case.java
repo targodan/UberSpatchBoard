@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Set;
  * 
  * @author Luca Corbatto
  */
-public class Case extends Observable {
+public class Case extends Observable implements Observer {
     private boolean active;
     private final int number;
     private Client client;
@@ -79,7 +80,9 @@ public class Case extends Observable {
     public Case(int number, Client client, System system, boolean codeRed, LocalDateTime openTime) {
         this.number = number;
         this.client = client;
+        this.client.addObserver(this);
         this.system = system;
+        this.system.addObserver(this);
         this.codeRed = codeRed;
         
         this.active = true;
@@ -243,7 +246,11 @@ public class Case extends Observable {
      * @param client 
      */
     public void setClient(Client client) {
+        if(this.client != null) {
+            this.client.deleteObserver(this);
+        }
         this.client = client;
+        this.client.addObserver(this);
         
         this.setChanged();
         this.notifyObservers();
@@ -255,7 +262,11 @@ public class Case extends Observable {
      * @param system 
      */
     public void setSystem(System system) {
+        if(this.system != null) {
+            this.system.deleteObserver(this);
+        }
         this.system = system;
+        this.system.addObserver(this);
         
         this.setChanged();
         this.notifyObservers();
@@ -266,7 +277,11 @@ public class Case extends Observable {
      * @param firstLimpet 
      */
     public void setFirstLimpet(Rat firstLimpet) {
+        if(this.firstLimpet != null) {
+            this.firstLimpet.deleteObserver(this);
+        }
         this.firstLimpet = firstLimpet;
+        this.firstLimpet.addObserver(this);
         
         this.notifyObservers();
     }
@@ -326,6 +341,7 @@ public class Case extends Observable {
      */
     public void addCall(Rat rat) {
         this.calls.add(rat);
+        rat.addObserver(this);
         
         try {
             // If that rat was already assigned update its jumps.
@@ -438,6 +454,10 @@ public class Case extends Observable {
         }
         return true;
     }
-    
-    
+
+    @Override
+    public void update(Observable o, Object arg) {
+        this.setChanged();
+        this.notifyObservers(o);
+    }
 }

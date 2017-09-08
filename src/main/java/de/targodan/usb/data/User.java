@@ -99,7 +99,7 @@ public class User extends Observable {
      * @return the commander name.
      */
     public String getCMDRName() {
-        return cmdrName != null ? cmdrName : ircName;
+        return this.cmdrName != null ? this.cmdrName : this.ircName;
     }
 
     /**
