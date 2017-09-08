@@ -134,7 +134,6 @@ public class CaseTable extends JTable {
 
         @Override
         public void update(Observable o, Object arg) {
-            this.fireTableStructureChanged();
             this.fireTableDataChanged();
         }
     }
