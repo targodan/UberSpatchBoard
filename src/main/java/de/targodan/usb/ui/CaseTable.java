@@ -135,6 +135,7 @@ public class CaseTable extends JTable {
         @Override
         public void update(Observable o, Object arg) {
             this.fireTableStructureChanged();
+            this.fireTableDataChanged();
         }
     }
     
@@ -187,24 +188,22 @@ public class CaseTable extends JTable {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Client client = (Client)value;
-            Component c = CaseTable.this.cells.get(new Pair<>(row, column));
-            if(c == null) {
-                switch(column) {
-                    case 1:
-                        c = new CopyableTextPanel(client.getCMDRName());
-                        break;
+            Component c;
+            switch(column) {
+                case 1:
+                    c = new CopyableTextPanel(client.getCMDRName());
+                    break;
 
-                    case 2:
-                        c = new TextPanel(client.getLanguage().toUpperCase());
-                        break;
+                case 2:
+                    c = new TextPanel(client.getLanguage().toUpperCase());
+                    break;
 
-                    case 3:
-                        c = new TextPanel(this.platformToString(client.getPlatform()));
-                        break;
+                case 3:
+                    c = new TextPanel(this.platformToString(client.getPlatform()));
+                    break;
 
-                    default:
-                        throw new IllegalArgumentException("Requested rendering for column "+column+" on ClientRenderer but only columns 1, 2 and 3 are suported.");
-                }
+                default:
+                    throw new IllegalArgumentException("Requested rendering for column "+column+" on ClientRenderer but only columns 1, 2 and 3 are suported.");
             }
             return c;
         }

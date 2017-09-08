@@ -38,6 +38,8 @@ import javax.swing.JPanel;
  * @author Luca Corbatto
  */
 public class RatView extends javax.swing.JPanel implements Observer {
+    private static final Color HARD_ASSIGNED_FOREGROUND_COLOR = Color.BLACK;
+    private static final Color SOFT_ASSIGNED_FOREGROUND_COLOR = Color.GRAY;
 
     /**
      * Creates new form RatView
@@ -65,6 +67,12 @@ public class RatView extends javax.swing.JPanel implements Observer {
     private void updateRatView() {
         if(this.rat == null) {
             throw new IllegalStateException("Can't updateRatView without a rat.");
+        }
+        
+        if(this.rat.isAssigned()) {
+            this.ratName.setForeground(HARD_ASSIGNED_FOREGROUND_COLOR);
+        } else {
+            this.ratName.setForeground(SOFT_ASSIGNED_FOREGROUND_COLOR);
         }
         
         this.ratName.setText(this.getRatName());

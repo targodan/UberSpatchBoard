@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -37,7 +38,7 @@ import java.util.Set;
  * 
  * @author Luca Corbatto
  */
-public class CaseManager extends Observable {
+public class CaseManager extends Observable implements Observer {
     protected final Set<Case> closedCases;
     protected final Map<Integer, Case> cases;
 
@@ -91,6 +92,8 @@ public class CaseManager extends Observable {
         }
         c.attachManager(this);
         this.cases.put(c.getNumber(), c);
+        
+        c.addObserver(this);
         
         this.setChanged();
         this.notifyObservers();
@@ -162,5 +165,20 @@ public class CaseManager extends Observable {
                 .findFirst().orElse(null);
         }
         return c;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(!(o instanceof Case)) {
+            return;
+        }
+        Case c = (Case)o;
+        
+        if(this.cases.containsValue(c) || this.closedCases.contains(c)) {
+            this.setChanged();
+            this.notifyObservers(c);
+        } else {
+            c.deleteObserver(this);
+        }
     }
 }
