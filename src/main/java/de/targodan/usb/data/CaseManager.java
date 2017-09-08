@@ -24,6 +24,7 @@
 package de.targodan.usb.data;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,8 +47,8 @@ public class CaseManager extends Observable implements Observer {
      * Constructs a new CaseManager.
      */
     public CaseManager() {
-        this.closedCases = new HashSet<>();
-        this.cases = new HashMap<>();
+        this.closedCases = Collections.synchronizedSet(new HashSet<>());
+        this.cases = Collections.synchronizedMap(new HashMap<>());
     }
     
     /**
