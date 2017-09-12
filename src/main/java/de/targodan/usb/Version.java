@@ -111,7 +111,7 @@ public class Version {
      * SplitAndSetSuffix splits the suffix on a '.' trying to interpret the second
      * part as a number.
      * 
-     * @param suffix 
+     * @param suffix The suffix to be analysed and set.
      */
     private void splitAndSetSuffix(String suffix) {
         String[] parts = suffix.split("\\.");
@@ -135,8 +135,9 @@ public class Version {
      * The format is "[v]MAJOR.MINOR[.PATCH][-SUFFIX]" with the elements
      * in brackets being optional.
      * 
-     * @param versionString
-     * @return 
+     * @param versionString The string representation of the version.
+     * @return The parsed Version
+     * @throws IllegalArgumentException If the string could not be parsed.
      */
     public static Version parse(String versionString) {
         Version version = new Version(0, 0);
@@ -184,6 +185,13 @@ public class Version {
         return version;
     }
     
+    /**
+     * This method will look up the latest released version on GitHub.
+     * 
+     * It will block until the result is in. NOTE: pre-releases will be ignored.
+     * 
+     * @return The latest version released on GitHub.
+     */
     public static Version getLatestVersionFromGithub() {
         String url = "https://api.github.com/repos/targodan/UberSpatchBoard/releases/latest";
         HttpRequestFactory fac = new NetHttpTransport().createRequestFactory();
@@ -223,7 +231,7 @@ public class Version {
      * The format is "vMAJOR.MINOR[.PATCH][-SUFFIX]" with the elements
      * in brackets being omitted if empty.
      * 
-     * @return 
+     * @return The string representation of this version.
      */
     @Override
     public String toString() {
@@ -252,7 +260,7 @@ public class Version {
     /**
      * Compares the other version to this one.
      * 
-     * @param other
+     * @param other The version to compare this one to.
      * @return &lt; 0 iff. this &lt; other
      */
     public int compareTo(Version other) {
@@ -262,8 +270,8 @@ public class Version {
     /**
      * Compares the other version to this one.
      * 
-     * @param v1
-     * @param v2
+     * @param v1 One of the versions to be compared.
+     * @param v2 The other of the versions to be compared.
      * @return &lt; 0 iff. v1 &lt; v2
      */
     public static int compare(Version v1, Version v2) {

@@ -50,7 +50,7 @@ public class Rat extends User {
      * 
      * @see Rat#guessPlatform(java.lang.String)
      * 
-     * @param ircName 
+     * @param ircName The IRC name of the rat.
      */
     public Rat(String ircName) {
         this(ircName, null, Rat.guessPlatform(ircName));
@@ -62,8 +62,8 @@ public class Rat extends User {
      * 
      * @see Rat#guessPlatform(java.lang.String)
      * 
-     * @param ircName 
-     * @param cmdrName 
+     * @param ircName The IRC name of the rat.
+     * @param cmdrName The CMDR name of the rat.
      */
     public Rat(String ircName, String cmdrName) {
         this(ircName, cmdrName, Rat.guessPlatform(ircName));
@@ -73,9 +73,9 @@ public class Rat extends User {
     /**
      * Construct a Rat with an IRC name, a commander name and the platform.
      * 
-     * @param ircName 
-     * @param cmdrName 
-     * @param platform 
+     * @param ircName The IRC name of the rat.
+     * @param cmdrName The CMDR name of the rat.
+     * @param platform The platform of the rat.
      */
     public Rat(String ircName, String cmdrName, Platform platform) {
         super(ircName, cmdrName, platform);
@@ -90,8 +90,8 @@ public class Rat extends User {
      * 
      * It looks for postfixes like "[PC]", "|PC" or similar. 
      * 
-     * @param ircName
-     * @return 
+     * @param ircName The IRC name of the rat.
+     * @return a guess on which platform that rat is.
      */
     private static Platform guessPlatform(String ircName) {
         if(Rat.platformPattern == null) {
@@ -127,7 +127,7 @@ public class Rat extends User {
     /**
      * Sets the number of jumps the Rat has left to reach the client.
      * 
-     * @param jumps 
+     * @param jumps The amount of jumps to be set.
      */
     public void setJumps(int jumps) {
         this.jumps = jumps;
@@ -149,7 +149,7 @@ public class Rat extends User {
      * Inserts a new Report overwriting reports of the same kind.
      * @see Report#equals(java.lang.Object)
      * 
-     * @param report 
+     * @param report The report to be inserted.
      */
     public void insertReport(Report report) {
         if(this.reports.contains(report)) {
@@ -173,7 +173,7 @@ public class Rat extends User {
     /**
      * Sets the assigned status of this rat.
      * 
-     * @param assigned 
+     * @param assigned True if the rat is supposed to be assigned.
      */
     public void setAssigned(boolean assigned) {
         this.assigned = assigned;

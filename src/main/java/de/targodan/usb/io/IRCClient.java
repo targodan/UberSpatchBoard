@@ -39,14 +39,14 @@ public interface IRCClient {
     /**
      * IsInstalled should check whether or not the client is installed.
      * 
-     * @return 
+     * @return true if the IRC client is installed.
      */
     boolean isInstalled();
     
     /**
      * GetFuelratsLogfilePath should return the path for the fuelrats log file.
      * 
-     * @return 
+     * @return the filepath of the default logfile of the #fuelrats channel.
      */
     String getFuelratsLogfilePath();
     
@@ -54,14 +54,14 @@ public interface IRCClient {
      * GetMarshaller should return a Marshaller that is able to marshal the log
      * files of this client.
      * 
-     * @return 
+     * @return the marshaller to be used for marshalling.
      */
     Marshaller getMarshaller();
     
     /**
      * GetName returns the name of the client.
      * 
-     * @return 
+     * @return the name of the client.
      */
     String getName();
     

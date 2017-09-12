@@ -32,9 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.nio.CharBuffer;
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +48,8 @@ public class MessageInjectionWindow extends javax.swing.JDialog implements DataS
 
     /**
      * Creates new form MessageInjectionWindow
+     * 
+     * @param owner The owner of this JDialog.
      */
     public MessageInjectionWindow(Window owner) {
         super(owner);

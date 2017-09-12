@@ -99,7 +99,7 @@ public class Case extends Observable implements Observer {
     /**
      * Assigns a rat to a case.
      * 
-     * @param rat 
+     * @param rat The rat to be assigned.
      * @throws IllegalStateException If there are already 3 rats assigned.
      */
     public void assignRat(Rat rat) {
@@ -115,7 +115,7 @@ public class Case extends Observable implements Observer {
     /**
      * Unassigns a rat.
      * 
-     * @param rat 
+     * @param rat The rat to be unassigned.
      */
     public void unassignRat(Rat rat) {
         this.rats.remove(rat);
@@ -181,7 +181,7 @@ public class Case extends Observable implements Observer {
     /**
      * Adds a note.
      * 
-     * @param note 
+     * @param note The note to be added.
      */
     public void addNote(String note) {
         this.notes.add(note);
@@ -193,7 +193,7 @@ public class Case extends Observable implements Observer {
     /**
      * Overwrites all notes with the given ones.
      * 
-     * @param notes 
+     * @param notes The notes to overwrite the current ones.
      */
     public void setNotes(String[] notes) {
         this.notes.clear();
@@ -232,7 +232,7 @@ public class Case extends Observable implements Observer {
     /**
      * Sets the cases active state.
      * 
-     * @param active 
+     * @param active True if the case should be set to active.
      */
     public void setActive(boolean active) {
         this.active = active;
@@ -243,7 +243,8 @@ public class Case extends Observable implements Observer {
 
     /**
      * Sets the client.
-     * @param client 
+     * 
+     * @param client The client to be set.
      */
     public void setClient(Client client) {
         if(this.client != null) {
@@ -259,7 +260,7 @@ public class Case extends Observable implements Observer {
     /**
      * Sets the system.
      * 
-     * @param system 
+     * @param system The system to be set.
      */
     public void setSystem(System system) {
         if(this.system != null) {
@@ -274,7 +275,8 @@ public class Case extends Observable implements Observer {
 
     /**
      * Sets the rat who first limpeted.
-     * @param firstLimpet 
+     * 
+     * @param firstLimpet The rat to be set as first limpet.
      */
     public void setFirstLimpet(Rat firstLimpet) {
         if(this.firstLimpet != null) {
@@ -288,7 +290,8 @@ public class Case extends Observable implements Observer {
 
     /**
      * Sets the cases code red state.
-     * @param caseRed 
+     * 
+     * @param caseRed True if the case is supposed to be a code red.
      */
     public void setCodeRed(boolean caseRed) {
         this.codeRed = caseRed;
@@ -299,6 +302,7 @@ public class Case extends Observable implements Observer {
 
     /**
      * Returns the time the case was closed or null if the case is still open.
+     * 
      * @return the time the case was closed or null if the case is still open.
      */
     public LocalDateTime getCloseTime() {
@@ -320,6 +324,7 @@ public class Case extends Observable implements Observer {
     
     /**
      * Returns true if the case is closed.
+     * 
      * @return the time the case was closed or null if the case is still open.
      */
     public boolean isClosed() {
@@ -337,7 +342,7 @@ public class Case extends Observable implements Observer {
      * already assigned they won't be added again but instead their jumps will
      * be updated.
      * 
-     * @param rat 
+     * @param rat The call to be added.
      */
     public void addCall(Rat rat) {
         this.calls.add(rat);
@@ -371,7 +376,7 @@ public class Case extends Observable implements Observer {
      * can be found an unassigned rat that has called jumps will be returned. If
      * no such rat can be found either null is returned.
      * 
-     * @param ircName
+     * @param ircName The irc name to be set.
      * @return A rat with the given name or null if no such rat can be found.
      */
     public Rat lookupAssociatedRat(String ircName) {

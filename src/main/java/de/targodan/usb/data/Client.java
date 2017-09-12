@@ -34,9 +34,9 @@ public class Client extends User {
     /**
      * Construct a Client with the given names, platform and language.
      * 
-     * @param ircName
-     * @param cmdrName
-     * @param platform
+     * @param ircName The IRC name of the client.
+     * @param cmdrName The CMDR name of the client.
+     * @param platform The platform of the client.
      * @param language Two character language code.
      */
     public Client(String ircName, String cmdrName, Platform platform, String language) {

@@ -43,6 +43,8 @@ public class SettingsWindow extends javax.swing.JDialog {
 
     /**
      * Creates new form SettingsWindow
+     * 
+     * @param owner The owner of this JDialog.
      */
     public SettingsWindow(Window owner) {
         super(owner);

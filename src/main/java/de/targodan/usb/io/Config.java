@@ -72,7 +72,7 @@ public class Config {
      * Creates a default Config trying to detect any supported
      * IRC clients installed on the local machine.
      * 
-     * @return 
+     * @return a Config instance representing a default configuration.
      */
     public static Config getDefaultConfig() {
         Config config = new Config();
@@ -90,7 +90,7 @@ public class Config {
     /**
      * Returns any registered IRCClient that reports as being installed.
      * 
-     * @return 
+     * @return any registered IRCClient that reports as being installed.
      */
     private static List<IRCClient> getInstalledIRCClients() {
         return IRCClientRegistry.getSupportedClients().stream()
@@ -101,8 +101,9 @@ public class Config {
     /**
      * Reads a configuration from a filename using the yaml format.
      * 
-     * @param filename
-     * @return 
+     * @param filename The name of the file to be read.
+     * @return The configuration representing the configuration as written in
+     * the file.
      */
     public static Config readConfig(String filename) {
         Path path = Paths.get(filename);
@@ -139,8 +140,8 @@ public class Config {
     /**
      * Writes the given configuration to a file using the yaml formatting.
      * 
-     * @param config
-     * @param filename 
+     * @param config The configuration to be written.
+     * @param filename The name of the file to write to.
      */
     public static void writeConfig(Config config, String filename) {
         Path path = Paths.get(filename);

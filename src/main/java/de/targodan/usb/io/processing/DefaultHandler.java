@@ -187,7 +187,7 @@ public class DefaultHandler implements Handler {
      * 
      * @param caseIdentifier The case identifier to search for, can be null.
      * @param rat The rat to search for, can be null.
-     * @return 
+     * @return the case as defined by the search criteria.
      */
     protected Case lookupCase(String caseIdentifier, Rat rat) {
         if(caseIdentifier != null) {

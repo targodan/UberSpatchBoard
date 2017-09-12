@@ -41,22 +41,22 @@ public abstract class CaseManagerFactory {
     /**
      * Creates a CaseManager.
      * 
-     * @return 
+     * @return a CaseManager.
      */
     public abstract CaseManager createCaseManager();
     
     /**
      * Creates a DataConsumer with DataSources as defined in the Config.
      * 
-     * @return 
+     * @return The DataConsumer to be used for reading data.
      */
     public abstract DataConsumer createDataConsumer();
     
     /**
      * Creates a default factory.
      * 
-     * @param config
-     * @return 
+     * @param config The configuration for the factory.
+     * @return a CaseManagerFactory.
      */
     public static CaseManagerFactory getDefaultFactory(Config config) {
         return new DefaultCaseManagerFactory(config);

@@ -63,6 +63,7 @@ public class CaseManager extends Observable implements Observer {
     
     /**
      * Returns all open cases.
+     * 
      * @return all open cases.
      */
     public List<Case> getOpenCases() {
@@ -85,7 +86,7 @@ public class CaseManager extends Observable implements Observer {
     /**
      * Adds a case.
      * 
-     * @param c 
+     * @param c The case to be added.
      */
     public void addCase(Case c) {
         if(this.cases.containsKey(c.getNumber())) {
@@ -106,7 +107,7 @@ public class CaseManager extends Observable implements Observer {
      * You typically don't need to call this as Case.close() does this
      * automatically.
      * 
-     * @param c 
+     * @param c The case that was just closed.
      */
     public void notifyCaseClosed(Case c) {
         Case closedCase = this.cases.remove(c.getNumber());
@@ -121,7 +122,7 @@ public class CaseManager extends Observable implements Observer {
     /**
      * Removes closed cases that have been closed before closeTime.
      * 
-     * @param closeTime 
+     * @param closeTime The timestamp of closing the case.
      */
     public void removeClosedCasesOlderThan(LocalDateTime closeTime) {
         if(this.closedCases.removeIf(item -> item.getCloseTime().isBefore(closeTime))) {
@@ -134,7 +135,7 @@ public class CaseManager extends Observable implements Observer {
      * Returns the Case where the clients IRC or CMDR name are equal to the
      * given name or null if no such case exists.
      * 
-     * @param clientName
+     * @param clientName The name of the client.
      * @return the Case where the clients IRC or CMDR name are equal to the
      * given name or null if no such case exists.
      */

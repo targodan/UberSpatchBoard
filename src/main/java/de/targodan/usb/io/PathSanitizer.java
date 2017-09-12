@@ -41,7 +41,7 @@ public class PathSanitizer {
      * 
      * This is only used for tests.
      * 
-     * @param environment 
+     * @param environment The environment to be used for resolving variables.
      */
     protected static void overrideEnvironment(Map<String, String> environment) {
         PathSanitizer.environment = environment;
@@ -51,7 +51,7 @@ public class PathSanitizer {
      * Sanitize cleans up a given path, replacing any environment variables
      * contained in the native formatting.
      * 
-     * @param path
+     * @param path The path to be cleaned up.
      * @return The cleaned up path.
      */
     public static String sanitize(String path) {
@@ -71,8 +71,9 @@ public class PathSanitizer {
      * SanitizeReplaceString escapes the given text to be interpreted
      * literally by a regex.
      * 
-     * @param text
-     * @return 
+     * @param text The text to be escaped.
+     * @return a escaped version of the given text such that it will be
+     * interpreted literally in a regular expression.
      */
     protected static String sanitizeReplaceString(String text) {
         return text.replace("\\", "\\\\")
@@ -83,8 +84,8 @@ public class PathSanitizer {
      * SanitizeWindows sanitizes the given path replacing windows environment
      * variables like "%APPDATA%".
      * 
-     * @param path
-     * @return 
+     * @param path The path to be sanitized.
+     * @return the sanitized path.
      */
     protected static String sanitizeWindows(String path) {
         Matcher m = Pattern.compile("%(?<var>[a-zA-Z0-9_]+)%").matcher(path);
@@ -98,8 +99,8 @@ public class PathSanitizer {
      * SanitizeWindows sanitizes the given path replacing linux environment
      * variables like "$HOME" or "~".
      * 
-     * @param path
-     * @return 
+     * @param path The path to be sanitized.
+     * @return the sanitized path.
      */
     protected static String sanitizeUnix(String path) {
         path = path.replaceFirst("^~", sanitizeReplaceString(System.getProperty("user.home")));

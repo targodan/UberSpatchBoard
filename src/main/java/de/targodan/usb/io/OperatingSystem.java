@@ -34,7 +34,7 @@ public enum OperatingSystem {
     /**
      * GetCurrent returns the currently running operating system.
      * 
-     * @return 
+     * @return the currently running operating system.
      */
     public static OperatingSystem getCurrent() {
         String osId = System.getProperty("os.name").toLowerCase();
