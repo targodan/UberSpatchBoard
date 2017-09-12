@@ -313,7 +313,16 @@ public class Case extends Observable implements Observer {
      * Closes the case with now as the closing time.
      */
     public void close() {
-        this.closeTime = LocalDateTime.now();
+        this.close(LocalDateTime.now());
+    }
+    
+    /**
+     * Closes the case with now as the closing time.
+     * 
+     * @param closeTime The time at which the case was closed.
+     */
+    public void close(LocalDateTime closeTime) {
+        this.closeTime = closeTime;
         if(this.attachedManager != null) {
             this.attachedManager.notifyCaseClosed(this);
         }
@@ -331,6 +340,14 @@ public class Case extends Observable implements Observer {
         return this.closeTime != null;
     }
     
+    /**
+     * Attaches a CaseManager that will be notified when this Case is closed.
+     * 
+     * This is automatically called by the CaseManager it is added to.
+     * @see CaseManager#addCase(de.targodan.usb.data.Case) 
+     * 
+     * @param manager The CaseManager to be attached.
+     */
     public void attachManager(CaseManager manager) {
         this.attachedManager = manager;
     }

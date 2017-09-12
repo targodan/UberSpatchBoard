@@ -79,7 +79,7 @@ public class CaseManager extends Observable implements Observer {
      */
     public List<Case> getClosedCases() {
         return this.closedCases.stream()
-                .sorted((i1, i2) -> i1.getOpenTime().compareTo(i2.getOpenTime()))
+                .sorted((i1, i2) -> i1.getCloseTime().compareTo(i2.getCloseTime()))
                 .collect(Collectors.toList());
     }
     
