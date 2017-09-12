@@ -130,9 +130,9 @@ public class CaseManagerTest {
         java.lang.System.out.println("getOpenCases");
         
         {
-            Case c1 = new Case(4, new Client("123",  "321", Platform.PC, "ru"), new System("test2"), true);
-            Case c2 = new Case(1, new Client("asdf",  "fdsa", Platform.PC, "de"), new System("test"), true);
-            Case c3 = new Case(5, new Client("22",  "33", Platform.XBOX, "gb"), new System("test3"), true);
+            Case c1 = new Case(4, new Client("123",  "321", Platform.PC, "ru"), new System("test2"), true, LocalDateTime.of(2017, Month.SEPTEMBER, 1, 12, 0));
+            Case c2 = new Case(1, new Client("asdf",  "fdsa", Platform.PC, "de"), new System("test"), true, LocalDateTime.of(2017, Month.SEPTEMBER, 1, 12, 1));
+            Case c3 = new Case(5, new Client("22",  "33", Platform.XBOX, "gb"), new System("test3"), true, LocalDateTime.of(2017, Month.SEPTEMBER, 1, 12, 2));
             CaseManager instance = this.createWithObserver();
             instance.cases.put(c1.getNumber(), c1);
             instance.cases.put(c2.getNumber(), c2);
